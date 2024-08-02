@@ -1,0 +1,107 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Interactable : MonoBehaviour
+{
+    public Vector3 InspectableInitialRotation;
+    public bool RotateX;
+    public bool RotateY;
+    public bool FreezePlayerRotation;
+    public bool FreezePlayerMotion;
+
+    public bool NonInspectable { get; private set; }
+    public bool InspectableOnly { get; private set; }
+    private List<IBehaviour> InteractionBehaviours = new();
+    private List<IBehaviour> InspectionBehaviours = new();
+
+    public bool DeactivateBehaviours;
+
+    private void Awake()
+    {
+        Interact(null, true, true);
+    }
+    public void Interact(PlayerController playerController, bool isInteracting, bool isInspecting)
+    {
+        var behavioursInObject = gameObject.GetComponents<IBehaviour>();
+
+        foreach (IBehaviour behaviour in behavioursInObject)
+        {
+            if (behaviour != null)
+            {
+                if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
+                if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
+
+                if (!behaviour.IsInteractable() && !behaviour.IsInspectable()) InteractionBehaviours.Add(behaviour);
+            }
+        }
+
+        foreach (Transform child in transform)
+        {
+            var behaviour = child.GetComponent<IBehaviour>();
+
+            if(behaviour != null)
+            {
+                if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
+                if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
+
+                if (!behaviour.IsInteractable() && !behaviour.IsInspectable()) InteractionBehaviours.Add(behaviour);
+            }
+        }
+
+        if (InteractionBehaviours.Count == 0) InspectableOnly = true;
+        if (!InspectableOnly && InspectionBehaviours.Count == 0) NonInspectable = true;
+
+        if (!InspectableOnly && isInteracting)
+        {
+            ManageInteractionBehaviours(isInteracting);
+        }
+        else if (!NonInspectable && isInspecting)
+        {
+            ManageInspectionBehaviours(isInspecting);
+        }
+        else if (!isInteracting && !isInspecting)
+        {
+            ManageInteractionBehaviours(isInteracting);
+            ManageInspectionBehaviours(isInspecting);
+        }
+
+        if(playerController)
+        {
+            //Remember to unfreeze player in behaviour components
+            if (FreezePlayerMotion) playerController.FreezePlayerMovement = true;
+            if (FreezePlayerRotation) playerController.FreezePlayerRotation = true;
+        }
+
+        if(DeactivateBehaviours) GetComponent<Collider>().enabled = false;
+    }
+
+    private void ManageInteractionBehaviours(bool isInteracting)
+    {
+        if (InteractionBehaviours.Count > 0)
+        {
+            for (int i = 0; i < InteractionBehaviours.Count; i++)
+            {
+                var behaviour = InteractionBehaviours[i];
+                if (behaviour.gameObject.activeInHierarchy) behaviour.Behaviour(isInteracting, false);
+            }
+        }
+    }
+
+    private void ManageInspectionBehaviours(bool isInspecting)
+    {
+        if (InspectionBehaviours.Count > 0)
+        {
+            for (int i = 0; i < InspectionBehaviours.Count; i++)
+            {
+                var behaviour = InspectionBehaviours[i];
+                if (behaviour.gameObject.activeInHierarchy) behaviour.Behaviour(false, isInspecting);
+            }
+        }
+    }
+
+    public bool[] RotateXY()
+    {
+        bool[] rotateXY = new bool[] { RotateX, RotateY };
+        return rotateXY;
+    }
+}
