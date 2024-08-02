@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            PlayerController.Instance.Character.Move(Vector3.zero);
+            Character.Move(Vector3.zero);
         }
     }
 
