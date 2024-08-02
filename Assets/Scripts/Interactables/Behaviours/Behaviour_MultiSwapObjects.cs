@@ -38,17 +38,17 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
     {
         if(_requiredObjects.Count > 0 )
         {
-            PlayerInventory inventory = PlayerController.Instance.Inventory;
+            var playerController = PlayerController.Instance;
 
             for(int i = 0; i < _requiredObjects.Count; i++)
             {
-               if(inventory.SelectedItem() != null && inventory.SelectedItem() == _requiredObjects[i])
+               if(playerController.Inventory.SelectedItem() != null && playerController.Inventory.SelectedItem() == _requiredObjects[i])
                {
-                    inventory.Remove(_requiredObjects[i]);
+                    playerController.Inventory.Remove(_requiredObjects[i]);
 
                     PlayerData playerData = PlayerController.Instance.PlayerData;
-                    playerData.InspectablesSource.pitch = 0.9f;
-                    playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+                    playerController.InspectablesSource.pitch = 0.9f;
+                    playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
                     _requiredObjects.Remove(_requiredObjects[i]);
 
@@ -80,10 +80,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
             {
                 for(int i = 0; i < _activateObjects.Count; i++)
                 {
-                    if (_activateObjects[i] != null)
-                    {
-                        _activateObjects[i].SetActive(true);
-                    }
+                    if (_activateObjects[i] != null) _activateObjects[i].SetActive(true);
                 }
             }
 
@@ -91,10 +88,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
             {
                 for(int i = 0; i < _deactivateObjects.Count; i++)
                 {
-                    if (_deactivateObjects[i] != null)
-                    {
-                        _deactivateObjects[i].SetActive(false);
-                    }  
+                    if (_deactivateObjects[i] != null) _deactivateObjects[i].SetActive(false);
                 }
             }
 

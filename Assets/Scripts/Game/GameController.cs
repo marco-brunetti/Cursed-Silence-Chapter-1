@@ -56,7 +56,7 @@ public class GameController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
         {
-            _playerCamera = PlayerController.Instance.PlayerData.Camera.gameObject;
+            _playerCamera = PlayerController.Instance.Camera.gameObject;
             Pause = !Pause;
             PauseControl();
         }

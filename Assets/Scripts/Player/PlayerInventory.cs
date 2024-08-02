@@ -72,9 +72,8 @@ public class PlayerInventory : MonoBehaviour
 
     public void Add(Transform interactable, Vector3 positionInInventory, Vector3 rotationInInventory, Vector3 scaleInInventory)
     {
-        //PlayerData playerData = PlayerController.Instance.PlayerData;
-        _playerData.InspectablesSource.pitch = 1;
-        _playerData.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+        PlayerController.Instance.InspectablesSource.pitch = 1;
+        PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
         if (_selectedItem != null)
         {
@@ -103,7 +102,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         interactable.gameObject.layer = LayerMask.NameToLayer("Inventory");
-        interactable.SetParent(_playerData.InventoryHolder);
+        interactable.SetParent(PlayerController.Instance.InventoryHolder);
         interactable.localPosition = positionInInventory;
         interactable.localRotation = Quaternion.Euler(rotationInInventory);
 
@@ -115,8 +114,8 @@ public class PlayerInventory : MonoBehaviour
         ChangeItemLayer(interactable.gameObject, "Inventory");
 
         //Refreshes camera, solving a layer change bug
-        _playerData.InventoryCamera.SetActive(false);
-        _playerData.InventoryCamera.SetActive(true);
+        PlayerController.Instance.InventoryCamera.SetActive(false);
+        PlayerController.Instance.InventoryCamera.SetActive(true);
 
         return interactable.gameObject;
     }

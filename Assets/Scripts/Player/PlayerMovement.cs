@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Windows;
 
 public interface IPlayerMovement
 {
@@ -14,11 +13,11 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
         if (input.playerMovementInput != Vector2.zero)
         {
-            Vector3 forward = playerData.Camera.transform.TransformDirection(Vector3.forward);
+            Vector3 forward = PlayerController.Instance.Camera.transform.TransformDirection(Vector3.forward);
             forward.y = 0;
             forward.Normalize();
 
-            Vector3 right = playerData.Camera.transform.TransformDirection(Vector3.right);
+            Vector3 right = PlayerController.Instance.Camera.transform.TransformDirection(Vector3.right);
 
             float curSpeedX = (input.playerRunInput ? playerData.RunSpeed : playerData.WalkSpeed) * input.playerMovementInput.y;
             float curSpeedY = (input.playerRunInput ? playerData.RunSpeed : playerData.WalkSpeed) * input.playerMovementInput.x;
@@ -29,6 +28,6 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
         }
 
         moveDirection.y += playerData.Gravity;
-        playerData.Character.Move(moveDirection * Time.deltaTime);
+        PlayerController.Instance.Character.Move(moveDirection * Time.deltaTime);
     }
 }

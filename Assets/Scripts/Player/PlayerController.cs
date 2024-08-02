@@ -1,20 +1,19 @@
+using Cinemachine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
-[RequireComponent (typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
+[RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
 [RequireComponent(typeof(PlayerStressControl), typeof(PlayerAudio))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
-    [field: SerializeField] public PlayerData PlayerData { get; private set; }
     [field: SerializeField] public PlayerInventory Inventory { get; private set; }
     [field: SerializeField] public PlayerInspect Inspector { get; private set; }
     [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
 
+
+    [SerializeField] private PlayerDataScript _data;
     [SerializeField] private PlayerMovement _movement;
     [SerializeField] private PlayerRotate _rotator;
     [SerializeField] private PlayerInput _input;
@@ -25,6 +24,18 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool FreezePlayerMovement;
     [NonSerialized] public bool FreezePlayerRotation;
 
+    [Header("Player Components")]
+    public GameObject CamHolder;
+    public Transform Camera;
+    public CinemachineVirtualCamera VirtualCamera;
+    public GameObject InventoryCamera;
+    public Transform InventoryHolder;
+    public Transform InspectorParent;
+    public AudioSource InspectablesSource;
+    public CharacterController Character;
+    public PlayerData PlayerData { get; private set; }
+
+    public bool IsSprinting { get; private set; }
 
     private void Awake()
     {
@@ -34,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
+        PlayerData = _data.dataObject;
     }
 
     private void Update()
@@ -66,10 +77,11 @@ public class PlayerController : MonoBehaviour
         if (FreezePlayerMovement == false)
         {
             _movement.PlayerMove(PlayerData, _input);
+            IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
         }
         else
         {
-            PlayerData.Character.Move(Vector3.zero);
+            PlayerController.Instance.Character.Move(Vector3.zero);
         }
     }
 

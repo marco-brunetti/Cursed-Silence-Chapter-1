@@ -69,8 +69,8 @@ public class PlayerInspect : MonoBehaviour
         PlayerController playerController = PlayerController.Instance;
         PlayerData playerData = playerController.PlayerData;
 
-        playerData.InspectablesSource.pitch = 1;
-        playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+        playerController.InspectablesSource.pitch = 1;
+        playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
         playerController.FreezePlayerMovement = true;
         playerController.FreezePlayerRotation = true;
@@ -91,7 +91,7 @@ public class PlayerInspect : MonoBehaviour
         {
             if (!_initialSetup)
             {
-                _interactable.parent = playerData.InspectorParent;
+                _interactable.parent = PlayerController.Instance.InspectorParent;
                 _targetRotation = _interactableComponent.InspectableInitialRotation;
                 _initialSetup = true;
             }
@@ -132,14 +132,14 @@ public class PlayerInspect : MonoBehaviour
 
                 if(_timer == _resetInspectorTimer)
                 {
-                    playerData.InspectablesSource.pitch = 0.9f;
-                    playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+                    playerController.InspectablesSource.pitch = 0.9f;
+                    playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
                 }
 
                 Vector3 targetPosition = _previousPositionAndRotation[0];
                 Quaternion targetRotation = Quaternion.Euler(_previousPositionAndRotation[1]);
 
-                if (_interactable.parent != playerData.InventoryHolder)
+                if (_interactable.parent != PlayerController.Instance.InventoryHolder)
                 {
                     _interactable.parent = _previousParent;
                     _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, targetPosition, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
@@ -157,7 +157,7 @@ public class PlayerInspect : MonoBehaviour
             }
             else
             {
-                if (_interactable.parent != playerData.InventoryHolder)
+                if (_interactable.parent != PlayerController.Instance.InventoryHolder)
                 {
                     _interactable.parent = _previousParent;
                 }
@@ -173,7 +173,7 @@ public class PlayerInspect : MonoBehaviour
     //Forces previous reset of inspectable if needed
     private void ResetInspectable(Vector3 targetPosition, Quaternion targetRotation)
     {
-        if (_interactable.parent != PlayerController.Instance.PlayerData.InventoryHolder)
+        if (_interactable.parent != PlayerController.Instance.InventoryHolder)
         {
             _interactable.parent = _previousParent;
             _interactable.localPosition = targetPosition;
