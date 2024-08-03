@@ -67,7 +67,7 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
         }
 
 
-        yield return new WaitForSeconds(_bounceDelay);
+        yield return new WaitForSecondsRealtime(_bounceDelay);
         SetPlayerPositionAndRotation(player, -_newPosition, previousRotation);
 
         if (_distortCamera)
