@@ -43,12 +43,14 @@ public class GameController : MonoBehaviour
         FramelockChange();
         VSyncToggle();
         ChangeMouseSensitivity();
+
+
     }
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 

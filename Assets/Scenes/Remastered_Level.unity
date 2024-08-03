@@ -38,6 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 303145326}
+  m_IndirectSpecularColor: {r: 0.0001280699, g: 0.00011771533, b: 0.00011164733, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -292,7 +293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2978349574843640782, guid: 1057b3fdf4beebb4dbf36ba6a27404ae, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 75.5
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 2978349574843640782, guid: 1057b3fdf4beebb4dbf36ba6a27404ae, type: 3}
       propertyPath: m_LocalRotation.w
@@ -633,6 +634,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 15662930635663992, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0000009561282
+      objectReference: {fileID: 0}
     - target: {fileID: 2770135100652048857, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -673,9 +678,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4151099751763470704, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0000009561282
+      objectReference: {fileID: 0}
     - target: {fileID: 4885722693976578010, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
       propertyPath: m_Name
       value: PlayerController
+      objectReference: {fileID: 0}
+    - target: {fileID: 7910862982637792271, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 7910862982637792271, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.14999962
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6056306828394776303, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
@@ -858,7 +875,6 @@ Terrain:
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
-  m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
@@ -1462,7 +1478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2978349574843640782, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -24.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2978349574843640782, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
       propertyPath: m_LocalRotation.w
