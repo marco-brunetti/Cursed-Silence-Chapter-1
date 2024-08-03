@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public PlayerInventory Inventory { get; private set; }
     [field: SerializeField] public PlayerInspect Inspector { get; private set; }
     [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
-
+    [field: SerializeField] public GameObject Player { get; private set; }
 
     [SerializeField] private PlayerDataScript _data;
     [SerializeField] private PlayerMovement _movement;

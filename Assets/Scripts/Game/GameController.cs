@@ -56,14 +56,14 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
+        /*if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
         {
             _playerCamera = PlayerController.Instance.Camera.gameObject;
             Pause = !Pause;
             PauseControl();
         }
 
-        MenuMusic();
+        MenuMusic();*/
     }
 
     private void MenuMusic()

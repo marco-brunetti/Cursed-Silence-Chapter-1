@@ -7,6 +7,8 @@ public interface IPlayerMovement
 
 public class PlayerMovement : MonoBehaviour, IPlayerMovement
 {
+    private float _currentMoveSpeed = 0;
+
     public void PlayerMove(PlayerData playerData, IPlayerInput input)
     {
         Vector3 moveDirection = Vector3.zero;
@@ -19,8 +21,11 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
             Vector3 right = PlayerController.Instance.Camera.transform.TransformDirection(Vector3.right);
 
-            float curSpeedX = (input.playerRunInput ? playerData.RunSpeed : playerData.WalkSpeed) * input.playerMovementInput.y;
-            float curSpeedY = (input.playerRunInput ? playerData.RunSpeed : playerData.WalkSpeed) * input.playerMovementInput.x;
+            _currentMoveSpeed = input.playerRunInput ? Mathf.MoveTowards(_currentMoveSpeed, playerData.RunSpeed, 0.3f) :
+                Mathf.MoveTowards(_currentMoveSpeed, playerData.WalkSpeed, 0.3f);
+
+            float curSpeedX = _currentMoveSpeed * input.playerMovementInput.y;
+            float curSpeedY = _currentMoveSpeed * input.playerMovementInput.x;
             float movementDirectionY = moveDirection.y;
 
             moveDirection = (forward * curSpeedX) + (right * curSpeedY);
