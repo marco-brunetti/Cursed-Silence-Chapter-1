@@ -7,11 +7,13 @@ public enum Language { English, Spanish };
 
 public class GameController : MonoBehaviour
 {
-    public bool Pause {  get; private set; }
+    public bool Pause { get; private set; }
 
     [SerializeField] public float GlobalVolume = 1;
 
     [SerializeField] public float MouseSensibilityMultiplier = 1;
+
+    [field: SerializeField] public AudioSource GeneralAudioSource { get; private set; }
 
     public Language SelectedLanguage;
 

@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
@@ -19,62 +17,66 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
     [SerializeField] private bool _bounce = false;
     [SerializeField] private float _bounceDelay = 0.5f;
 
-    [Header("Player Camera")]
+    [Header("Teleport Camera")]
     [SerializeField] private bool _distortCamera;
-    [SerializeField] private float _thickDistortLevel = 1;
-    [SerializeField] private float _fineDistortLevel = 5;
+    [SerializeField] private bool _activateDarkMask;
+    [SerializeField] private float _blackMaskDuration = 0.1f;
 
-    private float previousFineDistort;
-    private float previousThickDistort;
+    [Header("Teleport Audio")]
+    [SerializeField] private AudioClip _teleportClip; //add clip for bounce later
+    [SerializeField] private float _teleportClipVolume;
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if (_onInteraction && isInteracting)
-        {
-            Teleport();
-        }
-        else if (_onInspection && isInteracting)
-        {
-            Teleport();
-        }
-        else if (_onInspection && _onInteraction)
-        {
-            Teleport();
-        }
+        if (_onInteraction && isInteracting) StartCoroutine(Teleport());
+        else if (_onInspection && isInteracting) StartCoroutine(Teleport());
+        else if (_onInspection && _onInteraction) StartCoroutine(Teleport());
     }
 
-    private void Teleport()
+    private IEnumerator Teleport()
     {
-        var player = PlayerController.Instance.Player;
-        if (_bounce) StartCoroutine(BounceDelay(player));
+        if(_activateDarkMask) StartCoroutine(ActivateBlackMask());
+
+        if (_teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(_teleportClip, _teleportClipVolume);
+
+        PlayerController playerController = PlayerController.Instance;
+        var player = playerController.Player;
+        var playerData = playerController.PlayerData;
+        var tvDistortion = playerController.Camera.GetComponent<BadTVEffect>();
+
+        playerController.IsTeleporting = true;
+
+        tvDistortion.fineDistort = _distortCamera ? playerData.MaxFineDistortion : playerData.DefaultFineDistortion;
+        tvDistortion.thickDistort = _distortCamera ? playerData.MaxthickDistortion : playerData.DefaultThickDistortion;
+
+        if (_bounce) StartCoroutine(BounceDelay(player, playerData, tvDistortion));
         else SetPlayerPositionAndRotation(player, _newPosition, _newRotation);
+
+        yield return new WaitForEndOfFrame();
+
+        playerController.IsTeleporting = false;
     }
 
-    private IEnumerator BounceDelay(GameObject player)
+    private IEnumerator ActivateBlackMask()
     {
-        var tvDistortion = PlayerController.Instance.Camera.GetComponent<BadTVEffect>();
+        UIManager.Instance.ActivateDarkMask(true);
+        yield return new WaitForSecondsRealtime(_blackMaskDuration);
+        UIManager.Instance.ActivateDarkMask(false);
+    }
 
+    private IEnumerator BounceDelay(GameObject player, PlayerData playerData, BadTVEffect tvDistortion)
+    {
         var previousPosition = player.transform.position;
         var previousRotation = player.transform.rotation.eulerAngles;
         SetPlayerPositionAndRotation(player, _newPosition, _newRotation);
 
-        if(_distortCamera)
-        {
-            previousFineDistort = tvDistortion.fineDistort;
-            previousThickDistort = tvDistortion.thickDistort;
-            tvDistortion.fineDistort = _fineDistortLevel;
-            tvDistortion.thickDistort = _thickDistortLevel;
-        }
-
-
         yield return new WaitForSecondsRealtime(_bounceDelay);
+
         SetPlayerPositionAndRotation(player, -_newPosition, previousRotation);
 
-        if (_distortCamera)
-        {
-            tvDistortion.fineDistort = previousFineDistort;
-            tvDistortion.thickDistort = previousThickDistort;
-        }
+        //return defaults after bounce
+        tvDistortion.fineDistort = _distortCamera ? playerData.DefaultFineDistortion : playerData.MaxFineDistortion;
+        tvDistortion.thickDistort = _distortCamera ? playerData.DefaultThickDistortion : playerData.MaxthickDistortion;
     }
 
     private void SetPlayerPositionAndRotation(GameObject player, Vector3 position, Vector3 rotation)

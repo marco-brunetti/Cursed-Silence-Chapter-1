@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public bool FreezePlayerMovement;
     [NonSerialized] public bool FreezePlayerRotation;
     [NonSerialized] public bool IsOutside;
+    [NonSerialized] public bool IsTeleporting;
 
     [Header("Player Components")]
     public GameObject CamHolder;
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
     public PlayerData PlayerData { get; private set; }
 
     public bool IsSprinting { get; private set; }
+    public bool IsDistorted { get; private set; }
 
     private void Awake()
     {
@@ -62,8 +64,9 @@ public class PlayerController : MonoBehaviour
         else
         {
             Time.timeScale = 1;
-            Move();
+
             Interact();
+            Move();
             InventoryManage();
             PlayerAudio();
             ManageStress();
@@ -77,14 +80,17 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (FreezePlayerMovement == false)
+        if(!IsTeleporting)
         {
-            _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
-            IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
-        }
-        else
-        {
-            Character.Move(Vector3.zero);
+            if (FreezePlayerMovement == false)
+            {
+                _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
+                IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
+            }
+            else
+            {
+                Character.Move(Vector3.zero);
+            }
         }
     }
 

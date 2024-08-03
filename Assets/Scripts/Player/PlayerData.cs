@@ -14,6 +14,10 @@ public class PlayerData : ScriptableObject
     public float MouseSensitivityY = 0.05f;
     public int DreamLevelFOV = 50;
     public int HouseLevelFOV = 45;
+    public float DefaultThickDistortion = 0.2f;
+    public float DefaultFineDistortion = 0.2f;
+    public float MaxthickDistortion = 1f;
+    public float MaxFineDistortion = 5f;
 
     [Header("Player Audio Clips")]
     public AudioClip[] ConcreteFootstepClips;

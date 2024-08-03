@@ -7,6 +7,7 @@ public class UIData : MonoBehaviour
     [field: SerializeField, Header("Canvases")] public GameObject PlayerCanvas { get; private set; }
     [field: SerializeField, Header("SceneChanger")] public GameObject SceneChangeCanvas { get; private set; }
     [field: SerializeField] public Image SceneChangeBakground { get; private set; }
+    [field: SerializeField] public Image DarkMask { get; private set; }
     [field: SerializeField] public GameObject SceneChangeTip { get; private set; }
     [field: SerializeField, Header("Prompts")] public GameObject InteractPrompt {  get; private set; }
     [field: SerializeField] public GameObject InspectPrompt { get; private set; }

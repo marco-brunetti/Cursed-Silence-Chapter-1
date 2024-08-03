@@ -22,7 +22,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
             Vector3 right = PlayerController.Instance.Camera.transform.TransformDirection(Vector3.right);
 
-            _currentMoveSpeed = input.playerRunInput ? Mathf.MoveTowards(_currentMoveSpeed, playerData.RunSpeed, 0.3f) :
+            var runSpeed = PlayerController.Instance.IsOutside ? playerData.RunSpeed : playerData.RunSpeed / 2;
+
+            _currentMoveSpeed = input.playerRunInput ? Mathf.MoveTowards(_currentMoveSpeed, runSpeed, 0.3f) :
                 Mathf.MoveTowards(_currentMoveSpeed, playerData.WalkSpeed, 0.3f);
 
             float curSpeedX = _currentMoveSpeed * input.playerMovementInput.y;
@@ -32,19 +34,13 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
             moveDirection = (forward * curSpeedX) + (right * curSpeedY);
             moveDirection.y = movementDirectionY;
 
-
             Ray ray = new Ray
             {
                 origin = groundSpawnPoint.position,
                 direction = -groundSpawnPoint.transform.up
             };
 
-            if(Physics.Raycast(ray, out _hit, 1))
-            {
-                PlayerController.Instance.IsOutside = _hit.collider.CompareTag("Terrain");
-            }
-
-            Debug.DrawRay(ray.origin, ray.direction, Color.red);
+            if(Physics.Raycast(ray, out _hit, 1)) PlayerController.Instance.IsOutside = _hit.collider.CompareTag("Terrain");
         }
 
         moveDirection.y += playerData.Gravity;

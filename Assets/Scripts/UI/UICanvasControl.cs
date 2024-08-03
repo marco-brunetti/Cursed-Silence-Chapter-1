@@ -6,8 +6,11 @@ public class UICanvasControl : MonoBehaviour
 {
     [SerializeField] private float _delay = 4f;
     [SerializeField] private float _transparencyDuration = 2f;
+
     private bool _isSceneChanged;
     private float _currentTransparency;
+
+    public GameObject _blackMask { get; private set; } 
 
     public void ManageCanvases(UIData uIData, bool pause)
     {

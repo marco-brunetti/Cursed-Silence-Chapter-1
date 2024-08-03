@@ -34,6 +34,11 @@ public class UIManager : MonoBehaviour
         ManageCanvases();
     }
 
+    public void ActivateDarkMask(bool setActive)
+    {
+        UIData.DarkMask.gameObject.SetActive(setActive);
+    }
+
 
 
     private void CenterPointControl()
