@@ -2,14 +2,15 @@ using UnityEngine;
 
 public interface IPlayerMovement
 {
-    void PlayerMove(PlayerData playerData, IPlayerInput playerInput);
+    void PlayerMove(PlayerData playerData, IPlayerInput playerInput, Transform groundSpawnPoint);
 }
 
 public class PlayerMovement : MonoBehaviour, IPlayerMovement
 {
     private float _currentMoveSpeed = 0;
+    private RaycastHit _hit;
 
-    public void PlayerMove(PlayerData playerData, IPlayerInput input)
+    public void PlayerMove(PlayerData playerData, IPlayerInput input, Transform groundSpawnPoint)
     {
         Vector3 moveDirection = Vector3.zero;
 
@@ -30,6 +31,20 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
             moveDirection = (forward * curSpeedX) + (right * curSpeedY);
             moveDirection.y = movementDirectionY;
+
+
+            Ray ray = new Ray
+            {
+                origin = groundSpawnPoint.position,
+                direction = -groundSpawnPoint.transform.up
+            };
+
+            if(Physics.Raycast(ray, out _hit, 1))
+            {
+                PlayerController.Instance.IsOutside = _hit.collider.CompareTag("Terrain");
+            }
+
+            Debug.DrawRay(ray.origin, ray.direction, Color.red);
         }
 
         moveDirection.y += playerData.Gravity;

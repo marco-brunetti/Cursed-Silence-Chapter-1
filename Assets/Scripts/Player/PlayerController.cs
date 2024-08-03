@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
     [field: SerializeField] public GameObject Player { get; private set; }
 
+    [SerializeField] private Transform _groundSpawnPoint;
     [SerializeField] private PlayerDataScript _data;
     [SerializeField] private PlayerMovement _movement;
     [SerializeField] private PlayerRotate _rotator;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [NonSerialized] public Interactable InteractableInSight;
     [NonSerialized] public bool FreezePlayerMovement;
     [NonSerialized] public bool FreezePlayerRotation;
+    [NonSerialized] public bool IsOutside;
 
     [Header("Player Components")]
     public GameObject CamHolder;
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
     public GameObject InventoryCamera;
     public Transform InventoryHolder;
     public Transform InspectorParent;
+
     public AudioSource InspectablesSource;
     public CharacterController Character;
     public PlayerData PlayerData { get; private set; }
@@ -76,7 +79,7 @@ public class PlayerController : MonoBehaviour
     {
         if (FreezePlayerMovement == false)
         {
-            _movement.PlayerMove(PlayerData, _input);
+            _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
             IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
         }
         else
