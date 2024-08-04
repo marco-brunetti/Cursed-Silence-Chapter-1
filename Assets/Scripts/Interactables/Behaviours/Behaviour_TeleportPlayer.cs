@@ -96,4 +96,9 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
     {
         return _onInteraction;
     }
+
+    private void OnDisable()
+    {
+        PlayerController.Instance.IsTeleporting = false;
+    }
 }

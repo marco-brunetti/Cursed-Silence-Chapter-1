@@ -48,13 +48,15 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         else Instance = this;
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+
         PlayerData = _data.dataObject;
     }
 
     private void Update()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         Rotate();
 
         if (GameController.Instance != null && GameController.Instance.Pause)

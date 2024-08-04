@@ -11,12 +11,16 @@ public class ObjectGUID : MonoBehaviour
 
     private void OnEnable()
     {
+#if UNITY_EDITOR
         EditorApplication.update += Generate;
+#endif
     }
 
     private void Generate()
     {
-        if(EditorApplication.timeSinceStartup < delayInSeconds && (string.IsNullOrEmpty(Id)))
+#if UNITY_EDITOR
+
+        if (EditorApplication.timeSinceStartup < delayInSeconds && (string.IsNullOrEmpty(Id)))
         {
             int timeLeft = (int)delayInSeconds - (int)EditorApplication.timeSinceStartup;
             Debug.Log($"Will attempt {gameObject.name} GUID update in: {timeLeft}.");
@@ -31,10 +35,13 @@ public class ObjectGUID : MonoBehaviour
 
             EditorApplication.update -= Generate;
         }
+#endif
     }
 
     private void OnDestroy()
     {
+#if UNITY_EDITOR
         EditorApplication.update -= Generate;
+#endif
     }
 }
