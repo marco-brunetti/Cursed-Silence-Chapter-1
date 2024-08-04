@@ -19,6 +19,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
         PlayerFootsteps(playerData, playerInput);
         PlayerHeartbeat(playerData);
         PlayerBreath(playerData);
+        AmbienceSound();
     }
 
 
@@ -113,5 +114,11 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
 
             _breathingTimer -= Time.deltaTime;
         }
+    }
+
+    private void AmbienceSound()
+    {
+        if (PlayerController.Instance.IsOutside) GameController.Instance.ActivateAmbienceSounds(true);
+        else GameController.Instance.ActivateAmbienceSounds(false);
     }
 }

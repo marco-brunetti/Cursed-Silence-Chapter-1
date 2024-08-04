@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -30,6 +31,10 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private AudioSource _menuMusicSource;
     [SerializeField] private float _menuMusicVolume;
+    [SerializeField] private AudioSource _windAudioSource; 
+    [SerializeField] private float _windVolume = 0.1f;
+    [SerializeField] private AudioSource _ambienceAudioSource;
+    [SerializeField] private float _ambienceVolume = 0.3f;
 
     private bool _playMenuMusic = true;
     private GameObject _playerCamera;
@@ -77,6 +82,20 @@ public class GameController : MonoBehaviour
                 _menuMusicSource.volume = _menuMusicVolume * GlobalVolume;
                 _menuMusicSource.Play();
             }
+        }
+    }
+
+    public void ActivateAmbienceSounds(bool activate)
+    {
+        if (activate)
+        {
+            _windAudioSource.volume = Mathf.MoveTowards(_windAudioSource.volume, _windVolume, 0.05f);
+            _ambienceAudioSource.volume = Mathf.MoveTowards(_ambienceAudioSource.volume, _ambienceVolume, 0.05f);
+        }
+        else
+        {
+            _windAudioSource.volume = Mathf.MoveTowards(_windAudioSource.volume, 0, 0.05f);
+            _ambienceAudioSource.volume = Mathf.MoveTowards(_ambienceAudioSource.volume, 0, 0.05f);
         }
     }
 

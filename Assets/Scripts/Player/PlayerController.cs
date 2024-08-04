@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour
     public bool IsSprinting { get; private set; }
     public bool IsDistorted { get; private set; }
 
+    private BadTVEffect _camDistortion;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -50,6 +52,8 @@ public class PlayerController : MonoBehaviour
 
 
         PlayerData = _data.dataObject;
+
+        _camDistortion = Camera.GetComponent<BadTVEffect>();
     }
 
     private void Update()
@@ -72,6 +76,16 @@ public class PlayerController : MonoBehaviour
             InventoryManage();
             PlayerAudio();
             ManageStress();
+            ManageCameraDistortion();
+        }
+    }
+
+    private void ManageCameraDistortion()
+    {
+        if(IsOutside)
+        {
+            _camDistortion.fineDistort = Mathf.MoveTowards(_camDistortion.fineDistort, PlayerData.DefaultFineDistortion, 0.05f);
+            _camDistortion.thickDistort = Mathf.MoveTowards(_camDistortion.thickDistort, PlayerData.DefaultThickDistortion, 0.05f);
         }
     }
 
