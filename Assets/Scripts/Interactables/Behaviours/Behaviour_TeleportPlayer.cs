@@ -35,7 +35,7 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 
     private IEnumerator Teleport()
     {
-        if(_activateDarkMask) StartCoroutine(ActivateBlackMask());
+        if(_activateDarkMask) UIManager.Instance.ActivateDarkMask(true);
 
         if (_teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(_teleportClip, _teleportClipVolume);
 
@@ -49,19 +49,18 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
         tvDistortion.fineDistort = _distortCamera ? playerData.MaxFineDistortion : playerData.DefaultFineDistortion;
         tvDistortion.thickDistort = _distortCamera ? playerData.MaxthickDistortion : playerData.DefaultThickDistortion;
 
-        if (_bounce) StartCoroutine(BounceDelay(player, playerData, tvDistortion));
+        if (_bounce) yield return StartCoroutine(BounceDelay(player, playerData, tvDistortion));
         else SetPlayerPositionAndRotation(player, _newPosition, _newRotation);
 
-        yield return new WaitForEndOfFrame();
+
+        if (_activateDarkMask)
+        {
+            yield return new WaitForSecondsRealtime(_blackMaskDuration);
+            UIManager.Instance.ActivateDarkMask(false);
+        } 
+        else yield return new WaitForEndOfFrame();
 
         playerController.IsTeleporting = false;
-    }
-
-    private IEnumerator ActivateBlackMask()
-    {
-        UIManager.Instance.ActivateDarkMask(true);
-        yield return new WaitForSecondsRealtime(_blackMaskDuration);
-        UIManager.Instance.ActivateDarkMask(false);
     }
 
     private IEnumerator BounceDelay(GameObject player, PlayerData playerData, BadTVEffect tvDistortion)

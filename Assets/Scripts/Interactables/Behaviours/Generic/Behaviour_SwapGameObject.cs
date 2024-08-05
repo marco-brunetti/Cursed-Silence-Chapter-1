@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Behaviour_SwapGameObject : MonoBehaviour, IBehaviour
@@ -14,15 +13,15 @@ public class Behaviour_SwapGameObject : MonoBehaviour, IBehaviour
     {
         if(_onInteraction && isInteracting) 
         {
-            SwapObject();
+            StartCoroutine(SwapObject());
         }
         else if(_onInspection && isInspecting)
         {
-            SwapObject();
+            StartCoroutine(SwapObject());
         }
         else if(_onReleasingInteractable && !isInteracting && !isInspecting)
         {
-            SwapObject();
+            StartCoroutine(SwapObject());
         }
         else if(!_onInspection && !_onInteraction && !_onReleasingInteractable)
         {
@@ -40,8 +39,10 @@ public class Behaviour_SwapGameObject : MonoBehaviour, IBehaviour
         return _onInteraction;
     }
 
-    private void SwapObject()
+    private IEnumerator SwapObject()
     {
+        yield return new WaitUntil(() => !PlayerController.Instance.IsTeleporting);
+
         if (_activateObject != null) _activateObject.SetActive(true);
         if (_deactivateObject != null) _deactivateObject.SetActive(false);
     }
