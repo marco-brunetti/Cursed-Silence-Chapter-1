@@ -2,17 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Behaviour_Blackboard : MonoBehaviour
+public class Behaviour_Blackboard : MonoBehaviour, IBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        
+        if(isInteracting)
+        {
+
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool IsInspectable()
     {
-        
+        return false;
+    }
+
+    public bool IsInteractable()
+    {
+        return true;
     }
 }
