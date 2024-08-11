@@ -24,6 +24,7 @@ public class PhoneMessageApp : MonoBehaviour
     [SerializeField] private Button _miaConversationButton;
     [SerializeField] private Button _principalConversationButton;
     [SerializeField] private Button _husbandConversationButton;
+    [SerializeField] private Button _backButton;
 
 
     [SerializeField] private TextAsset _conversationTextJson;
@@ -47,6 +48,8 @@ public class PhoneMessageApp : MonoBehaviour
             var blockedContactObject = Instantiate(_blockedContactPrefab, _messageContainer);
             blockedContactObject.SetActive(true);
         });
+
+        _backButton.onClick.AddListener(() => GoBack());
     }
 
     public void SetConversation(MessageSender sender, string contactName)
@@ -93,6 +96,17 @@ public class PhoneMessageApp : MonoBehaviour
         }
 
         messageItem.gameObject.SetActive(true);
+    }
+
+    private void GoBack()
+    {
+        _conversationButtonsContainer.SetActive(true);
+        _conversationContainer.SetActive(false);
+
+        foreach (Transform child in _messageContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
 
