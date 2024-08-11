@@ -14,7 +14,10 @@ public class PhoneController : MonoBehaviour
     [Header("App buttons")]
     [SerializeField] private Button _messageAppButton;
 
-
+    private void OnEnable()
+    {
+        //add camera to canvas
+    }
 
 
     // Start is called before the first frame update

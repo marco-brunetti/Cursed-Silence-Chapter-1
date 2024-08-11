@@ -1,11 +1,13 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PhoneMessageApp : MonoBehaviour
 {
     [SerializeField] private GameObject _conversationContainer;
+    [SerializeField] private TextMeshProUGUI _conversationName;
     [SerializeField] private Transform _messageContainer;
     [SerializeField] private GameObject _recievedMessagePrefab;
     [SerializeField] private GameObject _sentMessagePrefab;
@@ -13,8 +15,14 @@ public class PhoneMessageApp : MonoBehaviour
 
     [SerializeField] private GameObject _conversationButtonsContainer;
     [SerializeField] private Button _angieConversationButton;
-    [SerializeField] private TextAsset _conversationTextJson;
+    [SerializeField] private Button _insuranceConversationButton;
+    [SerializeField] private Button _phoneConversationButton;
+    [SerializeField] private Button _autoFixConversationButton;
+    [SerializeField] private Button _hairHavenConversationButton;
+    [SerializeField] private Button _drLeeConversationButton;
 
+
+    [SerializeField] private TextAsset _conversationTextJson;
     private List<Message> _messages = new();
 
     private void Start()
@@ -22,15 +30,19 @@ public class PhoneMessageApp : MonoBehaviour
         var messageString = _conversationTextJson.ToString();
         _messages = JsonConvert.DeserializeObject<List<Message>>(messageString);
 
-        _angieConversationButton.onClick.AddListener(() => SetConversation(MessageSender.Angie));
-
-        
+        _angieConversationButton.onClick.AddListener(() => SetConversation(MessageSender.Angie, "Angie"));
+        _insuranceConversationButton.onClick.AddListener(() => SetConversation(MessageSender.HealthFirstInsurance, "HealthFirst Insurance"));
+        _phoneConversationButton.onClick.AddListener(() => SetConversation(MessageSender.HorizonSupport, "Horizon Support"));
+        _autoFixConversationButton.onClick.AddListener(() => SetConversation(MessageSender.AutoFix, "AutoFix"));
+        _hairHavenConversationButton.onClick.AddListener(() => SetConversation(MessageSender.HairHaven, "Hair Haven"));
+        _drLeeConversationButton.onClick.AddListener(() => SetConversation(MessageSender.DrLee, "Dr. Lee"));
     }
 
-    public void SetConversation(MessageSender sender)
+    public void SetConversation(MessageSender sender, string contactName)
     {
         _conversationButtonsContainer.SetActive(false);
         _conversationContainer.SetActive(true);
+        _conversationName.text = contactName;
 
         for(int i = 0; i < _messages.Count; i++)
         {
@@ -80,4 +92,9 @@ public enum MessageSender
 {
     Emily,
     Angie,
+    HealthFirstInsurance,
+    HorizonSupport,
+    AutoFix,
+    HairHaven,
+    DrLee
 }
