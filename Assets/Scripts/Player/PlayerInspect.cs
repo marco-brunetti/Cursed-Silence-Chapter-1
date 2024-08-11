@@ -24,6 +24,7 @@ public class PlayerInspect : MonoBehaviour
     private Vector3 _currentVelocity;
 
     private Vector3 _targetRotation;
+    private Vector3 _targetPosition;
     public void ManageInspection(PlayerData playerData, IPlayerInput playerInput)
     {
         if (_interactable != null)
@@ -93,10 +94,11 @@ public class PlayerInspect : MonoBehaviour
             {
                 _interactable.parent = PlayerController.Instance.InspectorParent;
                 _targetRotation = _interactableComponent.InspectableInitialRotation;
+                _targetPosition = _interactableComponent.InspectablePosition;
                 _initialSetup = true;
             }
 
-            _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, Vector3.zero, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
+            _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, _targetPosition, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
 
             SetRotation(playerInput);
         }

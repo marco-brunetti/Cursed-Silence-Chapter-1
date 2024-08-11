@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     public UISubtitles Subtitles;
     public UILanguage Language;
 
+    public bool HideUI;
+
     private bool _pause;
     public static UIManager Instance { get; private set; }
     private void Awake()
@@ -38,8 +40,6 @@ public class UIManager : MonoBehaviour
     {
         UIData.DarkMask.gameObject.SetActive(setActive);
     }
-
-
 
     private void CenterPointControl()
     {

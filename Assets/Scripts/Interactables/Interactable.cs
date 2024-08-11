@@ -4,6 +4,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public Vector3 InspectableInitialRotation;
+    public Vector3 InspectablePosition;
     public bool RotateX;
     public bool RotateY;
     public bool FreezePlayerRotation;

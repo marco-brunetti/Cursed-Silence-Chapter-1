@@ -58,9 +58,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         Rotate();
 
         if (GameController.Instance != null && GameController.Instance.Pause)

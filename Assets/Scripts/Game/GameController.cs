@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
 {
     public bool Pause { get; private set; }
 
+    public bool ShowCursor;
+
     [SerializeField] public float GlobalVolume = 1;
 
     [SerializeField] public float MouseSensibilityMultiplier = 1;
@@ -46,10 +48,10 @@ public class GameController : MonoBehaviour
             Destroy(this);
         else Instance = this;
 
-        ChangeLanguage();
-        FramelockChange();
-        VSyncToggle();
-        ChangeMouseSensitivity();
+        //ChangeLanguage();
+        //FramelockChange();
+        //VSyncToggle();
+        //ChangeMouseSensitivity();
 
 
     }
@@ -60,9 +62,19 @@ public class GameController : MonoBehaviour
         Cursor.visible = false;
     }
 
-
-    void Update()
+    private void Update()
     {
+        if (ShowCursor)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         /*if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
         {
             _playerCamera = PlayerController.Instance.Camera.gameObject;
