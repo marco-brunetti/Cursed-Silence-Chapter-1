@@ -12,6 +12,7 @@ public class PhoneMessageApp : MonoBehaviour
     [SerializeField] private GameObject _recievedMessagePrefab;
     [SerializeField] private GameObject _sentMessagePrefab;
     [SerializeField] private GameObject _datePrefab;
+    [SerializeField] private GameObject _blockedContactPrefab;
 
     [SerializeField] private GameObject _conversationButtonsContainer;
     [SerializeField] private Button _angieConversationButton;
@@ -20,6 +21,9 @@ public class PhoneMessageApp : MonoBehaviour
     [SerializeField] private Button _autoFixConversationButton;
     [SerializeField] private Button _hairHavenConversationButton;
     [SerializeField] private Button _drLeeConversationButton;
+    [SerializeField] private Button _miaConversationButton;
+    [SerializeField] private Button _principalConversationButton;
+    [SerializeField] private Button _husbandConversationButton;
 
 
     [SerializeField] private TextAsset _conversationTextJson;
@@ -36,6 +40,13 @@ public class PhoneMessageApp : MonoBehaviour
         _autoFixConversationButton.onClick.AddListener(() => SetConversation(MessageSender.AutoFix, "AutoFix"));
         _hairHavenConversationButton.onClick.AddListener(() => SetConversation(MessageSender.HairHaven, "Hair Haven"));
         _drLeeConversationButton.onClick.AddListener(() => SetConversation(MessageSender.DrLee, "Dr. Lee"));
+        _miaConversationButton.onClick.AddListener(() => SetConversation(MessageSender.Mia, "Mia"));
+        _principalConversationButton.onClick.AddListener(() => SetConversation(MessageSender.Principal, "Principal Smith"));
+        _husbandConversationButton.onClick.AddListener(() => {
+            SetConversation(MessageSender.Husband, "Muffin");
+            var blockedContactObject = Instantiate(_blockedContactPrefab, _messageContainer);
+            blockedContactObject.SetActive(true);
+        });
     }
 
     public void SetConversation(MessageSender sender, string contactName)
@@ -74,7 +85,13 @@ public class PhoneMessageApp : MonoBehaviour
     {
         PhoneMessageItem messageItem = Instantiate(messagePrefab, _messageContainer).GetComponent<PhoneMessageItem>();
         if(isDate) messageItem.SetMessage("", "", message.date);
-        else messageItem.SetMessage(message.messageText, message.time);
+        else
+        {
+            var isDeleted = message.messageText.Equals("You deleted this message") || message.messageText.Equals("This message has been deleted") ? true : false;
+
+            messageItem.SetMessage(message.messageText, message.time, isDeletedMessage: isDeleted);
+        }
+
         messageItem.gameObject.SetActive(true);
     }
 }
@@ -96,5 +113,8 @@ public enum MessageSender
     HorizonSupport,
     AutoFix,
     HairHaven,
-    DrLee
+    DrLee,
+    Husband,
+    Mia,
+    Principal
 }
