@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public bool Pause { get; private set; }
 
     public bool ShowCursor;
+    [SerializeField] private Texture2D _cursor;
 
     [SerializeField] public float GlobalVolume = 1;
 
@@ -58,6 +59,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        Cursor.SetCursor(_cursor, new Vector2(_cursor.width / 2, _cursor.height / 2), CursorMode.Auto);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
