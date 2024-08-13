@@ -16,10 +16,11 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             {
                 blackboardItems.Add(item);
                 PlayerController.Instance.Inventory.Remove(item.gameObject, deactivateObject: false);
-                item.GetComponent<Collider>().enabled = true;
+                //item.GetComponent<Collider>().enabled = true;
                 SendRay(item);
                 item.BlackboardCollider = GetComponent<Collider>();
                 item.IsOnBlackboard = true;
+                item.HoldItem(isFirstPlacement:true);
             }
         }
     }
@@ -51,7 +52,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             if(hit.collider.gameObject == gameObject)
             {
                 item.transform.position = hit.point;
-                item.transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, hit.normal.z));
+                item.transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, item.transform.eulerAngles.z));
                 item.transform.parent = transform.parent;
             }
         }

@@ -10,41 +10,40 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     private float _currentZRotation;
     private float _rotateSpeed = 2;
     private Sprite _sprite;
+    private SpriteRenderer _spriteRenderer;
+    private Collider _collider;
+    private PlayerController _playerController;
 
     private void Awake()
     {
-        _sprite = GetComponent<SpriteRenderer>().sprite;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _sprite = _spriteRenderer.sprite;
+        _collider = GetComponent<Collider>();
+    }
+
+    private void Start()
+    {
+        _playerController = PlayerController.Instance;
     }
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(isInteracting && IsOnBlackboard)
-        {
-            StartCoroutine(CheckMouseHold());
-        }
+        if(isInteracting && IsOnBlackboard) StartCoroutine(CheckMouseHold());
     }
 
     private IEnumerator CheckMouseHold()
     {
         yield return new WaitForSecondsRealtime(0.1f);
 
-        if(Input.GetMouseButton(0))
-        {
-            _isLooking = false;
-            _isHolding = true;
-        }
-        else
-        {
-            _isLooking = true;
-            _isHolding = false;
-        }
-
-        if(_isLooking) LookItem();
-        else if(_isHolding) HoldItem();
+        if(Input.GetMouseButton(0)) HoldItem();
+        else LookItem();
     }
 
     private void LookItem()
     {
+        _isLooking = true;
+        _isHolding = false;
+
         _currentZRotation = transform.eulerAngles.z;
         UIManager.Instance.ShowBlackboardImage(true, _sprite, _currentZRotation);
         _isLooking = true;
@@ -52,43 +51,48 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         StartCoroutine(WaitForMouseInput());
     }
 
-    private void HoldItem()
+    private void SetupComponentsForLook()
     {
-        PlayerController.Instance.FreezePlayerMovement = true;
-        GetComponent<Collider>().enabled = false;
-        StartCoroutine(WaitForMouseUp());
-    }
-
-    private IEnumerator WaitForMouseUp()
-    {
-        yield return new WaitUntil(()=> Input.GetMouseButtonUp(0));
-        GetComponent<Collider>().enabled = true;
-        PlayerController.Instance.FreezePlayerMovement = false;
-        _isHolding = false;
-        _isLooking = false;
+        _playerController.FreezePlayerMovement = _isLooking;
+        _playerController.FreezePlayerRotation = _isLooking;
+        _playerController.ActivateDepthOfField(_isLooking);
+        _spriteRenderer.enabled = !_isLooking;
+        _collider.enabled = !_isLooking;
     }
 
     private IEnumerator WaitForMouseInput()
     {
         yield return new WaitForEndOfFrame();
-
-        yield return new WaitUntil(()=> Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1));
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1));
 
         //Create UI for this
-        if(Input.GetMouseButtonDown(0)) transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _currentZRotation);
+        if (Input.GetMouseButtonDown(0)) transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _currentZRotation);
         UIManager.Instance.ShowBlackboardImage(false);
         _isLooking = false;
         SetupComponentsForLook();
     }
 
-    private void SetupComponentsForLook()
+    public void HoldItem(bool isFirstPlacement = false)
     {
-        var playerController = PlayerController.Instance;
-        playerController.FreezePlayerMovement = _isLooking;
-        playerController.FreezePlayerRotation = _isLooking;
-        playerController.ActivateDepthOfField(_isLooking);
-        GetComponent<SpriteRenderer>().enabled = !_isLooking;
-        GetComponent<Collider>().enabled = !_isLooking;
+        _isLooking = false;
+        _isHolding = true;
+
+        _playerController.FreezePlayerMovement = true;
+        _collider.enabled = false;
+
+        float delay = 0;
+        if (isFirstPlacement) delay = 0.1f;
+        StartCoroutine(WaitForMouseUp(delay));
+    }
+
+    private IEnumerator WaitForMouseUp(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        yield return new WaitUntil(()=> Input.GetMouseButtonUp(0));
+        _collider.enabled = true;
+        _playerController.FreezePlayerMovement = false;
+        _isHolding = false;
+        _isLooking = false;
     }
 
     private void Update()
@@ -104,17 +108,15 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
         if(_isHolding)
         {
-            var playerController = PlayerController.Instance;
-
             Ray ray = new()
             {
-                origin = playerController.Camera.position,
-                direction = playerController.Camera.forward
+                origin = _playerController.Camera.position,
+                direction = _playerController.Camera.forward
             };
 
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, playerController.PlayerData.InteractDistance, playerController.PlayerData.InteractLayer))
+            if (Physics.Raycast(ray, out hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
             {
                 if (hit.collider == BlackboardCollider)
                 {
