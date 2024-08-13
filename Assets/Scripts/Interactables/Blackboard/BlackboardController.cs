@@ -4,7 +4,7 @@ using UnityEngine;
 public class BlackboardController : MonoBehaviour, IBehaviour
 {
 
-    private List<BlackboardItem> blackboardItems = new();
+    [SerializeField] private List<BlackboardItem> blackboardItems = new();
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {

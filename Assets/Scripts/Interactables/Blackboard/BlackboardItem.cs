@@ -13,10 +13,11 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         {
             var playerController = PlayerController.Instance;
 
-            UIManager.Instance.ShowBlackboardImage(true, GetComponent<SpriteRenderer>().sprite);
+            UIManager.Instance.ShowBlackboardImage(true, GetComponent<SpriteRenderer>().sprite, transform.eulerAngles.z);
             playerController.FreezePlayerMovement = true;
             playerController.FreezePlayerRotation = true;
             playerController.ActivateDepthOfField(true);
+            GetComponent<SpriteRenderer>().enabled = false;
             StartCoroutine(WaitForRightMouse(playerController));
         }
     }
@@ -26,6 +27,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         yield return new WaitUntil(()=> Input.GetMouseButtonDown(1));
 
         UIManager.Instance.ShowBlackboardImage(false);
+        GetComponent<SpriteRenderer>().enabled = true;
         playerController.ActivateDepthOfField(false);
         playerController.FreezePlayerMovement = false;
         playerController.FreezePlayerRotation = false;
