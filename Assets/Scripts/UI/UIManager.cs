@@ -68,4 +68,13 @@ public class UIManager : MonoBehaviour
     {
         CanvasControl.ManageCanvases(UIData, _pause);
     }
+
+    public void ShowBlackboardImage(bool show, Sprite sprite = null)
+    {
+        if(sprite)
+        {
+            UIData.BlackboardImage.sprite = sprite;
+        }
+        UIData.BlackboardImage.gameObject.SetActive(show);
+    }
 }

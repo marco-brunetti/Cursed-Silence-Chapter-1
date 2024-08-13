@@ -1,6 +1,7 @@
 using Cinemachine;
 using System;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 [RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
 [RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput _input;
     [SerializeField] private PlayerInteract _interactor;
     [SerializeField] private PlayerAudio _audio;
+    [SerializeField] private PostProcessVolume _postProcessVolume;
 
     [NonSerialized] public Interactable InteractableInSight;
     [NonSerialized] public bool FreezePlayerMovement;
@@ -34,6 +36,7 @@ public class PlayerController : MonoBehaviour
     public GameObject InventoryCamera;
     public Transform InventoryHolder;
     public Transform InspectorParent;
+
 
     public AudioSource InspectablesSource;
     public CharacterController Character;
@@ -126,5 +129,10 @@ public class PlayerController : MonoBehaviour
     private void ManageStress()
     {
         PlayerStress.ManageStress(PlayerData);
+    }
+
+    public void ActivateDepthOfField(bool enable)
+    {
+        _postProcessVolume.gameObject.SetActive(enable);
     }
 }

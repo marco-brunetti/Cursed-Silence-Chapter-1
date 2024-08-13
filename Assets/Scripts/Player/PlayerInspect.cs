@@ -32,6 +32,7 @@ public class PlayerInspect : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 _returnItemToPreviousPosition = true;
+                PlayerController.Instance.ActivateDepthOfField(false);
                 IsInspecting = false;
             }
 
@@ -75,6 +76,7 @@ public class PlayerInspect : MonoBehaviour
 
         playerController.FreezePlayerMovement = true;
         playerController.FreezePlayerRotation = true;
+        playerController.ActivateDepthOfField(true);
         IsInspecting = true;
     }
 
@@ -84,6 +86,7 @@ public class PlayerInspect : MonoBehaviour
         {
             _interactableComponent.Interact(PlayerController.Instance, true, false);
             _returnItemToPreviousPosition = false;
+            PlayerController.Instance.ActivateDepthOfField(true);
             IsInspecting = false;
         }
 
