@@ -131,8 +131,11 @@ public class PlayerController : MonoBehaviour
         PlayerStress.ManageStress(PlayerData);
     }
 
-    public void ActivateDepthOfField(bool enable)
+    public void ActivateDepthOfField(bool enable, float currentValue = -1)
     {
         _postProcessVolume.gameObject.SetActive(enable);
+
+        if (currentValue == -1) _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = PlayerData.defaultDepthOfField;
+        else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;
     }
 }

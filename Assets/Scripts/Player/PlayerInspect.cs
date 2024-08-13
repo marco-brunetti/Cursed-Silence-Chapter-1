@@ -11,6 +11,7 @@ public class PlayerInspect : MonoBehaviour
     private float _resetInspectorTimer = 0.7f;
     private float _rotationSpeed = 0.2f;
     private float _timer;
+    private float _currentDepthOfField;
 
     private bool _initialSetup;
     private bool _returnItemToPreviousPosition;
@@ -33,6 +34,7 @@ public class PlayerInspect : MonoBehaviour
             {
                 _returnItemToPreviousPosition = true;
                 PlayerController.Instance.ActivateDepthOfField(false);
+                _currentDepthOfField = 0;
                 IsInspecting = false;
             }
 
@@ -76,7 +78,7 @@ public class PlayerInspect : MonoBehaviour
 
         playerController.FreezePlayerMovement = true;
         playerController.FreezePlayerRotation = true;
-        playerController.ActivateDepthOfField(true);
+        //playerController.ActivateDepthOfField(true);
         IsInspecting = true;
     }
 
@@ -86,7 +88,7 @@ public class PlayerInspect : MonoBehaviour
         {
             _interactableComponent.Interact(PlayerController.Instance, true, false);
             _returnItemToPreviousPosition = false;
-            PlayerController.Instance.ActivateDepthOfField(true);
+            //PlayerController.Instance.ActivateDepthOfField(true);
             IsInspecting = false;
         }
 
@@ -104,6 +106,9 @@ public class PlayerInspect : MonoBehaviour
             _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, _targetPosition, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
 
             SetRotation(playerInput);
+
+            _currentDepthOfField = Mathf.MoveTowards(_currentDepthOfField, playerData.defaultDepthOfField, 4f);
+            PlayerController.Instance.ActivateDepthOfField(true, currentValue: _currentDepthOfField);
         }
     }
 

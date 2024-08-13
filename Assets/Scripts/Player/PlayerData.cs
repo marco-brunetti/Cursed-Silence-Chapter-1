@@ -18,6 +18,7 @@ public class PlayerData : ScriptableObject
     public float DefaultFineDistortion = 0.2f;
     public float MaxthickDistortion = 1f;
     public float MaxFineDistortion = 5f;
+    public float defaultDepthOfField = 117;
 
     [Header("Player Audio Clips")]
     public AudioClip[] ConcreteFootstepClips;
