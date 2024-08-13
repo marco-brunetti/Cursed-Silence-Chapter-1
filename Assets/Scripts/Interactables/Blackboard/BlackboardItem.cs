@@ -9,6 +9,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     private bool _isHolding;
     private float _currentZRotation;
     private float _rotateSpeed = 2;
+    private Vector3 _moveOffset;
     private Sprite _sprite;
     private SpriteRenderer _spriteRenderer;
     private Collider _collider;
@@ -19,6 +20,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _sprite = _spriteRenderer.sprite;
         _collider = GetComponent<Collider>();
+        _currentZRotation = transform.localRotation.eulerAngles.y;
     }
 
     private void Start()
@@ -76,7 +78,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     {
         _isLooking = false;
         _isHolding = true;
-
+        _moveOffset = Vector3.zero;
         _playerController.FreezePlayerMovement = true;
         _collider.enabled = false;
 
@@ -120,7 +122,10 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
             {
                 if (hit.collider == BlackboardCollider)
                 {
-                    transform.position = hit.point;
+                    if (_moveOffset == Vector3.zero) _moveOffset = transform.position - hit.point;
+                    if (_currentZRotation == 0) _currentZRotation = transform.eulerAngles.z;
+
+                    transform.position = hit.point + _moveOffset;
                     transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, _currentZRotation));
                 }
             }
