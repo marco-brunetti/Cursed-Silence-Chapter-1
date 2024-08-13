@@ -54,6 +54,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
     private void HoldItem()
     {
+        PlayerController.Instance.FreezePlayerMovement = true;
         GetComponent<Collider>().enabled = false;
         StartCoroutine(WaitForMouseUp());
     }
@@ -62,6 +63,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     {
         yield return new WaitUntil(()=> Input.GetMouseButtonUp(0));
         GetComponent<Collider>().enabled = true;
+        PlayerController.Instance.FreezePlayerMovement = false;
         _isHolding = false;
         _isLooking = false;
     }
