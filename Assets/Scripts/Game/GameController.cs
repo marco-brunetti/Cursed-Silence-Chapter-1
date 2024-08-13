@@ -1,5 +1,5 @@
+using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +10,8 @@ public class GameController : MonoBehaviour
 {
     public bool Pause { get; private set; }
 
-    public bool ShowCursor;
+    [NonSerialized] public bool ShowCursor;
+    [NonSerialized] public bool IsInDream;
     [SerializeField] private Texture2D _cursor;
 
     [SerializeField] public float GlobalVolume = 1;

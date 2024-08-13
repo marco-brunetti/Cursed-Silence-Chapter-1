@@ -15,6 +15,7 @@ public class PlayerInspect : MonoBehaviour
 
     private bool _initialSetup;
     private bool _returnItemToPreviousPosition;
+    private bool _activateDepthOfField;
     private bool[] _rotateXY;
 
     private Transform _interactable;
@@ -33,6 +34,7 @@ public class PlayerInspect : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 _returnItemToPreviousPosition = true;
+                _activateDepthOfField = false;
                 PlayerController.Instance.ActivateDepthOfField(false);
                 _currentDepthOfField = 0;
                 IsInspecting = false;
@@ -100,6 +102,7 @@ public class PlayerInspect : MonoBehaviour
                 _interactable.parent = PlayerController.Instance.InspectorParent;
                 _targetRotation = _interactableComponent.InspectableInitialRotation;
                 _targetPosition = _interactableComponent.InspectablePosition;
+                StartCoroutine(DepthOfFieldWaitTime());
                 _initialSetup = true;
             }
 
@@ -107,9 +110,18 @@ public class PlayerInspect : MonoBehaviour
 
             SetRotation(playerInput);
 
-            _currentDepthOfField = Mathf.MoveTowards(_currentDepthOfField, playerData.defaultDepthOfField, 4f);
-            PlayerController.Instance.ActivateDepthOfField(true, currentValue: _currentDepthOfField);
+            if(_activateDepthOfField && _currentDepthOfField < playerData.defaultDepthOfField - 0.1f)
+            {
+                _currentDepthOfField = Mathf.MoveTowards(_currentDepthOfField, playerData.defaultDepthOfField, 5f);
+                PlayerController.Instance.ActivateDepthOfField(true, currentValue: _currentDepthOfField);
+            }
         }
+    }
+
+    private IEnumerator DepthOfFieldWaitTime()
+    {
+        yield return new WaitForSecondsRealtime(0.1f);
+        _activateDepthOfField = true;
     }
 
     private void SetRotation(IPlayerInput playerInput)

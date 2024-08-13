@@ -18,23 +18,25 @@ public class PhoneController : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
+        var playerController = PlayerController.Instance;
+
         if(isInspecting)
         {
             StartCoroutine(ActivateCanvas(true));
 
-            PlayerController.Instance.InventoryCamera.SetActive(false);
-            PlayerController.Instance.InventoryCamera.SetActive(true);
+            playerController.InventoryCamera.SetActive(false);
+            playerController.InventoryCamera.SetActive(true);
 
             _isInteracting = true;
-            GameController.Instance.ShowCursor = true;
+
             UIManager.Instance.HideUI = true;
         }
         if(!isInspecting && !isInspecting)
         {
             StartCoroutine(ActivateCanvas(false));
 
-            PlayerController.Instance.FreezePlayerMovement = false;
-            PlayerController.Instance.FreezePlayerRotation = false;
+            playerController.FreezePlayerMovement = false;
+            playerController.FreezePlayerRotation = false;
 
             _isInteracting = false;
 
@@ -46,6 +48,7 @@ public class PhoneController : MonoBehaviour, IBehaviour
     private IEnumerator ActivateCanvas(bool enable)
     {
         yield return new WaitForSecondsRealtime(0.4f);
+        GameController.Instance.ShowCursor = enable;
         _canvas.SetActive(enable);
     }
 

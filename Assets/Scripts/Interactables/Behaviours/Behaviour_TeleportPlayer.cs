@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 {
+    [SerializeField] private bool toDream;
+
     [Header("Interactable properties")]
     [SerializeField] private bool _onInteraction;
     [SerializeField] private bool _onInspection;
@@ -61,6 +63,7 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
         else yield return new WaitForEndOfFrame();
 
         playerController.IsTeleporting = false;
+        GameController.Instance.IsInDream = toDream;
     }
 
     private IEnumerator BounceDelay(GameObject player, PlayerData playerData, BadTVEffect tvDistortion)

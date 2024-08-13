@@ -14,7 +14,7 @@ public class UICanvasControl : MonoBehaviour
 
     public void ManageCanvases(UIData uIData, bool pause)
     {
-        if(pause || UIManager.Instance.HideUI)
+        if(pause || UIManager.Instance.HideUI || GameController.Instance.IsInDream)
         {
             uIData.PlayerCanvas.SetActive(false);
         }
