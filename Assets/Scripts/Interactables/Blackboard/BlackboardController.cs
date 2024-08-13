@@ -18,6 +18,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
                 PlayerController.Instance.Inventory.Remove(item.gameObject, deactivateObject: false);
                 item.GetComponent<Collider>().enabled = true;
                 SendRay(item);
+                item.BlackboardCollider = GetComponent<Collider>();
                 item.IsOnBlackboard = true;
             }
         }
@@ -51,7 +52,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             {
                 item.transform.position = hit.point;
                 item.transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, hit.normal.z));
-                item.transform.parent = transform;
+                item.transform.parent = transform.parent;
             }
         }
     }

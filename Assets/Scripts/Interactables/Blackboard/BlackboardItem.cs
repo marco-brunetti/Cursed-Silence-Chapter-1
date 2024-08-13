@@ -4,8 +4,9 @@ using UnityEngine;
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
     public bool IsOnBlackboard;
-
+    public Collider BlackboardCollider;
     private bool _isLooking;
+    private bool _isHolding;
     private float _currentZRotation;
     private float _rotateSpeed = 2;
     private Sprite _sprite;
@@ -19,24 +20,66 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     {
         if(isInteracting && IsOnBlackboard)
         {
-            _currentZRotation = transform.eulerAngles.z;
-            UIManager.Instance.ShowBlackboardImage(true, _sprite, _currentZRotation);
-            _isLooking = true;
-            SetupComponents();
-            StartCoroutine(WaitForRightMouse());
+            StartCoroutine(CheckMouseHold());
         }
     }
 
-    private IEnumerator WaitForRightMouse()
+    private IEnumerator CheckMouseHold()
     {
-        yield return new WaitUntil(()=> Input.GetMouseButtonDown(1));
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _currentZRotation);
-        UIManager.Instance.ShowBlackboardImage(false);
-        _isLooking = false;
-        SetupComponents();
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        if(Input.GetMouseButton(0))
+        {
+            _isLooking = false;
+            _isHolding = true;
+        }
+        else
+        {
+            _isLooking = true;
+            _isHolding = false;
+        }
+
+        if(_isLooking) LookItem();
+        else if(_isHolding) HoldItem();
     }
 
-    private void SetupComponents()
+    private void LookItem()
+    {
+        _currentZRotation = transform.eulerAngles.z;
+        UIManager.Instance.ShowBlackboardImage(true, _sprite, _currentZRotation);
+        _isLooking = true;
+        SetupComponentsForLook();
+        StartCoroutine(WaitForMouseInput());
+    }
+
+    private void HoldItem()
+    {
+        GetComponent<Collider>().enabled = false;
+        StartCoroutine(WaitForMouseUp());
+    }
+
+    private IEnumerator WaitForMouseUp()
+    {
+        yield return new WaitUntil(()=> Input.GetMouseButtonUp(0));
+        GetComponent<Collider>().enabled = true;
+        _isHolding = false;
+        _isLooking = false;
+    }
+
+    private IEnumerator WaitForMouseInput()
+    {
+        yield return new WaitForEndOfFrame();
+
+        yield return new WaitUntil(()=> Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1));
+
+        //Create UI for this
+        if(Input.GetMouseButtonDown(0)) transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _currentZRotation);
+        UIManager.Instance.ShowBlackboardImage(false);
+        _isLooking = false;
+        SetupComponentsForLook();
+    }
+
+    private void SetupComponentsForLook()
     {
         var playerController = PlayerController.Instance;
         playerController.FreezePlayerMovement = _isLooking;
@@ -48,10 +91,35 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
     private void Update()
     {
-        if(Input.mouseScrollDelta.y != 0 && _isLooking)
+        if(_isLooking)
         {
-            _currentZRotation += Input.mouseScrollDelta.y * _rotateSpeed;
-            UIManager.Instance.ShowBlackboardImage(true, zAngle: _currentZRotation);
+            if (Input.mouseScrollDelta.y != 0)
+            {
+                _currentZRotation += Input.mouseScrollDelta.y * _rotateSpeed;
+                UIManager.Instance.ShowBlackboardImage(true, zAngle: _currentZRotation);
+            }
+        }
+
+        if(_isHolding)
+        {
+            var playerController = PlayerController.Instance;
+
+            Ray ray = new()
+            {
+                origin = playerController.Camera.position,
+                direction = playerController.Camera.forward
+            };
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, playerController.PlayerData.InteractDistance, playerController.PlayerData.InteractLayer))
+            {
+                if (hit.collider == BlackboardCollider)
+                {
+                    transform.position = hit.point;
+                    transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, _currentZRotation));
+                }
+            }
         }
     }
 
