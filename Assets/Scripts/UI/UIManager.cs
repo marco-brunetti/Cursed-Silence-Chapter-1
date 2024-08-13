@@ -74,8 +74,9 @@ public class UIManager : MonoBehaviour
         if(sprite)
         {
             UIData.BlackboardImage.sprite = sprite;
-            UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
         }
+
+        UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
         UIData.BlackboardImage.gameObject.SetActive(show);
     }
 }
