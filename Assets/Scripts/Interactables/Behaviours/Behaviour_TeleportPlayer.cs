@@ -29,9 +29,11 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
     [SerializeField] private AudioClip _teleportClip; //add clip for bounce later
     [SerializeField] private float _teleportClipVolume = 1;
 
+    private bool _isTeleporting;
+
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if (PlayerController.Instance.IsTeleporting) return;
+        if (_isTeleporting) return;
 
         if (_onInteraction && isInteracting) StartCoroutine(Teleport());
         else if (_onInspection && isInteracting) StartCoroutine(Teleport());
@@ -40,14 +42,19 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 
     private IEnumerator Teleport()
     {
+        _isTeleporting = true;
+
         PlayerController playerController = PlayerController.Instance;
-        playerController.IsTeleporting = true;
+
+        if (toDream) AudioListener.volume = 0;
+        else AudioListener.volume = 1;
 
         if (_delay != 0) yield return new WaitForSecondsRealtime(_delay);
 
         if(_activateDarkMask) UIManager.Instance.ActivateDarkMask(true);
 
-        PlayerController.Instance.AudioListener.gameObject.SetActive(!toDream);
+        playerController.IsTeleporting = true;
+
         if (_teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(_teleportClip, _teleportClipVolume);
 
         var player = playerController.Player;
@@ -67,6 +74,7 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
         } 
         else yield return new WaitForEndOfFrame();
 
+        _isTeleporting = false;
         playerController.IsTeleporting = false;
         GameController.Instance.IsInDream = toDream;
     }
@@ -106,6 +114,7 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 
     private void OnDisable()
     {
+        _isTeleporting = false;
         PlayerController.Instance.IsTeleporting = false;
     }
 }
