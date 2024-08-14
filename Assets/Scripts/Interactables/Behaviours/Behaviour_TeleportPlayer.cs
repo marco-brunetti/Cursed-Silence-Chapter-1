@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 {
+    [SerializeField] private float _delay = 0;
     [SerializeField] private bool toDream;
 
     [Header("Interactable properties")]
@@ -26,10 +27,12 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 
     [Header("Teleport Audio")]
     [SerializeField] private AudioClip _teleportClip; //add clip for bounce later
-    [SerializeField] private float _teleportClipVolume;
+    [SerializeField] private float _teleportClipVolume = 1;
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
+        if (PlayerController.Instance.IsTeleporting) return;
+
         if (_onInteraction && isInteracting) StartCoroutine(Teleport());
         else if (_onInspection && isInteracting) StartCoroutine(Teleport());
         else if (_onInspection && _onInteraction) StartCoroutine(Teleport());
@@ -37,23 +40,25 @@ public class Behaviour_TeleportPlayer : MonoBehaviour, IBehaviour
 
     private IEnumerator Teleport()
     {
+        PlayerController playerController = PlayerController.Instance;
+        playerController.IsTeleporting = true;
+
+        if (_delay != 0) yield return new WaitForSecondsRealtime(_delay);
+
         if(_activateDarkMask) UIManager.Instance.ActivateDarkMask(true);
 
+        PlayerController.Instance.AudioListener.gameObject.SetActive(!toDream);
         if (_teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(_teleportClip, _teleportClipVolume);
 
-        PlayerController playerController = PlayerController.Instance;
         var player = playerController.Player;
         var playerData = playerController.PlayerData;
         var tvDistortion = playerController.Camera.GetComponent<BadTVEffect>();
-
-        playerController.IsTeleporting = true;
 
         tvDistortion.fineDistort = _distortCamera ? playerData.MaxFineDistortion : playerData.DefaultFineDistortion;
         tvDistortion.thickDistort = _distortCamera ? playerData.MaxthickDistortion : playerData.DefaultThickDistortion;
 
         if (_bounce) yield return StartCoroutine(BounceDelay(player, playerData, tvDistortion));
         else SetPlayerPositionAndRotation(player, _newPosition, _newRotation);
-
 
         if (_activateDarkMask)
         {

@@ -79,6 +79,8 @@ public class GameController : MonoBehaviour
             Cursor.visible = false;
         }
 
+        
+
         /*if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
         {
             _playerCamera = PlayerController.Instance.Camera.gameObject;

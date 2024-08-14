@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player Components")]
     public GameObject CamHolder;
     public Transform Camera;
+    public AudioListener AudioListener;
     public CinemachineVirtualCamera VirtualCamera;
     public GameObject InventoryCamera;
     public Transform InventoryHolder;
