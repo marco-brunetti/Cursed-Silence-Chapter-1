@@ -1,15 +1,17 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
-    public Collider BlackboardCollider;
+    [field: SerializeField] public int PageNumber {  get; private set; }
 
+    [NonSerialized] public Collider BlackboardCollider;
     private float _currentZRotation;
     private Vector3 _moveOffset;
     private BlackboardItemState _currentState;
-    private SpriteRenderer _spriteRenderer;
     private Collider _collider;
+    private SpriteRenderer _spriteRenderer;
     private PlayerController _playerController;
 
     private void Awake()
@@ -50,8 +52,9 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         }
     }
 
-    public void HoldItem(bool isFirstPlacement = false)
+    public void HoldItem(bool isFirstPlacement = false, Collider blackboardCollider = null)
     {
+        if(isFirstPlacement) BlackboardCollider = blackboardCollider;
         _currentState = BlackboardItemState.Moving;
         _playerController.FreezePlayerMovement = true;
         _collider.enabled = false;

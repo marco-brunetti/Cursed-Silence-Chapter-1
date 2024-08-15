@@ -1,12 +1,15 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BlackboardController : MonoBehaviour, IBehaviour
 {
-
-    public List<BlackboardItem> BlackboardItems = new();
+    [field: SerializeField] public List<BlackboardItem> BlackboardItems { get; private set; } = new();
 
     public static BlackboardController Instance;
+
+    private Collider _collider;
+    private PlayerController _playerController;
 
     private void Awake()
     {
@@ -14,54 +17,60 @@ public class BlackboardController : MonoBehaviour, IBehaviour
         else Destroy(this);
     }
 
+    private void Start()
+    {
+        _playerController = PlayerController.Instance;
+        _collider = GetComponent<Collider>();
+
+        if(BlackboardItems.Count > 0)
+        {
+            foreach(var item in BlackboardItems)
+            {
+                item.BlackboardCollider = _collider;
+            }
+        }
+    }
+
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
         if (isInteracting)
         {
-            var inventorySelected = PlayerController.Instance.Inventory.SelectedItem();
+            var inventorySelected = _playerController.Inventory.SelectedItem();
 
             if (inventorySelected && inventorySelected.TryGetComponent(out BlackboardItem item))
             {
+                SetPos(item);
+
                 BlackboardItems.Add(item);
-                PlayerController.Instance.Inventory.Remove(item.gameObject, deactivateObject: false);
-                //item.GetComponent<Collider>().enabled = true;
-                SendRay(item);
-                item.BlackboardCollider = GetComponent<Collider>();
-                item.HoldItem(isFirstPlacement:true);
+                _playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
+
+                item.HoldItem(isFirstPlacement: true, blackboardCollider: _collider);
             }
         }
     }
 
-    public bool IsInspectable()
+    private void SetPos(BlackboardItem item)
     {
-        return false;
-    }
+        Ray ray = new() { origin = _playerController.Camera.position, direction = _playerController.Camera.forward };
 
-    public bool IsInteractable()
-    {
-        return true;
-    }
-
-    private void SendRay(BlackboardItem item)
-    {
-        var playerController = PlayerController.Instance;
-
-        Ray ray = new()
-        {
-            origin = playerController.Camera.position,
-            direction = playerController.Camera.forward
-        };
-
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, playerController.PlayerData.InteractDistance, playerController.PlayerData.InteractLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
         {
             if(hit.collider.gameObject == gameObject)
             {
                 item.transform.position = hit.point;
-                item.transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, item.transform.eulerAngles.z));
+                item.transform.eulerAngles = new Vector3(hit.normal.x, hit.normal.y + 90, item.transform.eulerAngles.z);
+
+                /*var previousPiece = BlackboardItems.Find(x => x.PageNumber == item.PageNumber);
+
+                if(previousPiece) item.transform.parent = previousPiece.transform;
+                else item.transform.parent = transform.parent;*/
+
                 item.transform.parent = transform.parent;
+                item.transform.localScale = Vector3.one;
             }
         }
     }
+
+    public bool IsInspectable() { return false; }
+    public bool IsInteractable() { return true; }
 }
