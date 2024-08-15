@@ -69,12 +69,9 @@ public class UIManager : MonoBehaviour
         CanvasControl.ManageCanvases(UIData, _pause);
     }
 
-    public void ShowBlackboardImage(bool show, Sprite sprite = null, float zAngle = 0)
+    public void ShowBlackboardImage(bool show = true, Sprite sprite = null, float zAngle = 0)
     {
-        if(sprite)
-        {
-            UIData.BlackboardImage.sprite = sprite;
-        }
+        if(sprite) UIData.BlackboardImage.sprite = sprite;
 
         UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
         UIData.BlackboardImage.gameObject.SetActive(show);

@@ -3,14 +3,11 @@ using UnityEngine;
 
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
-    public bool IsOnBlackboard;
     public Collider BlackboardCollider;
-    private bool _isLooking;
-    private bool _isHolding;
+
     private float _currentZRotation;
-    private float _rotateSpeed = 2;
     private Vector3 _moveOffset;
-    private Sprite _sprite;
+    private BlackboardItemState _currentState;
     private SpriteRenderer _spriteRenderer;
     private Collider _collider;
     private PlayerController _playerController;
@@ -18,9 +15,8 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _sprite = _spriteRenderer.sprite;
         _collider = GetComponent<Collider>();
-        _currentZRotation = transform.localRotation.eulerAngles.y;
+        _currentZRotation = transform.eulerAngles.z;
     }
 
     private void Start()
@@ -30,36 +26,36 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(isInteracting && IsOnBlackboard) StartCoroutine(CheckMouseHold());
+        if(isInteracting && BlackboardController.Instance.BlackboardItems.Contains(this))
+        {
+            StartCoroutine(CheckMouseHold());
+        }
     }
 
     private IEnumerator CheckMouseHold()
     {
         yield return new WaitForSecondsRealtime(0.1f);
 
-        if(Input.GetMouseButton(0)) HoldItem();
-        else LookItem();
+        if(Input.GetMouseButton(0))
+        {
+            HoldItem();
+        }
+        else
+        {
+            _currentState = BlackboardItemState.Looking;
+            _currentZRotation = transform.eulerAngles.z;
+            UIManager.Instance.ShowBlackboardImage(sprite: _spriteRenderer.sprite, zAngle: _currentZRotation);
+            SetupComponentsForLook(isLooking: true);
+            StartCoroutine(WaitForMouseInput());
+        }
     }
 
-    private void LookItem()
+    public void HoldItem(bool isFirstPlacement = false)
     {
-        _isLooking = true;
-        _isHolding = false;
-
-        _currentZRotation = transform.eulerAngles.z;
-        UIManager.Instance.ShowBlackboardImage(true, _sprite, _currentZRotation);
-        _isLooking = true;
-        SetupComponentsForLook();
-        StartCoroutine(WaitForMouseInput());
-    }
-
-    private void SetupComponentsForLook()
-    {
-        _playerController.FreezePlayerMovement = _isLooking;
-        _playerController.FreezePlayerRotation = _isLooking;
-        _playerController.ActivateDepthOfField(_isLooking);
-        _spriteRenderer.enabled = !_isLooking;
-        _collider.enabled = !_isLooking;
+        _currentState = BlackboardItemState.Moving;
+        _playerController.FreezePlayerMovement = true;
+        _collider.enabled = false;
+        StartCoroutine(WaitForMouseUp(isFirstPlacement));
     }
 
     private IEnumerator WaitForMouseInput()
@@ -70,75 +66,67 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
         //Create UI for this
         if (Input.GetMouseButtonDown(0)) transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _currentZRotation);
         UIManager.Instance.ShowBlackboardImage(false);
-        _isLooking = false;
-        SetupComponentsForLook();
+        SetupComponentsForLook(isLooking: false);
+        _currentState = BlackboardItemState.None;
     }
 
-    public void HoldItem(bool isFirstPlacement = false)
+    private void SetupComponentsForLook(bool isLooking)
     {
-        _isLooking = false;
-        _isHolding = true;
-        _moveOffset = Vector3.zero;
-        _playerController.FreezePlayerMovement = true;
-        _collider.enabled = false;
-
-        float delay = 0;
-        if (isFirstPlacement) delay = 0.1f;
-        StartCoroutine(WaitForMouseUp(delay));
+        _playerController.FreezePlayerMovement = isLooking;
+        _playerController.FreezePlayerRotation = isLooking;
+        _playerController.ActivateDepthOfField(isLooking);
+        _spriteRenderer.enabled = !isLooking;
+        _collider.enabled = !isLooking;
     }
 
-    private IEnumerator WaitForMouseUp(float delay)
+    private IEnumerator WaitForMouseUp(bool isFirstPlacement)
     {
-        yield return new WaitForSecondsRealtime(delay);
+        if(isFirstPlacement) yield return new WaitForSecondsRealtime(0.1f);
         yield return new WaitUntil(()=> Input.GetMouseButtonUp(0));
         _collider.enabled = true;
         _playerController.FreezePlayerMovement = false;
-        _isHolding = false;
-        _isLooking = false;
+        _moveOffset = Vector3.zero;
+        _currentState = BlackboardItemState.None;
     }
 
     private void Update()
     {
-        if(_isLooking)
+        switch(_currentState)
         {
-            if (Input.mouseScrollDelta.y != 0)
-            {
-                _currentZRotation += Input.mouseScrollDelta.y * _rotateSpeed;
-                UIManager.Instance.ShowBlackboardImage(true, zAngle: _currentZRotation);
-            }
-        }
-
-        if(_isHolding)
-        {
-            Ray ray = new()
-            {
-                origin = _playerController.Camera.position,
-                direction = _playerController.Camera.forward
-            };
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
-            {
-                if (hit.collider == BlackboardCollider)
+            case BlackboardItemState.Looking:
+                if (Input.mouseScrollDelta.y != 0)
                 {
-                    if (_moveOffset == Vector3.zero) _moveOffset = transform.position - hit.point;
-                    if (_currentZRotation == 0) _currentZRotation = transform.eulerAngles.z;
-
-                    transform.position = hit.point + _moveOffset;
-                    transform.rotation = Quaternion.Euler(new Vector3(hit.normal.x, hit.normal.y + 90, _currentZRotation));
+                    var rotateSpeed = 2f;
+                    _currentZRotation += Input.mouseScrollDelta.y * rotateSpeed;
+                    UIManager.Instance.ShowBlackboardImage(zAngle: _currentZRotation);
                 }
-            }
+                break;
+            case BlackboardItemState.Moving:
+                Ray ray = new() { origin = _playerController.Camera.position, direction = _playerController.Camera.forward };
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
+                {
+                    if (hit.collider == BlackboardCollider)
+                    {
+                        if (_moveOffset == Vector3.zero) _moveOffset = transform.position - hit.point;
+
+                        transform.position = hit.point + _moveOffset;
+                        transform.eulerAngles = new Vector3(hit.normal.x, hit.normal.y + 90, _currentZRotation);
+                    }
+                }
+                break;
         }
     }
 
-    public bool IsInspectable()
-    {
-        return false;
-    }
+    public bool IsInspectable() { return false; }
+    public bool IsInteractable() { return true; }
+}
 
-    public bool IsInteractable()
-    {
-        return true;
-    }
+public enum BlackboardItemState
+{
+    None,
+    Looking,
+    Moving,
+    Joined
 }

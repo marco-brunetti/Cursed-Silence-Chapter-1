@@ -4,7 +4,15 @@ using UnityEngine;
 public class BlackboardController : MonoBehaviour, IBehaviour
 {
 
-    [SerializeField] private List<BlackboardItem> blackboardItems = new();
+    public List<BlackboardItem> BlackboardItems = new();
+
+    public static BlackboardController Instance;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(this);
+    }
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
@@ -14,12 +22,11 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 
             if (inventorySelected && inventorySelected.TryGetComponent(out BlackboardItem item))
             {
-                blackboardItems.Add(item);
+                BlackboardItems.Add(item);
                 PlayerController.Instance.Inventory.Remove(item.gameObject, deactivateObject: false);
                 //item.GetComponent<Collider>().enabled = true;
                 SendRay(item);
                 item.BlackboardCollider = GetComponent<Collider>();
-                item.IsOnBlackboard = true;
                 item.HoldItem(isFirstPlacement:true);
             }
         }
