@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +7,11 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 {
     [field: SerializeField] public List<BlackboardItem> BlackboardItems { get; private set; } = new();
     public static BlackboardController Instance;
+    [NonSerialized] public BlackboardItem CurrentItem;
 
     private Collider _collider;
     private PlayerController _playerController;
-    private BlackboardItem _currentBlackboardItem;
+    private Vector3 _itemMoveOffset;
     private ItemOrientation _tempOrientation;
     private BlackboardState _currentState;
 
@@ -29,45 +31,70 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if (isInteracting)
+        if (isInteracting && _currentState == BlackboardState.None)
         {
-            var inventorySelected = _playerController.Inventory.SelectedItem();
+            var currentItem = _playerController.Inventory.SelectedItem();
 
-            if (inventorySelected && inventorySelected.TryGetComponent(out BlackboardItem item))
+            if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
             {
-                SetPos(item);
-
-                BlackboardItems.Add(item);
                 _playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
-
+                BlackboardItems.Add(item);
+                SetPos(item);
                 HoldItem(item, isFirstPlacement: true);
             }
         }
     }
 
+    private RaycastHit GetHitObject()
+    {
+        Physics.Raycast(_playerController.Camera.position, _playerController.Camera.forward, out RaycastHit hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer);
+        return hit;
+    }
+
     private void Update()
     {
-        switch (_currentState)
+        if(_currentState == BlackboardState.Moving && Input.mousePosition != Vector3.zero)
         {
-            case BlackboardState.Moving:
-                Ray ray = new() { origin = _playerController.Camera.position, direction = _playerController.Camera.forward };
-                RaycastHit hit;
+            var hit = GetHitObject();
 
-                if (Physics.Raycast(ray, out hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
-                {
-                    if (hit.collider == _collider)
-                    {
-                        if (_currentBlackboardItem.MoveOffset == Vector3.zero) _currentBlackboardItem.MoveOffset = _currentBlackboardItem.transform.position - hit.point;
-
-                        _currentBlackboardItem.transform.position = hit.point + _currentBlackboardItem.MoveOffset;
-                        _currentBlackboardItem.transform.eulerAngles = new Vector3(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(_currentBlackboardItem.Orientation));
-                    }
-                }
-                break;
+            if(hit.collider == _collider)
+            {
+                if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = CurrentItem.transform.position - hit.point;
+                CurrentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(CurrentItem.Orientation)));
+            }
+            else
+            {
+                //IF TIME PASSES, THE PLAYER SHOULD SAY TO LOOK AT THE CHALKBOARD
+            }
         }
     }
 
-    public IEnumerator CheckMouseHold(BlackboardItem selectedItem)
+    private void SetPos(BlackboardItem item)
+    {
+        var hit = GetHitObject();
+        item.transform.SetPositionAndRotation(hit.point, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(item.Orientation)));
+        item.transform.parent = transform.parent;
+        item.transform.localScale = Vector3.one;
+    }
+
+    public void HoldItem(BlackboardItem item, bool isFirstPlacement = false)
+    {
+        SetupComponentsForHold(isHolding: true, item);
+        StartCoroutine(WaitForMouseUp(item, isFirstPlacement));
+    }
+    private IEnumerator WaitForMouseUp(BlackboardItem item, bool isFirstPlacement)
+    {
+        if (isFirstPlacement) yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitUntil(() => Input.GetMouseButtonUp(0) || _currentState == BlackboardState.None);
+        SetupComponentsForHold(isHolding: false);
+    }
+
+    public void CheckMouseHold(BlackboardItem selectedItem)
+    {
+        if(_currentState == BlackboardState.None) StartCoroutine(CheckHold(selectedItem));
+    }
+
+    private IEnumerator CheckHold(BlackboardItem selectedItem)
     {
         yield return new WaitForSecondsRealtime(0.1f);
 
@@ -78,29 +105,28 @@ public class BlackboardController : MonoBehaviour, IBehaviour
         else
         {
             _currentState = BlackboardState.Looking;
-            _currentBlackboardItem = selectedItem;
-            _tempOrientation = _currentBlackboardItem.Orientation;
-            UIManager.Instance.ShowBlackboardImage(sprite: _currentBlackboardItem.Sprite, zAngle: GetOrientationAngle(_tempOrientation));
+            CurrentItem = selectedItem;
+            _tempOrientation = CurrentItem.Orientation;
+            UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite, zAngle: GetOrientationAngle(_tempOrientation));
             SetupComponentsForLook(isLooking: true);
         }
     }
 
-    public void HoldItem(BlackboardItem item, bool isFirstPlacement = false)
+    private void SetupComponentsForHold(bool isHolding, BlackboardItem item = null)
     {
-        _currentBlackboardItem = item;
-        _currentState = BlackboardState.Moving;
-        _playerController.FreezePlayerMovement = true;
-        item.GetComponent<Collider>().enabled = false;
-        StartCoroutine(WaitForMouseUp(item, isFirstPlacement));
-    }
-    private IEnumerator WaitForMouseUp(BlackboardItem item, bool isFirstPlacement)
-    {
-        if (isFirstPlacement) yield return new WaitForSecondsRealtime(0.1f);
-        yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        item.GetComponent<Collider>().enabled = true;
-        _playerController.FreezePlayerMovement = false;
-        item.MoveOffset = Vector3.zero;
-        _currentState = BlackboardState.None;
+        if (isHolding)
+        {
+            item.Collider.enabled = false;
+        }
+        else
+        {
+            CurrentItem.Collider.enabled = true;
+            _itemMoveOffset = Vector3.zero;
+        }
+
+        _playerController.FreezePlayerMovement = isHolding;
+        CurrentItem = item;
+        _currentState = isHolding ? BlackboardState.Moving : BlackboardState.None;
     }
 
     private void SetupComponentsForLook(bool isLooking)
@@ -108,29 +134,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
         _playerController.FreezePlayerMovement = isLooking;
         _playerController.FreezePlayerRotation = isLooking;
         _playerController.ActivateDepthOfField(isLooking);
-        _currentBlackboardItem.EnableComponents(!isLooking);
-    }
-
-    private void SetPos(BlackboardItem item)
-    {
-        Ray ray = new() { origin = _playerController.Camera.position, direction = _playerController.Camera.forward };
-
-        if (Physics.Raycast(ray, out RaycastHit hit, _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer))
-        {
-            if(hit.collider.gameObject == gameObject)
-            {
-                item.transform.position = hit.point;
-                item.transform.eulerAngles = new Vector3(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(item.Orientation));
-
-                /*var previousPiece = BlackboardItems.Find(x => x.PageNumber == item.PageNumber);
-
-                if(previousPiece) item.transform.parent = previousPiece.transform;
-                else item.transform.parent = transform.parent;*/
-
-                item.transform.parent = transform.parent;
-                item.transform.localScale = Vector3.one;
-            }
-        }
+        CurrentItem.EnableComponents(!isLooking);
     }
 
     private void RotateItem()
@@ -145,10 +149,10 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 
     private void ApplyRotation()
     {
-        var itemRotation = _currentBlackboardItem.transform.eulerAngles;
+        var itemRotation = CurrentItem.transform.eulerAngles;
         itemRotation.z = GetOrientationAngle(_tempOrientation);
-        _currentBlackboardItem.transform.eulerAngles = itemRotation;
-        _currentBlackboardItem.Orientation = _tempOrientation;
+        CurrentItem.transform.eulerAngles = itemRotation;
+        CurrentItem.Orientation = _tempOrientation;
 
         ResetBlackboard();
     }
@@ -157,7 +161,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
     {
         UIManager.Instance.ShowBlackboardImage(false);
         SetupComponentsForLook(false);
-        _currentBlackboardItem = null;
+        CurrentItem = null;
         _currentState = BlackboardState.None;
     }
 
@@ -175,6 +179,11 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             case ItemOrientation.Right:
                 return 270;
         }
+    }
+
+    public void CancelHold()
+    {
+        _currentState = BlackboardState.None;
     }
 
     public bool IsInspectable() { return false; }

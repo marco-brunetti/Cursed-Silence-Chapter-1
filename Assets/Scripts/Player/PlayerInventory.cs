@@ -75,17 +75,17 @@ public class PlayerInventory : MonoBehaviour
         PlayerController.Instance.InspectablesSource.pitch = 1;
         PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
-        if (_selectedItem != null)
-        {
-            _selectedItem.SetActive(false);
-        }
+        //if (_selectedItem != null)
+        //{
+        //    _selectedItem.SetActive(false);
+        //}
 
         GameObject inventoryObject = PrepareItemForInventory(interactable, positionInInventory, rotationInInventory, scaleInInventory);
 
         _inventory.Add(inventoryObject);
 
-        _selectedItem = inventoryObject;
-        _selectedItemIndex = _inventory.Count - 1;
+        //_selectedItem = inventoryObject;
+        //_selectedItemIndex = _inventory.Count - 1;
     }
 
     private GameObject PrepareItemForInventory(Transform interactable, Vector3 positionInInventory, Vector3 rotationInInventory, Vector3 scaleInInventory)
@@ -112,6 +112,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         ChangeItemLayer(interactable.gameObject, "Inventory");
+        interactable.gameObject.SetActive(false);
 
         //Refreshes camera, solving a layer change bug
         PlayerController.Instance.InventoryCamera.SetActive(false);
@@ -130,8 +131,9 @@ public class PlayerInventory : MonoBehaviour
         }
 
         _inventory.Remove(interactable);
-        _selectedItemIndex = _inventory.Count - 1;
-        if(_selectedItemIndex > 0) _inventory[_inventory.Count - 1].SetActive(true);
+        _selectedItemIndex = 0;
+        //_selectedItemIndex = _inventory.Count - 1;
+        //if(_selectedItemIndex > 0) _inventory[_inventory.Count - 1].SetActive(true);
     }
 
     private void ChangeItemLayer(GameObject item, string layer)

@@ -3,43 +3,38 @@ using UnityEngine;
 
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
-    [field: SerializeField] public int PageNumber { get; private set; }
     public ItemOrientation Orientation = ItemOrientation.Up;
-
-    private Collider _collider;
     private SpriteRenderer _spriteRenderer;
-    private PlayerController _playerController;
-    private BlackboardController _blackboardController;
-
     [NonSerialized] public Sprite Sprite;
-    [NonSerialized] public Vector3 MoveOffset;
+    [NonSerialized] public Collider Collider;
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         Sprite = _spriteRenderer.sprite;
-        _collider = GetComponent<Collider>();
-    }
-
-    private void Start()
-    {
-        _blackboardController = BlackboardController.Instance;
-        _playerController = PlayerController.Instance;
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, _blackboardController.GetOrientationAngle(Orientation));
+        Collider = GetComponent<Collider>();
     }
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(isInteracting && _blackboardController.BlackboardItems.Contains(this))
+        if(isInteracting && BlackboardController.Instance.BlackboardItems.Contains(this))
         {
-            StartCoroutine(_blackboardController.CheckMouseHold(this));
+            var currentItem = PlayerController.Instance.Inventory.SelectedItem();
+            if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
+            {
+                Debug.Log("Put subtitle for placing somewhere else");
+            }
+            else
+            {
+                BlackboardController.Instance.CheckMouseHold(this);
+            }
         }
     }
 
     public void EnableComponents(bool enable)
     {
         _spriteRenderer.enabled = enable;
-        _collider.enabled = enable;
+        Collider.enabled = enable;
     }
 
     public bool IsInspectable() { return false; }
