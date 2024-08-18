@@ -14,7 +14,11 @@ public class UIData : MonoBehaviour
     [field: SerializeField] public GameObject ReturnPrompt { get; private set; }
     [field: SerializeField] public GameObject InteractOrReturnPrompt { get; private set; }
     [field: SerializeField, Header("Interactables")] public GameObject CenterPoint { get; private set; }
+    [field: SerializeField, Header("Blackboard")] public GameObject BlackboardUI { get; private set; }
     [field: SerializeField] public Image BlackboardImage { get; private set; }
+    [field: SerializeField] public Button BlackboardRotateItemButton { get; private set; }
+    [field: SerializeField] public Button ApplyRotationButton { get; private set; }
+    [field: SerializeField] public Button CancelRotationButton { get; private set; }
     [field: SerializeField, Header("Readables")] public GameObject ReadableUI { get; private set; }
     [field:SerializeField] public TextMeshProUGUI ReadablesText { get; private set; }
     [field: SerializeField, Header("Subtitles")] public TextMeshProUGUI SubtitlesText { get; private set; }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UIManager : MonoBehaviour
 {
@@ -22,7 +23,6 @@ public class UIManager : MonoBehaviour
             Destroy(this);
         else Instance = this; 
     }
-
 
     void Update()
     {
@@ -69,11 +69,19 @@ public class UIManager : MonoBehaviour
         CanvasControl.ManageCanvases(UIData, _pause);
     }
 
+    public void SetBlackboardButtons(UnityAction rotateAction, UnityAction applyAction, UnityAction cancelAction)
+    {
+        UIData.BlackboardRotateItemButton.onClick.AddListener(rotateAction);
+        UIData.ApplyRotationButton.onClick.AddListener(applyAction);
+        UIData.CancelRotationButton.onClick.AddListener(cancelAction);
+    }
+
     public void ShowBlackboardImage(bool show = true, Sprite sprite = null, float zAngle = 0)
     {
         if(sprite) UIData.BlackboardImage.sprite = sprite;
 
         UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
-        UIData.BlackboardImage.gameObject.SetActive(show);
+        UIData.BlackboardUI.SetActive(show);
+        GameController.Instance.ShowCursor = show;
     }
 }
