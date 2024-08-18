@@ -1,11 +1,11 @@
+using System;
 using UnityEngine;
 
 public class BlackboardItemSnap : MonoBehaviour
 {
-    [field:SerializeField] public int Id {  get; private set; } = 0;
+    [field: SerializeField] public int Id { get; private set; } = 0;
 
-
-    public bool Snapped;
+    [NonSerialized] public bool Snapped;
     public BlackboardItem BlackboardItem { get; private set; }
 
     private void Awake()
@@ -23,7 +23,7 @@ public class BlackboardItemSnap : MonoBehaviour
             Snapped = true;
             snap.Snapped = true;
 
-            print("snapped");
+            print($"snapped{gameObject.name}");
             BlackboardController.Instance.CancelHold();
             var parentOffset = transform.parent.transform.position - transform.position;
             transform.parent.transform.position = snap.transform.position + parentOffset;
