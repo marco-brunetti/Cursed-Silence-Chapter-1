@@ -1,11 +1,12 @@
-using System;
 using UnityEngine;
 
 public class BlackboardItemSnap : MonoBehaviour
 {
     [field:SerializeField] public int Id {  get; private set; } = 0;
 
-    public BlackboardItem BlackboardItem {  get; private set; }
+
+    public bool Snapped;
+    public BlackboardItem BlackboardItem { get; private set; }
 
     private void Awake()
     {
@@ -14,10 +15,14 @@ public class BlackboardItemSnap : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var validSnap = other.TryGetComponent(out BlackboardItemSnap snap) && snap && snap.Id == Id;
-        var validItem = validSnap && BlackboardItem == BlackboardController.Instance.CurrentItem && BlackboardItem.Orientation == snap.BlackboardItem.Orientation;
+        var isOnBlackboard = validSnap && BlackboardController.Instance.BlackboardItems.Contains(snap.BlackboardItem.gameObject);
+        var validItem = isOnBlackboard && BlackboardItem == BlackboardController.Instance.CurrentItem && BlackboardItem.Orientation == snap.BlackboardItem.Orientation;
 
         if (validItem)
         {
+            Snapped = true;
+            snap.Snapped = true;
+
             print("snapped");
             BlackboardController.Instance.CancelHold();
             var parentOffset = transform.parent.transform.position - transform.position;

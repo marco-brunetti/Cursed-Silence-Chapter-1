@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class BlackboardController : MonoBehaviour, IBehaviour
 {
-    [field: SerializeField] public List<BlackboardItem> BlackboardItems { get; private set; } = new();
+    [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
     public static BlackboardController Instance;
     [NonSerialized] public BlackboardItem CurrentItem;
 
     private Collider _collider;
     private PlayerController _playerController;
+    private BlackboardItem _blackboardItemInSight;
     private Vector3 _itemMoveOffset;
     private ItemOrientation _tempOrientation;
     private BlackboardState _currentState;
@@ -38,7 +39,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
             {
                 _playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
-                BlackboardItems.Add(item);
+                BlackboardItems.Add(item.gameObject);
                 SetPos(item);
                 HoldItem(item, isFirstPlacement: true);
             }
@@ -66,6 +67,44 @@ public class BlackboardController : MonoBehaviour, IBehaviour
             {
                 //IF TIME PASSES, THE PLAYER SHOULD SAY TO LOOK AT THE CHALKBOARD
             }
+        }
+
+        if(_currentState == BlackboardState.None)
+        {
+            CheckGlowObject();
+        }
+    }
+
+    private void CheckGlowObject()
+    {
+        var playerItemInSight = PlayerController.Instance.InteractableInSight;
+
+        if(playerItemInSight)
+        {
+            if(_blackboardItemInSight)
+            {
+                if (_blackboardItemInSight.gameObject == playerItemInSight.gameObject)
+                {
+                    _blackboardItemInSight.Glow(true);
+                    return;
+                }
+                else
+                {
+                    _blackboardItemInSight.Glow(false);
+                    _blackboardItemInSight = null;
+                }
+            }
+
+            if (BlackboardItems.Contains(playerItemInSight.gameObject))
+            {
+                _blackboardItemInSight = playerItemInSight.GetComponent<BlackboardItem>();
+                _blackboardItemInSight.Glow(true);
+            }
+        }
+        else if(_blackboardItemInSight != null)
+        {
+            _blackboardItemInSight.Glow(false);
+            _blackboardItemInSight = null;
         }
     }
 

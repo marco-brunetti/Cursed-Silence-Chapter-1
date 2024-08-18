@@ -4,7 +4,9 @@ using UnityEngine;
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
     public ItemOrientation Orientation = ItemOrientation.Up;
+    [SerializeField] private GameObject _glow;
     private SpriteRenderer _spriteRenderer;
+
     [NonSerialized] public Sprite Sprite;
     [NonSerialized] public Collider Collider;
 
@@ -17,7 +19,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(isInteracting && BlackboardController.Instance.BlackboardItems.Contains(this))
+        if(isInteracting && BlackboardController.Instance.BlackboardItems.Contains(this.gameObject))
         {
             var currentItem = PlayerController.Instance.Inventory.SelectedItem();
             if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
@@ -35,6 +37,11 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
     {
         _spriteRenderer.enabled = enable;
         Collider.enabled = enable;
+    }
+
+    public void Glow(bool enable)
+    {
+        _glow.SetActive(enable);
     }
 
     public bool IsInspectable() { return false; }
