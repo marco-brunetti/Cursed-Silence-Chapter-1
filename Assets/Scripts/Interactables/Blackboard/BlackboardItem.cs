@@ -66,14 +66,16 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 		if(!_isFullySnapped) Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
 	}
 
-
 	private void SnapDetected(bool isSnapping, BlackboardItemSnap thisSnap, BlackboardItemSnap otherSnap)
 	{
 		var validSnap = otherSnap.Id == thisSnap.Id && (thisSnap.isBaseSnapPoint || otherSnap.isBaseSnapPoint);
+
+        if (!validSnap) return;
+
 		var isOnBlackboard = _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
 		var validItem = this == _controller.CurrentItem && Orientation == otherSnap.BlackboardItem.Orientation;
 
-		if (validSnap && validItem && isOnBlackboard)
+		if (validItem && isOnBlackboard)
 		{
 			RegisterSnap(isSnapping, thisSnap);
 			otherSnap.BlackboardItem.RegisterSnap(isSnapping, otherSnap);
@@ -89,6 +91,13 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
 	public void RegisterSnap(bool isSnapped, BlackboardItemSnap snap)
 	{
+        if(!_snaps.Contains(snap))
+        {
+            Debug.Log($"Incorrect snap registered in {gameObject}!");
+            return;
+        }
+
+
 		if(isSnapped)
 		{
 			if (_snappedPoints.Contains(snap)) return;
