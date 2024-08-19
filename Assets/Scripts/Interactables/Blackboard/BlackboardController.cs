@@ -19,11 +19,24 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	private Vector3 _itemMoveOffset;
 	private ItemOrientation _tempOrientation;
 	private BlackboardState _currentState;
+	private Dictionary<ItemOrientation, float> _orientationAngles;
 
 	private void Awake()
 	{
 		if (Instance == null) Instance = this;
 		else Destroy(this);
+
+		_orientationAngles = new()
+		{
+			{ ItemOrientation.Up, 0 },
+			{ ItemOrientation.UpLeft, 45 },
+			{ ItemOrientation.Left, 90 },
+			{ ItemOrientation.DownLeft, 135 },
+			{ ItemOrientation.Down, 180 },
+			{ ItemOrientation.DownRight, 225 },
+			{ ItemOrientation.Right, 270 },
+			{ ItemOrientation.UpRight, 315 },
+		};
 	}
 
 	private void Start()
@@ -65,7 +78,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 			if(hit.collider == _collider)
 			{
 				if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = CurrentItem.transform.position - hit.point;
-				CurrentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(CurrentItem.Orientation)));
+				CurrentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[CurrentItem.Orientation]));
 			}
 			else
 			{
@@ -115,7 +128,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	private void SetPos(BlackboardItem item)
 	{
 		var hit = GetHitObject();
-		item.transform.SetPositionAndRotation(hit.point, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, GetOrientationAngle(item.Orientation)));
+		item.transform.SetPositionAndRotation(hit.point, Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[item.Orientation]));
 		item.transform.parent = transform.parent;
 		item.transform.localScale = Vector3.one;
 	}
@@ -150,7 +163,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 			_currentState = BlackboardState.Looking;
 			CurrentItem = selectedItem;
 			_tempOrientation = CurrentItem.Orientation;
-			UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite, zAngle: GetOrientationAngle(_tempOrientation));
+			UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite, zAngle: _orientationAngles[_tempOrientation]);
 			if (_showRotateIconCount > 0)
 			{
 				UIManager.Instance.ShowRotateItemButton(true);
@@ -192,14 +205,14 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	private void RotateItem()
 	{
 		_tempOrientation = _tempOrientation.Next();
-		UIManager.Instance.ShowBlackboardImage(zAngle: GetOrientationAngle(_tempOrientation));
+		UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_tempOrientation]);
 		UIManager.Instance.ShowRotateItemButton(false);
 	}
 
 	private void ApplyRotation()
 	{
 		var itemRotation = CurrentItem.transform.eulerAngles;
-		itemRotation.z = GetOrientationAngle(_tempOrientation);
+		itemRotation.z = _orientationAngles[_tempOrientation];
 		CurrentItem.transform.eulerAngles = itemRotation;
 		CurrentItem.Orientation = _tempOrientation;
 
@@ -212,30 +225,6 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 		SetupComponentsForLook(false);
 		CurrentItem = null;
 		_currentState = BlackboardState.None;
-	}
-
-	public float GetOrientationAngle(ItemOrientation orientation)
-	{
-		switch (orientation)
-		{
-			default:
-			case ItemOrientation.Up:
-				return 0;
-			case ItemOrientation.UpRight:
-				return 315;
-			case ItemOrientation.Right:
-				return 270;
-			case ItemOrientation.DownRight:
-				return 225;
-			case ItemOrientation.Down:
-				return 180;
-			case ItemOrientation.DownLeft:
-				return 135;
-			case ItemOrientation.Left:
-				return 90;
-			case ItemOrientation.UpLeft:
-				return 45;
-		}
 	}
 
 	public void CancelHold()
