@@ -5,9 +5,8 @@ public class BlackboardItemSnap : MonoBehaviour
 {
 	[field:SerializeField] public int Id { get; private set; } = 0;
 	[field:SerializeField] public bool isBaseSnapPoint { get; private set; }
-
-	private UnityAction<bool, BlackboardItemSnap, BlackboardItemSnap> snapAction;
-	public BlackboardItem BlackboardItem { get; private set; }
+    public BlackboardItem BlackboardItem { get; private set; }
+    private UnityAction<bool, BlackboardItemSnap, BlackboardItemSnap> snapAction;
 
 	public void SetSnapAction(UnityAction<bool, BlackboardItemSnap, BlackboardItemSnap> action, BlackboardItem item)
 	{

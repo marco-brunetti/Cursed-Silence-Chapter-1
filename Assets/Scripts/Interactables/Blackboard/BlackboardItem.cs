@@ -1,38 +1,36 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
 	public ItemOrientation Orientation = ItemOrientation.Up;
-	[SerializeField] private BlackboardItem _fullPage;
 	[SerializeField] private GameObject _glow;
+    [field:SerializeField] public BlackboardItem FullPage { get; private set; }
+	public BlackboardItemSnap[] Snaps {  get; private set; }
+	public List<BlackboardItemSnap> SnappedPoints = new();
 
-	[NonSerialized] public SpriteRenderer SpriteRenderer;
-	[NonSerialized] public Sprite Sprite;
-	[NonSerialized] public Collider[] Colliders;
-	[SerializeField] private BlackboardItemSnap[] _snaps;
-	[SerializeField] private List<BlackboardItemSnap> _snappedPoints = new();
-	
-	private bool _isFullySnapped;
+    [NonSerialized] public bool IsFullySnapped;
+    [NonSerialized] public SpriteRenderer SpriteRenderer;
+    [NonSerialized] public Sprite Sprite;
+    [NonSerialized] public Collider[] Colliders;
+
 	private BlackboardController _controller;
 
 	private void Awake()
 	{
-		SpriteRenderer = GetComponent<SpriteRenderer>();
+        Colliders = GetComponents<Collider>();
+        SpriteRenderer = GetComponent<SpriteRenderer>();
 		Sprite = SpriteRenderer.sprite;
-		Colliders = GetComponents<Collider>();
-
-		_snaps = GetComponentsInChildren<BlackboardItemSnap>();
-		Array.ForEach(_snaps, snap => snap.SetSnapAction(SnapDetected, this));
+		Snaps = GetComponentsInChildren<BlackboardItemSnap>();
 	}
 
 	private void Start()
 	{
 		_controller = BlackboardController.Instance;
 		_controller.SetColliderEnabled += OnSetColliderEnabled;
-	}
+        Array.ForEach(Snaps, snap => snap.SetSnapAction(_controller.SnapDetected, this));
+    }
 
 	public void Behaviour(bool isInteracting, bool isInspecting)
 	{
@@ -61,67 +59,9 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 		_glow.SetActive(enable);
 	}
 
-	private void OnSetColliderEnabled(object sender, BlackboardEventArgs e)
+	public void OnSetColliderEnabled(object sender, BlackboardEventArgs e)
 	{
-		if(!_isFullySnapped) Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
-	}
-
-	private void SnapDetected(bool isSnapping, BlackboardItemSnap thisSnap, BlackboardItemSnap otherSnap)
-	{
-		var validSnap = otherSnap.Id == thisSnap.Id && (thisSnap.isBaseSnapPoint || otherSnap.isBaseSnapPoint);
-
-		if (!validSnap) return;
-
-		var isOnBlackboard = _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
-		var validItem = this == _controller.CurrentItem && Orientation == otherSnap.BlackboardItem.Orientation;
-
-		if (validItem && isOnBlackboard)
-		{
-			RegisterSnap(isSnapping, thisSnap);
-			otherSnap.BlackboardItem.RegisterSnap(isSnapping, otherSnap);
-
-			if(isSnapping)
-			{
-				_controller.CancelHold();
-				var snapOffset = transform.position - thisSnap.transform.position;
-				transform.position = otherSnap.transform.position + snapOffset;
-			}
-		}
-	}
-
-	public void RegisterSnap(bool isSnapped, BlackboardItemSnap snap)
-	{
-		if(!_snaps.Contains(snap))
-		{
-			Debug.Log($"Incorrect snap registered in {gameObject}!");
-			return;
-		}
-
-
-		if(isSnapped)
-		{
-			if (_snappedPoints.Contains(snap)) return;
-			else _snappedPoints.Add(snap);
-		}
-		else
-		{
-			_snappedPoints.Remove(snap);
-		}    
-
-		if(_snappedPoints.Count == _snaps.Length)
-		{
-			OnSetColliderEnabled(null, new() { ColliderEnabled = false });
-			SpriteRenderer.enabled = false;
-			//BlackboardController.Instance.BlackboardItems.Remove(gameObject);
-
-			if (_fullPage)
-			{
-				_fullPage.Orientation = Orientation;
-				_controller.BlackboardItems.Add(_fullPage.gameObject);
-				_fullPage.gameObject.SetActive(true);
-			}
-			_isFullySnapped = true;
-		}
+		if(!IsFullySnapped) Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
 	}
 
 	public bool IsInspectable() { return false; }

@@ -3,21 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SnowHorse.Utils;
+using System.Linq;
 
 public class BlackboardController : MonoBehaviour, IBehaviour
 {
 	[field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
-	public static BlackboardController Instance;
-	[NonSerialized] public BlackboardItem CurrentItem;
+
+	public BlackboardItem CurrentItem { get; private set; }
 	public EventHandler<BlackboardEventArgs> SetColliderEnabled;
+	public static BlackboardController Instance;
 
 	private int _showRotateIconCount = 3;
 	private int _defaultRendererOrder;
 	private Collider _collider;
 	private PlayerController _playerController;
-	private BlackboardItem _blackboardItemInSight;
+	private BlackboardItem _currentItemInSight;
 	private Vector3 _itemMoveOffset;
-	private ItemOrientation _tempOrientation;
+	private ItemOrientation _uiOrientation;
 	private BlackboardState _currentState;
 	private Dictionary<ItemOrientation, float> _orientationAngles;
 
@@ -94,34 +96,34 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 
 	private void CheckGlowObject()
 	{
-		var playerItemInSight = PlayerController.Instance.InteractableInSight;
+		var newItemInSight = _playerController.InteractableInSight;
 
-		if(playerItemInSight)
+		if(newItemInSight)
 		{
-			if(_blackboardItemInSight)
+			if(_currentItemInSight)
 			{
-				if (_blackboardItemInSight.gameObject == playerItemInSight.gameObject)
+				if (_currentItemInSight.gameObject == newItemInSight.gameObject)
 				{
-					_blackboardItemInSight.Glow(true);
+					_currentItemInSight.Glow(true);
 					return;
 				}
 				else
 				{
-					_blackboardItemInSight.Glow(false);
-					_blackboardItemInSight = null;
+					_currentItemInSight.Glow(false);
+					_currentItemInSight = null;
 				}
 			}
 
-			if (BlackboardItems.Contains(playerItemInSight.gameObject))
+			if (BlackboardItems.Contains(newItemInSight.gameObject))
 			{
-				_blackboardItemInSight = playerItemInSight.GetComponent<BlackboardItem>();
-				_blackboardItemInSight.Glow(true);
+				_currentItemInSight = newItemInSight.GetComponent<BlackboardItem>();
+				_currentItemInSight.Glow(true);
 			}
 		}
-		else if(_blackboardItemInSight != null)
+		else if(_currentItemInSight != null)
 		{
-			_blackboardItemInSight.Glow(false);
-			_blackboardItemInSight = null;
+			_currentItemInSight.Glow(false);
+			_currentItemInSight = null;
 		}
 	}
 
@@ -140,7 +142,7 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	}
 	private IEnumerator WaitForMouseUp(BlackboardItem item, bool isFirstPlacement)
 	{
-		if (isFirstPlacement) yield return new WaitForSecondsRealtime(0.1f);
+		if (isFirstPlacement) yield return new WaitForSecondsRealtime(0.5f);
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0) || _currentState == BlackboardState.None);
 		SetupComponentsForHold(isHolding: false);
 	}
@@ -162,8 +164,9 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 		{
 			_currentState = BlackboardState.Looking;
 			CurrentItem = selectedItem;
-			_tempOrientation = CurrentItem.Orientation;
-			UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite, zAngle: _orientationAngles[_tempOrientation]);
+			_uiOrientation = CurrentItem.Orientation;
+			UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite, zAngle: _orientationAngles[_uiOrientation]);
+
 			if (_showRotateIconCount > 0)
 			{
 				UIManager.Instance.ShowRotateItemButton(true);
@@ -204,17 +207,17 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 
 	private void RotateItem()
 	{
-		_tempOrientation = _tempOrientation.Next();
-		UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_tempOrientation]);
+		_uiOrientation = _uiOrientation.Next();
+		UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_uiOrientation]);
 		UIManager.Instance.ShowRotateItemButton(false);
 	}
 
 	private void ApplyRotation()
 	{
 		var itemRotation = CurrentItem.transform.eulerAngles;
-		itemRotation.z = _orientationAngles[_tempOrientation];
+		itemRotation.z = _orientationAngles[_uiOrientation];
 		CurrentItem.transform.eulerAngles = itemRotation;
-		CurrentItem.Orientation = _tempOrientation;
+		CurrentItem.Orientation = _uiOrientation;
 
 		ResetBlackboard();
 	}
@@ -232,6 +235,63 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 		_currentState = BlackboardState.None;
 	}
 
+	public void SnapDetected(bool isSnapping, BlackboardItemSnap thisSnap, BlackboardItemSnap otherSnap)
+	{
+		var validSnap = otherSnap.Id == thisSnap.Id && (thisSnap.isBaseSnapPoint || otherSnap.isBaseSnapPoint);
+		if (!validSnap) return;
+
+		var isOnBlackboard = BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
+		var validItem = thisSnap.BlackboardItem == CurrentItem && thisSnap.BlackboardItem.Orientation == otherSnap.BlackboardItem.Orientation;
+
+		if (validItem && isOnBlackboard)
+		{
+			RegisterSnap(isSnapping, thisSnap);
+			RegisterSnap(isSnapping, otherSnap);
+
+			if (isSnapping)
+			{
+				CancelHold();
+				var snapOffset = thisSnap.BlackboardItem.transform.position - thisSnap.transform.position;
+				thisSnap.BlackboardItem.transform.position = otherSnap.transform.position + snapOffset;
+			}
+		}
+	}
+
+	private void RegisterSnap(bool isSnapped, BlackboardItemSnap snap)
+	{
+		var item = snap.BlackboardItem;
+
+		if (!item.Snaps.Contains(snap))
+		{
+			Debug.Log($"Incorrect snap registered in {gameObject}!");
+			return;
+		}
+
+		if (isSnapped)
+		{
+			if (item.SnappedPoints.Contains(snap)) return;
+			else item.SnappedPoints.Add(snap);
+		}
+		else
+		{
+			item.SnappedPoints.Remove(snap);
+		}
+
+		if (item.SnappedPoints.Count == item.Snaps.Length)
+		{
+			item.OnSetColliderEnabled(null, new() { ColliderEnabled = false });
+			item.SpriteRenderer.enabled = false;
+
+			if (item.FullPage)
+			{
+				item.FullPage.Orientation = item.Orientation;
+				BlackboardItems.Add(item.FullPage.gameObject);
+				item.FullPage.gameObject.SetActive(true);
+			}
+			item.IsFullySnapped = true;
+		}
+	}
+
 	public bool IsInspectable() { return false; }
 	public bool IsInteractable() { return true; }
 }
@@ -240,8 +300,7 @@ public enum BlackboardState
 {
 	None,
 	Looking,
-	Moving,
-	Joined
+	Moving
 }
 
 public class BlackboardEventArgs : EventArgs
