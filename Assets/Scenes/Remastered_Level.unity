@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 303145326}
-  m_IndirectSpecularColor: {r: 0.0001280699, g: 0.00011771533, b: 0.00011164733, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2775,6 +2774,7 @@ Terrain:
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
+  m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
@@ -6264,6 +6264,14 @@ PrefabInstance:
     - target: {fileID: 102365876801512989, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
       propertyPath: m_Name
       value: House_Reality
+      objectReference: {fileID: 0}
+    - target: {fileID: 650947745773596223, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1895296183503087734, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2978349574843640782, guid: 91a52eb68f81b2246860a7835f7fd216, type: 3}
       propertyPath: m_LocalPosition.x

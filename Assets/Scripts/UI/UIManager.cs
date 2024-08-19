@@ -84,4 +84,10 @@ public class UIManager : MonoBehaviour
         UIData.BlackboardUI.SetActive(show);
         GameController.Instance.ShowCursor = show;
     }
+
+    public void ShowRotateItemButton(bool show)
+    {
+        if (show) UIData.BlackboardRotateImage.color = Color.white;
+        else UIData.BlackboardRotateImage.color = new Color(0, 0, 0, 0);
+    }
 }

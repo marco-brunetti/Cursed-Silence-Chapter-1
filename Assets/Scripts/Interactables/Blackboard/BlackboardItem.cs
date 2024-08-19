@@ -70,7 +70,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 	{
 		var validSnap = otherSnap.Id == thisSnap.Id && (thisSnap.isBaseSnapPoint || otherSnap.isBaseSnapPoint);
 
-        if (!validSnap) return;
+		if (!validSnap) return;
 
 		var isOnBlackboard = _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
 		var validItem = this == _controller.CurrentItem && Orientation == otherSnap.BlackboardItem.Orientation;
@@ -91,11 +91,11 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
 	public void RegisterSnap(bool isSnapped, BlackboardItemSnap snap)
 	{
-        if(!_snaps.Contains(snap))
-        {
-            Debug.Log($"Incorrect snap registered in {gameObject}!");
-            return;
-        }
+		if(!_snaps.Contains(snap))
+		{
+			Debug.Log($"Incorrect snap registered in {gameObject}!");
+			return;
+		}
 
 
 		if(isSnapped)
@@ -131,7 +131,11 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 public enum ItemOrientation
 {
 	Up,
-	Left,
+	UpRight,
+	Right,
+	DownRight,
 	Down,
-	Right
+	DownLeft,
+	Left,
+	UpLeft
 }
