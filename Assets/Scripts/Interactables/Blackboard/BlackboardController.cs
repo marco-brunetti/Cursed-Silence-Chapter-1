@@ -157,16 +157,16 @@ public class BlackboardController : MonoBehaviour, IBehaviour
     {
         if (isHolding)
         {
-            SetColliderEnabled?.Invoke(this, new BlackboardEventArgs() { ColliderEnabled = false });
             _defaultRendererOrder = item.SpriteRenderer.sortingOrder;
             item.SpriteRenderer.sortingOrder = 10;
         }
         else
         {
-            SetColliderEnabled?.Invoke(this, new BlackboardEventArgs() { ColliderEnabled = true });
             CurrentItem.SpriteRenderer.sortingOrder = _defaultRendererOrder;
             _itemMoveOffset = Vector3.zero;
         }
+
+        SetColliderEnabled?.Invoke(this, new() { ColliderEnabled = !isHolding });
 
         _playerController.FreezePlayerMovement = isHolding;
         CurrentItem = item;

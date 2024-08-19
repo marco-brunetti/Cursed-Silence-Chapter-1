@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BlackboardItem : MonoBehaviour, IBehaviour
 {
     public ItemOrientation Orientation = ItemOrientation.Up;
+    [SerializeField] private BlackboardItem _fullPage;
     [SerializeField] private GameObject _glow;
 
     [NonSerialized] public SpriteRenderer SpriteRenderer;
     [NonSerialized] public Sprite Sprite;
     [NonSerialized] public Collider[] Colliders;
-
-    private List<BlackboardItemSnap> _snaps = new();
-    private List<BlackboardItemSnap> _snappedPoints = new();
+    private bool _isFullySnapped;
+    [SerializeField] private List<BlackboardItemSnap> _snaps = new();
+    [SerializeField] private List<BlackboardItemSnap> _snappedPoints = new();
 
     private void Awake()
     {
@@ -59,17 +59,35 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 
     private void OnSetColliderEnabled(object sender, BlackboardEventArgs e)
     {
-        Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
+        if(!_isFullySnapped) Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
     }
 
     public void RegisterSnap(bool isSnapped, BlackboardItemSnap snap)
     {
-        if(isSnapped) _snappedPoints.Add(snap);
-        else _snappedPoints.Remove(snap);
+        if(isSnapped)
+        {
+            if (_snappedPoints.Contains(snap)) return;
+            else _snappedPoints.Add(snap);
+        }
+        else
+        {
+            _snappedPoints.Remove(snap);
+        }    
+
 
         if(_snappedPoints.Count == _snaps.Count)
         {
             OnSetColliderEnabled(null, new() { ColliderEnabled = false });
+            SpriteRenderer.enabled = false;
+            //BlackboardController.Instance.BlackboardItems.Remove(gameObject);
+
+            if (_fullPage)
+            {
+                _fullPage.Orientation = Orientation;
+                BlackboardController.Instance.BlackboardItems.Add(_fullPage.gameObject);
+                _fullPage.gameObject.SetActive(true);
+            }
+            _isFullySnapped = true;
         }
     }
 
