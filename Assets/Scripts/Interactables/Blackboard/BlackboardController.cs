@@ -8,7 +8,9 @@ public class BlackboardController : MonoBehaviour, IBehaviour
     [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
     public static BlackboardController Instance;
     [NonSerialized] public BlackboardItem CurrentItem;
+    public EventHandler<BlackboardEventArgs> SetColliderEnabled;
 
+    private int _defaultRendererOrder;
     private Collider _collider;
     private PlayerController _playerController;
     private BlackboardItem _blackboardItemInSight;
@@ -155,11 +157,14 @@ public class BlackboardController : MonoBehaviour, IBehaviour
     {
         if (isHolding)
         {
-            item.Collider.enabled = false;
+            SetColliderEnabled?.Invoke(this, new BlackboardEventArgs() { ColliderEnabled = false });
+            _defaultRendererOrder = item.SpriteRenderer.sortingOrder;
+            item.SpriteRenderer.sortingOrder = 10;
         }
         else
         {
-            CurrentItem.Collider.enabled = true;
+            SetColliderEnabled?.Invoke(this, new BlackboardEventArgs() { ColliderEnabled = true });
+            CurrentItem.SpriteRenderer.sortingOrder = _defaultRendererOrder;
             _itemMoveOffset = Vector3.zero;
         }
 
@@ -235,4 +240,9 @@ public enum BlackboardState
     Looking,
     Moving,
     Joined
+}
+
+public class BlackboardEventArgs : EventArgs
+{
+    public bool ColliderEnabled;
 }

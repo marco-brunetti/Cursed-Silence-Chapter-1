@@ -12,24 +12,78 @@ public class BlackboardItemSnap : MonoBehaviour
 
     private void Awake()
     {
-        _controller = BlackboardController.Instance;
         BlackboardItem = transform.parent.GetComponent<BlackboardItem>();
+    }
+
+    private void Start()
+    {
+        _controller = BlackboardController.Instance;
     }
     private void OnTriggerEnter(Collider other)
     {
-        var validSnap = other.TryGetComponent(out BlackboardItemSnap snap) && snap && snap.Id == Id;
-        var isOnBlackboard = validSnap && _controller.BlackboardItems.Contains(snap.BlackboardItem.gameObject);
-        var validItem = isOnBlackboard && BlackboardItem == _controller.CurrentItem && BlackboardItem.Orientation == snap.BlackboardItem.Orientation;
+        if (!SnapRegistered(isSnapping:true, other)) return;
+
+        _controller.CancelHold();
+        var parentOffset = transform.parent.transform.position - transform.position;
+        transform.parent.transform.position = other.transform.position + parentOffset;
+
+        //var thisSnap = this;
+        //var validSnap = other.TryGetComponent(out BlackboardItemSnap otherSnap) && otherSnap && otherSnap.Id == Id;
+        //var isOnBlackboard = validSnap && _controller && _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
+        //var validItem = isOnBlackboard && BlackboardItem == _controller.CurrentItem && BlackboardItem.Orientation == otherSnap.BlackboardItem.Orientation;
+
+        //if (validItem)
+        //{
+        //    //thisSnap.Snapped = true;
+        //    //otherSnap.Snapped = true;
+
+        //    thisSnap.BlackboardItem.RegisterSnap(isSnapped:true, thisSnap);
+        //    otherSnap.BlackboardItem.RegisterSnap(isSnapped: true, otherSnap);
+
+        //    print($"snapped {gameObject.name}");
+        //    _controller.CancelHold();
+        //    var parentOffset = transform.parent.transform.position - transform.position;
+        //    transform.parent.transform.position = otherSnap.transform.position + parentOffset;
+        //}
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!SnapRegistered(isSnapping: false, other)) return;
+
+        //var thisSnap = this;
+        //var validSnap = other.TryGetComponent(out BlackboardItemSnap otherSnap) && otherSnap && otherSnap.Id == Id;
+        //var isOnBlackboard = validSnap && _controller && _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
+        //var validItem = isOnBlackboard && BlackboardItem == _controller.CurrentItem && BlackboardItem.Orientation == otherSnap.BlackboardItem.Orientation;
+
+        //if (validItem)
+        //{
+        //    //thisSnap.Snapped = false;
+        //    //otherSnap.Snapped = false;
+
+        //    thisSnap.BlackboardItem.RegisterSnap(isSnapped: false, thisSnap);
+        //    otherSnap.BlackboardItem.RegisterSnap(isSnapped: false, otherSnap);
+
+        //    print($"unsnapped {gameObject.name}");
+        //    //_controller.CancelHold();
+        //    //var parentOffset = transform.parent.transform.position - transform.position;
+        //    //transform.parent.transform.position = otherSnap.transform.position + parentOffset;
+        //}
+    }
+
+    private bool SnapRegistered(bool isSnapping, Collider other)
+    {
+        var thisSnap = this;
+        var validSnap = other.TryGetComponent(out BlackboardItemSnap otherSnap) && otherSnap && otherSnap.Id == Id;
+        var isOnBlackboard = validSnap && _controller && _controller.BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
+        var validItem = isOnBlackboard && BlackboardItem == _controller.CurrentItem && BlackboardItem.Orientation == otherSnap.BlackboardItem.Orientation;
 
         if (validItem)
         {
-            Snapped = true;
-            snap.Snapped = true;
-
-            print($"snapped {gameObject.name}");
-            _controller.CancelHold();
-            var parentOffset = transform.parent.transform.position - transform.position;
-            transform.parent.transform.position = snap.transform.position + parentOffset;
+            thisSnap.BlackboardItem.RegisterSnap(isSnapping, thisSnap);
+            otherSnap.BlackboardItem.RegisterSnap(isSnapping, otherSnap);
         }
+
+        return validItem;
     }
 }
