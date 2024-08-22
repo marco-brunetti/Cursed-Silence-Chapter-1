@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -432,6 +431,7 @@ MonoBehaviour:
   _layoutId: 1
   _position: {x: 10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
 --- !u!114 &138516545
@@ -1661,8 +1661,6 @@ MonoBehaviour:
   - {fileID: 1670796285}
   - {fileID: 1237098586}
   - {fileID: 784579725}
-  activeLayouts:
-  - {fileID: 1670796285}
   currentLayout: {fileID: 1670796285}
 --- !u!1 &615646487
 GameObject:
@@ -1848,7 +1846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 3
-  canDispose: 0
+  CanDispose: 0
   LayoutTrigger1: {fileID: 1903323728}
   LayoutTrigger2: {fileID: 138516543}
 --- !u!4 &784579726
@@ -2467,7 +2465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 2
-  canDispose: 0
+  CanDispose: 0
   LayoutTrigger1: {fileID: 2014896269}
   LayoutTrigger2: {fileID: 1251345948}
 --- !u!4 &1237098587
@@ -2597,6 +2595,7 @@ MonoBehaviour:
   _layoutId: 1
   _position: {x: 10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
 --- !u!114 &1251345950
@@ -3112,6 +3111,7 @@ MonoBehaviour:
   _layoutId: 2
   _position: {x: -10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
 --- !u!1001 &1529020150
@@ -3841,7 +3841,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 1
-  canDispose: 0
+  CanDispose: 0
   LayoutTrigger1: {fileID: 1399485202}
   LayoutTrigger2: {fileID: 1949702585}
 --- !u!1001 &1678779019
@@ -4342,6 +4342,7 @@ MonoBehaviour:
   _layoutId: 2
   _position: {x: -10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
 --- !u!114 &1903323730
@@ -4765,8 +4766,56 @@ MonoBehaviour:
   _layoutId: 3
   _position: {x: 10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
+--- !u!1 &1961947162
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1961947164}
+  - component: {fileID: 1961947163}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1961947163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961947162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cebacb0f896d44f4d9f7ba429d7a20fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decoratorObject: {fileID: 0}
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!4 &1961947164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961947162}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.710306, y: -0.00000050914747, z: 4.1710386}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1973699342
 GameObject:
   m_ObjectHideFlags: 0
@@ -5228,6 +5277,7 @@ MonoBehaviour:
   _layoutId: 3
   _position: {x: -10, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
   _onInteraction: 1
   _onInspection: 0
 --- !u!114 &2014896271
@@ -5632,3 +5682,4 @@ SceneRoots:
   - {fileID: 350070064}
   - {fileID: 1997697865}
   - {fileID: 477632776}
+  - {fileID: 1961947164}

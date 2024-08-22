@@ -7,9 +7,10 @@ using UnityEngine;
 public class LevelLayoutManager : MonoBehaviour
 {
     [SerializeField] private LevelLayout[] layoutPrefabs;
-
-    [SerializeField] private List<LevelLayout> activeLayouts = new();
     [SerializeField] private LevelLayout currentLayout;
+
+    private HashSet<LevelLayout> activeLayouts = new();
+    private Queue<LevelLayout> deactivateQueue = new Queue<LevelLayout>();
 
     public static LevelLayoutManager Instance { get; private set; }
     private void Awake()
@@ -20,28 +21,33 @@ public class LevelLayoutManager : MonoBehaviour
 
     private void Start()
     {
+        if(currentLayout) activeLayouts.Add(currentLayout);
         StartCoroutine(DeactivateLevelLayouts());
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
     {
         MarkForDeactivation(exceptions: new() { currentLayout, newCurrent });
-
         currentLayout = newCurrent;
     }
 
-    public void ActivateLayout(int nextId, Vector3 position, Vector3 rotation)
+    public void ActivateLayout(int id, Vector3 position, Quaternion rotation, params RoomDecorator[] decorators)
     {
-        var levelLayout = activeLayouts.FirstOrDefault(x => x.Id == nextId && !x.gameObject.activeInHierarchy) as LevelLayout;
+        var levelLayout = activeLayouts.FirstOrDefault(x => x.Id == id && !x.gameObject.activeInHierarchy);
 
-        if(!levelLayout)
+        if (!levelLayout)
         {
-            levelLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Id == nextId));
+            levelLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Id == id));
             activeLayouts.Add(levelLayout);
         }
 
-        levelLayout.transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
+        levelLayout.transform.SetPositionAndRotation(position, rotation);
         levelLayout.gameObject.SetActive(true);
+
+        foreach (var decorator in decorators)
+        {
+            decorator.ApplyDecorator(levelLayout);
+        }
 
         MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
 
@@ -50,26 +56,33 @@ public class LevelLayoutManager : MonoBehaviour
 
     private void MarkForDeactivation(List<LevelLayout> exceptions)
     {
-
-        foreach(var layout in activeLayouts)
+        foreach (var layout in activeLayouts)
         {
-            if(exceptions.Contains(layout)) layout.canDispose = false;
-            else layout.canDispose = true;
+            if (exceptions.Contains(layout))
+            {
+                layout.CanDispose = false;
+            }
+            else
+            {
+                layout.CanDispose = true;
+                deactivateQueue.Enqueue(layout);
+            }
         }
     }
 
     private IEnumerator DeactivateLevelLayouts()
     {
-        yield return new WaitForSecondsRealtime(1);
-
-        foreach(var levelLayout in activeLayouts)
+        while (true)
         {
-            if(levelLayout.canDispose)
+            if (deactivateQueue.Count > 0)
             {
-                levelLayout.gameObject.SetActive(false);
+                var layout = deactivateQueue.Dequeue();
+                if (layout.CanDispose)
+                {
+                    layout.gameObject.SetActive(false);
+                }
             }
+            yield return null;
         }
-
-        StartCoroutine(DeactivateLevelLayouts());
     }
 }
