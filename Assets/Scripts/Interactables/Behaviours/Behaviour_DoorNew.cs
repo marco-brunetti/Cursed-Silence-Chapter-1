@@ -38,6 +38,8 @@ public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 	private bool isGrabbed = false;
 	private Vector3 grabPoint;
 	private float previousAngle = 0f;
+	private Vector3 initialDirection;
+	private float initialDistance;
 
 	private void Start()
 	{
@@ -96,7 +98,7 @@ public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 		if (!currentInteractable || currentInteractable.gameObject != gameObject && hitPoint == Vector3.zero) return;
 
 		// Calculate the rotation angle based on the hitpoint position
-		Vector3 doorCenter = _doorPivot.transform.position;
+		Vector3 doorCenter = transform.position;
 		Vector3 doorUp = _doorPivot.transform.up;
 		Vector3 hitDirection = (hitPoint - doorCenter).normalized;
 		float targetAngle = Mathf.Atan2(hitDirection.x, hitDirection.z) * Mathf.Rad2Deg;
