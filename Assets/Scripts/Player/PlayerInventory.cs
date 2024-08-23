@@ -151,6 +151,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+	public List<GameObject> Items()
+	{
+		return _inventory;
+	}
+
     public GameObject SelectedItem()
     {
         return _selectedItem;
