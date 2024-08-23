@@ -31,7 +31,7 @@ public class LevelLayoutManager : MonoBehaviour
         currentLayout = newCurrent;
     }
 
-    public void ActivateLayout(int id, Vector3 position, Quaternion rotation, params RoomDecorator[] decorators)
+    public void ActivateLayout(int id, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
     {
         var levelLayout = activeLayouts.FirstOrDefault(x => x.Id == id && !x.gameObject.activeInHierarchy);
 
