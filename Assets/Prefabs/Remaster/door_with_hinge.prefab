@@ -95,7 +95,8 @@ Transform:
   m_LocalPosition: {x: -0.6, y: 1.2985016, z: 0.06700039}
   m_LocalScale: {x: 50, y: 60, z: 50}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8750565746194665156}
   m_Father: {fileID: 8699524724360173455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2168185946640003649
@@ -269,3 +270,54 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.005411198, y: 0.020744285, z: 0.049939856}
   m_Center: {x: -0.0011919782, y: 0.010117409, z: -0.028029967}
+--- !u!1 &9059430639465060453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8750565746194665156}
+  - component: {fileID: 3759299088899115402}
+  m_Layer: 9
+  m_Name: TriggerNextLayout
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8750565746194665156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9059430639465060453}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8075702305741423895}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3759299088899115402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9059430639465060453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e58887db61b781645a4ccefe2961181a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _layoutId: 1
+  _position: {x: 0.6, y: -2.65, z: 0}
+  _rotation: {x: 0, y: 0, z: 0}
+  _decorators: []
+  _deactivateWhenReady: 1
+  _onInteraction: 1
+  _onInspection: 0

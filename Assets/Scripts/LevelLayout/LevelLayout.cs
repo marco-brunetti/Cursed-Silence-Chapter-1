@@ -1,27 +1,91 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelLayout : MonoBehaviour
 {
 	[field: SerializeField] public int Id { get; private set; }
-	public bool CanDispose;
 
-	[SerializeField] private GameObject LayoutTrigger1;
-	[SerializeField] private GameObject LayoutTrigger2;
 
-	[SerializeField] private Material testMat;
-	[SerializeField] private Material testMat2;
+    [SerializeField] private Behaviour_GenericAction doorAction;
+	[SerializeField] private LayoutData layoutData;
 
+	[Header("Style")]
 	[SerializeField] private MeshRenderer[] wallRenderers;
 	[SerializeField] private MeshRenderer[] doorWallRenderers;
 	[SerializeField] private MeshRenderer[] windowWallRenderers;
 	[SerializeField] private MeshRenderer[] ceilingRenderers;
+	[SerializeField] private MeshRenderer[] floorRenderers;
+	
+	[NonSerialized] public bool CanDispose;
 
-	private void Start()
+    public void Setup(LayoutStyle style, UnityAction doorAction, params LevelDecorator[] decorators)
 	{
-		SetMaterials(upperMat: testMat, lowerMat: testMat2);
+		SetLayoutStyle(style);
+        this.doorAction.Setup(action: doorAction, onInteraction: true, onInspection: false);
+    }
+
+	private void SetLayoutStyle(LayoutStyle style)
+	{
+		Material upperMat = null;
+		Material lowerMat = null;
+        Material ceilingMat = null;
+        Material floorMat = null;
+        Material windowDecorMat1 = null;
+        Material windowDecorMat2 = null;
+
+        switch (style)
+		{
+			default:
+			case LayoutStyle.Style1:
+				upperMat = layoutData.WallMat1;
+				lowerMat = layoutData.LowerWallMat1;
+				ceilingMat = layoutData.CeilingMat1;
+				floorMat = layoutData.FloorMat1;
+				windowDecorMat1 = layoutData.WindowDecorMat1;
+				windowDecorMat2 = layoutData.WindowDecorMat1;
+				break;
+            case LayoutStyle.Style2:
+                upperMat = layoutData.WallMat2;
+                lowerMat = layoutData.LowerWallMat2;
+                ceilingMat = layoutData.CeilingMat2;
+                floorMat = layoutData.FloorMat2;
+                windowDecorMat1 = layoutData.WindowDecorMat2;
+                windowDecorMat2 = layoutData.WindowDecorMat2;
+                break;
+            case LayoutStyle.Style3:
+                upperMat = layoutData.WallMat3;
+                lowerMat = layoutData.LowerWallMat3;
+                ceilingMat = layoutData.CeilingMat3;
+                floorMat = layoutData.FloorMat3;
+                windowDecorMat1 = layoutData.WindowDecorMat3;
+                windowDecorMat2 = layoutData.WindowDecorMat3;
+                break;
+            case LayoutStyle.Style4:
+                upperMat = layoutData.WallMat4;
+                lowerMat = layoutData.LowerWallMat4;
+                ceilingMat = layoutData.CeilingMat4;
+                floorMat = layoutData.FloorMat4;
+                windowDecorMat1 = layoutData.WindowDecorMat4;
+                windowDecorMat2 = layoutData.WindowDecorMat4;
+                break;
+            case LayoutStyle.Style5:
+                upperMat = layoutData.WallMat5;
+                lowerMat = layoutData.LowerWallMat5;
+                ceilingMat = layoutData.CeilingMat5;
+                floorMat = layoutData.FloorMat5;
+                windowDecorMat1 = layoutData.WindowDecorMat5;
+                windowDecorMat2 = layoutData.WindowDecorMat5;
+                break;
+
+        }
+
+		SetMaterials(upperMat, lowerMat, ceilingMat, floorMat, windowDecorMat1, windowDecorMat2);
 	}
 
-	public void SetMaterials(Material upperMat = null, Material lowerMat = null, Material ceilingMat = null, Material windowDecorMat1 = null, Material windowDecorMat2 = null)
+	private void SetMaterials(Material upperMat = null, Material lowerMat = null,
+		Material ceilingMat = null, Material floorMat = null,
+		Material windowDecorMat1 = null, Material windowDecorMat2 = null)
 	{
 		if(upperMat || lowerMat)
 		{
@@ -70,11 +134,20 @@ public class LevelLayout : MonoBehaviour
 				renderer.materials = ceilingMaterials;
 			}
 		}
-	}
 
-	private void OnDisable()
-	{
-		LayoutTrigger1.SetActive(false);
-		LayoutTrigger2.SetActive(false);
+		if(floorMat)
+		{
+			foreach(var renderer in  floorRenderers)
+			{
+				var floorMaterials = renderer.materials;
+				floorMaterials[0] = floorMat;
+				renderer.materials = floorMaterials;
+			}
+		}
 	}
+}
+
+public record LayoutState
+{
+	public LayoutStyle Style;
 }

@@ -7,17 +7,16 @@ public enum DoorState { Locked, Closed, Open };
 [HelpURL("https://www.youtube.com/watch?v=3i-d6leI7Q4")]
 public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 {
-	[SerializeField] Camera cam;
-	//Transform selectedDoor;
-	GameObject dragPointGameobject;
-	int leftDoor = 0;
-
-	private bool isSelected;
-	[SerializeField] private HingeJoint joint;
+    [SerializeField] private HingeJoint joint;
 	[SerializeField] private MeshRenderer doorRenderer;
-	private JointMotor motor;
 
-	private void Start()
+    private bool isSelected;
+    private int leftDoor = 0;
+    private Camera cam;
+    private GameObject dragPointGameobject;
+    private JointMotor motor;
+
+    private void Start()
 	{
 		cam = PlayerController.Instance.Camera.GetComponent<Camera>();
 	}

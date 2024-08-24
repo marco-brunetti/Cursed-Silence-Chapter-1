@@ -27,7 +27,7 @@ public class LevelLayoutManager : MonoBehaviour
 
     public void SetCurrentLayout(LevelLayout newCurrent)
     {
-        MarkForDeactivation(exceptions: new() { currentLayout, newCurrent });
+        //MarkForDeactivation(exceptions: new() { currentLayout, newCurrent });
         currentLayout = newCurrent;
     }
 
@@ -42,6 +42,7 @@ public class LevelLayoutManager : MonoBehaviour
         }
 
         levelLayout.transform.SetPositionAndRotation(position, rotation);
+        levelLayout.Setup(LayoutStyle.Style2, doorAction: null, decorators: decorators);
         levelLayout.gameObject.SetActive(true);
 
         foreach (var decorator in decorators)
@@ -49,7 +50,7 @@ public class LevelLayoutManager : MonoBehaviour
             decorator.ApplyDecorator(levelLayout);
         }
 
-        MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
+        //MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
 
         currentLayout = levelLayout;
     }
