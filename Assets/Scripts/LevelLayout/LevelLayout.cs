@@ -149,5 +149,7 @@ public class LevelLayout : MonoBehaviour
 
 public record LayoutState
 {
-	public LayoutStyle Style;
+	public bool enable;
+	public int id;
+	public LayoutStyle style;
 }

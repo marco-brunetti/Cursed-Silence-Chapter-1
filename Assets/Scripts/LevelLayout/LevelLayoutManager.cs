@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,21 +9,39 @@ public class LevelLayoutManager : MonoBehaviour
 {
     [SerializeField] private LevelLayout[] layoutPrefabs;
     [SerializeField] private LevelLayout currentLayout;
+    [SerializeField] private TextAsset mapJson;
 
     private HashSet<LevelLayout> activeLayouts = new();
-    private Queue<LevelLayout> deactivateQueue = new Queue<LevelLayout>();
+    private Queue<LevelLayout> deactivateQueue = new();
+    private List<LayoutState> mapLayoutStates = new();
+    private LayoutMap map;
 
     public static LevelLayoutManager Instance { get; private set; }
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(this);
+
+        SetupMap();
     }
 
     private void Start()
     {
-        if(currentLayout) activeLayouts.Add(currentLayout);
+        if (currentLayout) activeLayouts.Add(currentLayout);
         StartCoroutine(DeactivateLevelLayouts());
+    }
+
+    private void SetupMap()
+    {
+        map = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
+
+        foreach (var state in map.LayoutStates)
+        {
+            mapLayoutStates.Add(state);
+        }
+
+        //Sets up first level
+        currentLayout.Setup(mapLayoutStates[0].style, null, null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
@@ -83,7 +102,14 @@ public class LevelLayoutManager : MonoBehaviour
                     layout.gameObject.SetActive(false);
                 }
             }
+
             yield return null;
         }
     }
+}
+
+public record LayoutMap
+{
+    [JsonProperty("layoutStates")]
+    public List<LayoutState> LayoutStates;
 }
