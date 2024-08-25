@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.TerrainTools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,20 +25,27 @@ public class LevelLayout : MonoBehaviour
 
     public void Setup(LayoutStyle style, List<int> nextLevelIds, params LevelDecorator[] decorators)
 	{
-		if(nextLevelIds != null) SetDoorActions(nextLevelIds);
+		SetDoorActions(nextLevelIds);
         SetLayoutStyle(style);
     }
 
 	private void SetDoorActions(List<int> nextLevelIds)
 	{
-		for(int i = 0; i < doorActions.Count; i++)
+		if(nextLevelIds == null)
 		{
-			var id = nextLevelIds[i];
-			var offset = NextLayoutOffsets[i];
-			var rotation = Quaternion.Euler(NextLayoutRotations[i]);
-            UnityAction action = ()=> LevelLayoutManager.Instance.ActivateLayout(id, offset, rotation, null);
+			//LOCK DOORS
+		}
+		else
+		{
+            for (int i = 0; i < doorActions.Count; i++)
+            {
+                var nextId = nextLevelIds[i];
+                var offset = NextLayoutOffsets[i];
+                var rotation = Quaternion.Euler(NextLayoutRotations[i]);
+                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(triggeredLayout: this, nextId, offset, rotation, null);
 
-            doorActions[i].Setup(action, onInteraction: true, onInspection: false);
+                doorActions[i].Setup(action, onInteraction: true, onInspection: false);
+            }
         }
     }
 

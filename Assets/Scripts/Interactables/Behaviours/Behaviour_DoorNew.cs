@@ -1,6 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using SnowHorse.Utils;
 
 public enum DoorState { Locked, Closed, Open };
 

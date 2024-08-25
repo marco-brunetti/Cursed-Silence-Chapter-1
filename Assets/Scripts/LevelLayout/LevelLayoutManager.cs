@@ -4,12 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class LevelLayoutManager : MonoBehaviour
 {
     [SerializeField] private LevelLayout[] layoutPrefabs;
-    [SerializeField] private LevelLayout currentLayout;
+    private LevelLayout currentLayout;
     [SerializeField] private TextAsset mapJson;
 
     private HashSet<LevelLayout> activeLayouts = new();
@@ -31,7 +30,7 @@ public class LevelLayoutManager : MonoBehaviour
     private void Start()
     {
         if (currentLayout) activeLayouts.Add(currentLayout);
-        StartCoroutine(DeactivateLevelLayouts());
+        //StartCoroutine(DeactivateLevelLayouts());
     }
 
     private void SetupMap()
@@ -46,39 +45,40 @@ public class LevelLayoutManager : MonoBehaviour
 
         //Sets up first level
         var currentMapLayout = mapLayouts[currentLayoutIndex];
+        currentLayout = FindObjectOfType<LevelLayout>();
         currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLevelIds, null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
     {
-        //MarkForDeactivation(exceptions: new() { currentLayout, newCurrent });
+        MarkForDeactivation(exceptions: new() { currentLayout });
         currentLayout = newCurrent;
     }
 
-    public void ActivateLayout(int id, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
+    public void ActivateLayout(LevelLayout triggeredLayout, int nextLayoutId, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
     {
-        var levelLayout = activeLayouts.FirstOrDefault(x => x.Id == id && !x.gameObject.activeInHierarchy);
+        var nextLayout = activeLayouts.FirstOrDefault(x => x.Id == nextLayoutId && !x.gameObject.activeInHierarchy);
 
-        if (!levelLayout)
+        if (!nextLayout)
         {
-            levelLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Id == id));
-            activeLayouts.Add(levelLayout);
+            nextLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Id == nextLayoutId));
+            activeLayouts.Add(nextLayout);
         }
 
-        levelLayout.transform.parent = currentLayout.transform;
-        levelLayout.transform.SetLocalPositionAndRotation(position, rotation);
-        levelLayout.transform.parent = null;
+        nextLayout.transform.parent = triggeredLayout.transform;
+        nextLayout.transform.SetLocalPositionAndRotation(position, rotation);
+        nextLayout.transform.parent = null;
         //levelLayout.Setup(LayoutStyle.Style2, doorActions: null, decorators: decorators);
-        levelLayout.gameObject.SetActive(true);
+        nextLayout.gameObject.SetActive(true);
 
         //foreach (var decorator in decorators)
         //{
         //    decorator.ApplyDecorator(levelLayout);
         //}
 
-        //MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
+        MarkForDeactivation(exceptions: new() { currentLayout });
+        currentLayout = nextLayout;
         currentLayoutIndex++;
-        currentLayout = levelLayout;
 
         var mapLayout = mapLayouts[currentLayoutIndex];
         currentLayout.Setup(mapLayout.style, mapLayout.nextLevelIds, null);
@@ -107,10 +107,7 @@ public class LevelLayoutManager : MonoBehaviour
             if (deactivateQueue.Count > 0)
             {
                 var layout = deactivateQueue.Dequeue();
-                if (layout.CanDispose)
-                {
-                    layout.gameObject.SetActive(false);
-                }
+                if (layout.CanDispose) layout.gameObject.SetActive(false);
             }
 
             yield return null;

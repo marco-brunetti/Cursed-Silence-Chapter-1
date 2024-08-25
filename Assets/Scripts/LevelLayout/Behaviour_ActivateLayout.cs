@@ -15,7 +15,7 @@ public class Behaviour_ActivateLayout : MonoBehaviour, IBehaviour
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
         if (_deactivated) return;
-        LevelLayoutManager.Instance.ActivateLayout(_layoutId, transform.position + _position, Quaternion.Euler(_rotation), _decorators);
+        //LevelLayoutManager.Instance.ActivateLayout(_layoutId, transform.position + _position, Quaternion.Euler(_rotation), _decorators);
         if(_deactivateWhenReady) _deactivated = true;
     }
 
