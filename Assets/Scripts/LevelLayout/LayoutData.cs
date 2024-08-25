@@ -48,4 +48,6 @@ public enum LayoutShape
     HallLongT,
     HallLeftL,
     HallRightL,
+    HallThinStraight,
+    RoomSmall
 }

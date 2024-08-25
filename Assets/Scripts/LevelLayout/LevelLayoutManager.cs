@@ -7,14 +7,15 @@ using UnityEngine;
 
 public class LevelLayoutManager : MonoBehaviour
 {
-    [SerializeField] private LevelLayout[] layoutPrefabs;
+
     private LevelLayout currentLayout;
     [SerializeField] private TextAsset mapJson;
 
     private HashSet<LevelLayout> activeLayouts = new();
     private Queue<LevelLayout> deactivateQueue = new();
-    private List<Layout> mapLayouts = new();
-    private LayoutMap map;
+    private LevelLayout[] layoutPrefabs;
+    private List<Layout> loadedMap = new();
+    private LayoutMap layoutMap;
 
     private int currentLayoutIndex = -1;
 
@@ -24,6 +25,7 @@ public class LevelLayoutManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(this);
 
+        layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
         SetupMap();
     }
 
@@ -35,16 +37,16 @@ public class LevelLayoutManager : MonoBehaviour
 
     private void SetupMap()
     {
-        map = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
+        layoutMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-        for (int i = 0; i < map.LayoutStates.Count; i++)
+        for (int i = 0; i < layoutMap.LayoutStates.Count; i++)
         {
-            mapLayouts.Add(map.LayoutStates[i]);
-            if (currentLayoutIndex == -1 && map.LayoutStates[i].enable) currentLayoutIndex = i;
+            loadedMap.Add(layoutMap.LayoutStates[i]);
+            if (currentLayoutIndex == -1 && layoutMap.LayoutStates[i].enable) currentLayoutIndex = i;
         }
 
         //Sets up first level
-        var currentMapLayout = mapLayouts[currentLayoutIndex];
+        var currentMapLayout = loadedMap[currentLayoutIndex];
         currentLayout = FindObjectOfType<LevelLayout>();
         currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLayoutShapes, null);
     }
@@ -79,7 +81,7 @@ public class LevelLayoutManager : MonoBehaviour
         MarkForDeactivation(exceptions: new() { currentLayout });
         currentLayout = nextLayout;
 
-        if(currentLayoutIndex == mapLayouts.Count - 1)
+        if(currentLayoutIndex == loadedMap.Count - 1)
         {
             Debug.Log("No more layouts");
             return;
@@ -87,7 +89,7 @@ public class LevelLayoutManager : MonoBehaviour
         else
         {
             currentLayoutIndex++;
-            var mapLayout = mapLayouts[currentLayoutIndex];
+            var mapLayout = loadedMap[currentLayoutIndex];
             currentLayout.Setup(mapLayout.style, mapLayout.nextLayoutShapes, null);
         }
     }

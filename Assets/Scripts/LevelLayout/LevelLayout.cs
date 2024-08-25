@@ -31,6 +31,8 @@ public class LevelLayout : MonoBehaviour
 
 	private void SetDoorActions(List<LayoutShape> nextLayoutShapes)
 	{
+		if(doors == null || doors.Count == 0) return;
+
 		for(int i = 0; i < doors.Count; i++)
 		{
 			if(nextLayoutShapes == null || nextLayoutShapes.Count == 0 || i >= nextLayoutShapes.Count || (nextLayoutShapes[i] == LayoutShape.None))
