@@ -1,12 +1,13 @@
 using UnityEngine;
-
-public enum DoorState { Locked, Closed, Open };
+using UnityEngine.Events;
 
 [HelpURL("https://www.youtube.com/watch?v=3i-d6leI7Q4")]
 public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 {
+	[SerializeField] private DoorState doorState;
     [SerializeField] private HingeJoint joint;
 	[SerializeField] private MeshRenderer doorRenderer;
+	[SerializeField] private Behaviour_GenericAction doorAction;
 
     private bool isSelected;
     private int leftDoor = 0;
@@ -23,9 +24,26 @@ public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 	{
 		if(isInteracting) 
 		{
-			isSelected = true;
+			if(doorState == DoorState.Locked)
+			{
+				Debug.Log("Door Locked");
+			}
+			else
+			{
+                isSelected = true;
+            }
 		}
 	}
+
+	public void SetDoorState(DoorState state)
+	{
+		doorState = state;
+	}
+
+	public void SetDoorAction(UnityAction action)
+	{
+		doorAction.Setup(action, onInteraction: true, onInspection: false);
+    }
 
 	public bool IsInspectable()
 	{
@@ -102,4 +120,11 @@ public class Behaviour_DoorNew : MonoBehaviour, IBehaviour
 			}
 		}
 	}
+}
+
+public enum DoorState
+{
+	Locked,
+	Closed,
+	Open
 }

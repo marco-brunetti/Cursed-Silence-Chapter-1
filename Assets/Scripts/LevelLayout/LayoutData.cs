@@ -39,3 +39,13 @@ public enum LayoutStyle
     Style4,
     Style5
 }
+
+public enum LayoutShape
+{
+    None,
+    HallStraight,
+    HallShortT,
+    HallLongT,
+    HallLeftL,
+    HallRightL,
+}

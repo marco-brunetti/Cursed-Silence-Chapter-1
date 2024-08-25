@@ -46,7 +46,7 @@ public class LevelLayoutManager : MonoBehaviour
         //Sets up first level
         var currentMapLayout = mapLayouts[currentLayoutIndex];
         currentLayout = FindObjectOfType<LevelLayout>();
-        currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLevelIds, null);
+        currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLayoutShapes, null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
@@ -55,13 +55,13 @@ public class LevelLayoutManager : MonoBehaviour
         currentLayout = newCurrent;
     }
 
-    public void ActivateLayout(LevelLayout triggeredLayout, int nextLayoutId, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
+    public void ActivateLayout(LevelLayout triggeredLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
     {
-        var nextLayout = activeLayouts.FirstOrDefault(x => x.Id == nextLayoutId && !x.gameObject.activeInHierarchy);
+        var nextLayout = activeLayouts.FirstOrDefault(x => x.Shape == nextShape && !x.gameObject.activeInHierarchy);
 
         if (!nextLayout)
         {
-            nextLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Id == nextLayoutId));
+            nextLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Shape == nextShape));
             activeLayouts.Add(nextLayout);
         }
 
@@ -78,10 +78,18 @@ public class LevelLayoutManager : MonoBehaviour
 
         MarkForDeactivation(exceptions: new() { currentLayout });
         currentLayout = nextLayout;
-        currentLayoutIndex++;
 
-        var mapLayout = mapLayouts[currentLayoutIndex];
-        currentLayout.Setup(mapLayout.style, mapLayout.nextLevelIds, null);
+        if(currentLayoutIndex == mapLayouts.Count - 1)
+        {
+            Debug.Log("No more layouts");
+            return;
+        }
+        else
+        {
+            currentLayoutIndex++;
+            var mapLayout = mapLayouts[currentLayoutIndex];
+            currentLayout.Setup(mapLayout.style, mapLayout.nextLayoutShapes, null);
+        }
     }
 
     private void MarkForDeactivation(List<LevelLayout> exceptions)

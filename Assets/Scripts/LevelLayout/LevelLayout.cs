@@ -5,13 +5,13 @@ using UnityEngine.Events;
 
 public class LevelLayout : MonoBehaviour
 {
-	[field: SerializeField] public int Id { get; private set; }
+	[field: SerializeField] public LayoutShape Shape { get; private set; }
 
 
     [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
     [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
 
-    [SerializeField] private List<Behaviour_GenericAction> doorActions;
+    [SerializeField] private List<Behaviour_DoorNew> doors;
 	[SerializeField] private LayoutData layoutData;
 
 	[Header("Style")]
@@ -23,28 +23,31 @@ public class LevelLayout : MonoBehaviour
 	
 	[NonSerialized] public bool CanDispose;
 
-    public void Setup(LayoutStyle style, List<int> nextLevelIds, params LevelDecorator[] decorators)
+    public void Setup(LayoutStyle style, List<LayoutShape> nextLayoutShapes, params LevelDecorator[] decorators)
 	{
-		SetDoorActions(nextLevelIds);
+		SetDoorActions(nextLayoutShapes);
         SetLayoutStyle(style);
     }
 
-	private void SetDoorActions(List<int> nextLevelIds)
+	private void SetDoorActions(List<LayoutShape> nextLayoutShapes)
 	{
-		if(nextLevelIds == null)
+		for(int i = 0; i < doors.Count; i++)
 		{
-			//LOCK DOORS
-		}
-		else
-		{
-            for (int i = 0; i < doorActions.Count; i++)
+			if(nextLayoutShapes == null || nextLayoutShapes.Count == 0 || i >= nextLayoutShapes.Count || (nextLayoutShapes[i] == LayoutShape.None))
+			{
+                doors[i].SetDoorState(DoorState.Locked);
+                continue;
+            }
+
+            if (i < nextLayoutShapes.Count)
             {
-                var nextId = nextLevelIds[i];
+                var nextId = nextLayoutShapes[i];
                 var offset = NextLayoutOffsets[i];
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
                 UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(triggeredLayout: this, nextId, offset, rotation, null);
 
-                doorActions[i].Setup(action, onInteraction: true, onInspection: false);
+				doors[i].SetDoorState(DoorState.Closed);
+                doors[i].SetDoorAction(action);
             }
         }
     }
@@ -174,7 +177,6 @@ public class LevelLayout : MonoBehaviour
 public record Layout
 {
 	public bool enable;
-	public int id;
-	public List<int> nextLevelIds;
+	public List<LayoutShape> nextLayoutShapes;
 	public LayoutStyle style;
 }
