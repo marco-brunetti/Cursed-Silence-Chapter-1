@@ -5,7 +5,10 @@ public class Behaviour_GenericAction : MonoBehaviour, IBehaviour
 {
     public bool onInteraction;
     public bool onInspection;
+    [SerializeField] private bool _deactivateWhenReady = true;
     private UnityAction action;
+
+    private bool _deactivated;
 
     public void Setup(UnityAction action, bool onInteraction, bool onInspection)
     {
@@ -16,18 +19,13 @@ public class Behaviour_GenericAction : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(onInteraction && isInteracting)
-        {
-            action?.Invoke();
-        }
-        else if (onInspection && isInteracting)
-        {
-            action?.Invoke();
-        }
-        else if(!onInteraction && !onInspection)
-        {
-            action?.Invoke();
-        }
+        if (_deactivated) return;
+
+        if (onInteraction && isInteracting) action?.Invoke();
+        else if (onInspection && isInteracting) action?.Invoke();
+        else if(!onInteraction && !onInspection) action?.Invoke();
+
+        if (_deactivateWhenReady) _deactivated = true;
     }
 
     public bool IsInspectable()

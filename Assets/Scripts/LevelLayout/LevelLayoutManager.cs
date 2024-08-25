@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelLayoutManager : MonoBehaviour
 {
@@ -13,8 +14,10 @@ public class LevelLayoutManager : MonoBehaviour
 
     private HashSet<LevelLayout> activeLayouts = new();
     private Queue<LevelLayout> deactivateQueue = new();
-    private List<LayoutState> mapLayoutStates = new();
+    private List<Layout> mapLayouts = new();
     private LayoutMap map;
+
+    private int currentLayoutIndex = -1;
 
     public static LevelLayoutManager Instance { get; private set; }
     private void Awake()
@@ -35,13 +38,16 @@ public class LevelLayoutManager : MonoBehaviour
     {
         map = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-        foreach (var state in map.LayoutStates)
+        for(int i = 0; i < map.LayoutStates.Count; i++)
         {
-            mapLayoutStates.Add(state);
+            mapLayouts.Add(map.LayoutStates[i]);
+
+            if(currentLayoutIndex == -1 && map.LayoutStates[i].enable) currentLayoutIndex = i;
         }
 
         //Sets up first level
-        currentLayout.Setup(mapLayoutStates[0].style, null, null);
+        currentLayout.Setup(mapLayouts[currentLayoutIndex].style, doorAction: ()=> ActivateLayout(mapLayouts[currentLayoutIndex+1].id,
+            currentLayout.transform.position + currentLayout.NextLayoutOffset, Quaternion.Euler(currentLayout.NextLayoutRotation)), null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
@@ -70,8 +76,24 @@ public class LevelLayoutManager : MonoBehaviour
         }
 
         //MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
-
+        currentLayoutIndex++;
         currentLayout = levelLayout;
+
+        UnityAction action = null;
+
+        if(currentLayoutIndex < mapLayouts.Count - 1)
+        {
+            action = () => {
+                ActivateLayout(mapLayouts[currentLayoutIndex + 1].id,
+            currentLayout.transform.position + currentLayout.NextLayoutOffset, Quaternion.Euler(currentLayout.NextLayoutRotation));
+            };
+        }
+        else if(currentLayoutIndex == mapLayouts.Count - 1)
+        {
+            Debug.Log("No more levels");
+        }
+
+        currentLayout.Setup(mapLayouts[currentLayoutIndex].style, doorAction: action, null);
     }
 
     private void MarkForDeactivation(List<LevelLayout> exceptions)
@@ -111,5 +133,5 @@ public class LevelLayoutManager : MonoBehaviour
 public record LayoutMap
 {
     [JsonProperty("layoutStates")]
-    public List<LayoutState> LayoutStates;
+    public List<Layout> LayoutStates;
 }

@@ -5,6 +5,8 @@ using UnityEngine.Events;
 public class LevelLayout : MonoBehaviour
 {
 	[field: SerializeField] public int Id { get; private set; }
+	[field: SerializeField] public Vector3 NextLayoutOffset { get; private set; }
+	[field: SerializeField] public Vector3 NextLayoutRotation { get; private set; }
 
 
     [SerializeField] private Behaviour_GenericAction doorAction;
@@ -147,7 +149,7 @@ public class LevelLayout : MonoBehaviour
 	}
 }
 
-public record LayoutState
+public record Layout
 {
 	public bool enable;
 	public int id;
