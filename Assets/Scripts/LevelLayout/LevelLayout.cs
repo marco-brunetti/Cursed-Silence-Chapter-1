@@ -1,15 +1,18 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.TerrainTools;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class LevelLayout : MonoBehaviour
 {
 	[field: SerializeField] public int Id { get; private set; }
-	[field: SerializeField] public Vector3 NextLayoutOffset { get; private set; }
-	[field: SerializeField] public Vector3 NextLayoutRotation { get; private set; }
 
 
-    [SerializeField] private Behaviour_GenericAction doorAction;
+    [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
+    [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
+
+    [SerializeField] private List<Behaviour_GenericAction> doorActions;
 	[SerializeField] private LayoutData layoutData;
 
 	[Header("Style")]
@@ -21,10 +24,23 @@ public class LevelLayout : MonoBehaviour
 	
 	[NonSerialized] public bool CanDispose;
 
-    public void Setup(LayoutStyle style, UnityAction doorAction, params LevelDecorator[] decorators)
+    public void Setup(LayoutStyle style, List<int> nextLevelIds, params LevelDecorator[] decorators)
 	{
-		SetLayoutStyle(style);
-        this.doorAction.Setup(action: doorAction, onInteraction: true, onInspection: false);
+		if(nextLevelIds != null) SetDoorActions(nextLevelIds);
+        SetLayoutStyle(style);
+    }
+
+	private void SetDoorActions(List<int> nextLevelIds)
+	{
+		for(int i = 0; i < doorActions.Count; i++)
+		{
+			var id = nextLevelIds[i];
+			var offset = transform.position + NextLayoutOffsets[i];
+			var rotation = Quaternion.Euler(NextLayoutRotations[i]);
+            UnityAction action = ()=> LevelLayoutManager.Instance.ActivateLayout(id, offset, rotation, null);
+
+            doorActions[i].Setup(action, onInteraction: true, onInspection: false);
+        }
     }
 
 	private void SetLayoutStyle(LayoutStyle style)
@@ -153,5 +169,6 @@ public record Layout
 {
 	public bool enable;
 	public int id;
+	public List<int> nextLevelIds;
 	public LayoutStyle style;
 }

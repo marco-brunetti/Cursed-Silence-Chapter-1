@@ -38,16 +38,15 @@ public class LevelLayoutManager : MonoBehaviour
     {
         map = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-        for(int i = 0; i < map.LayoutStates.Count; i++)
+        for (int i = 0; i < map.LayoutStates.Count; i++)
         {
             mapLayouts.Add(map.LayoutStates[i]);
-
-            if(currentLayoutIndex == -1 && map.LayoutStates[i].enable) currentLayoutIndex = i;
+            if (currentLayoutIndex == -1 && map.LayoutStates[i].enable) currentLayoutIndex = i;
         }
 
         //Sets up first level
-        currentLayout.Setup(mapLayouts[currentLayoutIndex].style, doorAction: ()=> ActivateLayout(mapLayouts[currentLayoutIndex+1].id,
-            currentLayout.transform.position + currentLayout.NextLayoutOffset, Quaternion.Euler(currentLayout.NextLayoutRotation)), null);
+        var currentMapLayout = mapLayouts[currentLayoutIndex];
+        currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLevelIds, null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
@@ -67,33 +66,20 @@ public class LevelLayoutManager : MonoBehaviour
         }
 
         levelLayout.transform.SetPositionAndRotation(position, rotation);
-        levelLayout.Setup(LayoutStyle.Style2, doorAction: null, decorators: decorators);
+        //levelLayout.Setup(LayoutStyle.Style2, doorActions: null, decorators: decorators);
         levelLayout.gameObject.SetActive(true);
 
-        foreach (var decorator in decorators)
-        {
-            decorator.ApplyDecorator(levelLayout);
-        }
+        //foreach (var decorator in decorators)
+        //{
+        //    decorator.ApplyDecorator(levelLayout);
+        //}
 
         //MarkForDeactivation(exceptions: new() { currentLayout, levelLayout });
         currentLayoutIndex++;
         currentLayout = levelLayout;
 
-        UnityAction action = null;
-
-        if(currentLayoutIndex < mapLayouts.Count - 1)
-        {
-            action = () => {
-                ActivateLayout(mapLayouts[currentLayoutIndex + 1].id,
-            currentLayout.transform.position + currentLayout.NextLayoutOffset, Quaternion.Euler(currentLayout.NextLayoutRotation));
-            };
-        }
-        else if(currentLayoutIndex == mapLayouts.Count - 1)
-        {
-            Debug.Log("No more levels");
-        }
-
-        currentLayout.Setup(mapLayouts[currentLayoutIndex].style, doorAction: action, null);
+        var mapLayout = mapLayouts[currentLayoutIndex];
+        currentLayout.Setup(mapLayout.style, mapLayout.nextLevelIds, null);
     }
 
     private void MarkForDeactivation(List<LevelLayout> exceptions)
