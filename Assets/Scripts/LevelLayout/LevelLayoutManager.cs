@@ -65,7 +65,9 @@ public class LevelLayoutManager : MonoBehaviour
             activeLayouts.Add(levelLayout);
         }
 
-        levelLayout.transform.SetPositionAndRotation(position, rotation);
+        levelLayout.transform.parent = currentLayout.transform;
+        levelLayout.transform.SetLocalPositionAndRotation(position, rotation);
+        levelLayout.transform.parent = null;
         //levelLayout.Setup(LayoutStyle.Style2, doorActions: null, decorators: decorators);
         levelLayout.gameObject.SetActive(true);
 

@@ -35,7 +35,7 @@ public class LevelLayout : MonoBehaviour
 		for(int i = 0; i < doorActions.Count; i++)
 		{
 			var id = nextLevelIds[i];
-			var offset = transform.position + NextLayoutOffsets[i];
+			var offset = NextLayoutOffsets[i];
 			var rotation = Quaternion.Euler(NextLayoutRotations[i]);
             UnityAction action = ()=> LevelLayoutManager.Instance.ActivateLayout(id, offset, rotation, null);
 
