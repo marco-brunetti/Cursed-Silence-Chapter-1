@@ -45,10 +45,14 @@ public class LevelLayoutManager : MonoBehaviour
             if (currentLayoutIndex == -1 && layoutMap.LayoutStates[i].enable) currentLayoutIndex = i;
         }
 
-        //Sets up first level
         var currentMapLayout = loadedMap[currentLayoutIndex];
-        currentLayout = FindObjectOfType<LevelLayout>();
-        currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLayoutShapes, null);
+
+        ActivateLayout(null, currentMapLayout.nextLayoutShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
+
+        //Sets up first level
+
+        //currentLayout = FindObjectOfType<LevelLayout>();
+        //currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLayoutShapes, isEndOfZone: false, null);
     }
 
     public void SetCurrentLayout(LevelLayout newCurrent)
@@ -67,9 +71,17 @@ public class LevelLayoutManager : MonoBehaviour
             activeLayouts.Add(nextLayout);
         }
 
-        nextLayout.transform.parent = triggeredLayout.transform;
-        nextLayout.transform.SetLocalPositionAndRotation(position, rotation);
-        nextLayout.transform.parent = null;
+        if (triggeredLayout)
+        {
+            nextLayout.transform.parent = triggeredLayout.transform;
+            nextLayout.transform.SetLocalPositionAndRotation(position, rotation);
+            nextLayout.transform.parent = null;
+        }
+        else
+        {
+            nextLayout.transform.SetPositionAndRotation(position, rotation);
+        }
+            
         //levelLayout.Setup(LayoutStyle.Style2, doorActions: null, decorators: decorators);
         nextLayout.gameObject.SetActive(true);
 
@@ -78,7 +90,7 @@ public class LevelLayoutManager : MonoBehaviour
         //    decorator.ApplyDecorator(levelLayout);
         //}
 
-        MarkForDeactivation(exceptions: new() { currentLayout });
+        MarkForDeactivation(exceptions: new() { currentLayout, nextLayout });
         currentLayout = nextLayout;
 
         if(currentLayoutIndex == loadedMap.Count - 1)
@@ -90,7 +102,8 @@ public class LevelLayoutManager : MonoBehaviour
         {
             currentLayoutIndex++;
             var mapLayout = loadedMap[currentLayoutIndex];
-            currentLayout.Setup(mapLayout.style, mapLayout.nextLayoutShapes, null);
+            var isEndOfZone = mapLayout.zone != loadedMap[currentLayoutIndex + 1].zone;
+            currentLayout.Setup(mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
         }
     }
 
@@ -110,16 +123,12 @@ public class LevelLayoutManager : MonoBehaviour
         }
     }
 
-    private IEnumerator DeactivateLevelLayouts()
+    public IEnumerator DeactivateLevelLayouts()
     {
-        while (true)
+        while (deactivateQueue.Count > 0)
         {
-            if (deactivateQueue.Count > 0)
-            {
-                var layout = deactivateQueue.Dequeue();
-                if (layout.CanDispose) layout.gameObject.SetActive(false);
-            }
-
+            var layout = deactivateQueue.Dequeue();
+            if (layout.CanDispose) layout.gameObject.SetActive(false);
             yield return null;
         }
     }

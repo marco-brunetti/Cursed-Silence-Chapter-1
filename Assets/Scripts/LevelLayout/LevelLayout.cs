@@ -7,7 +7,6 @@ public class LevelLayout : MonoBehaviour
 {
 	[field: SerializeField] public LayoutShape Shape { get; private set; }
 
-
     [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
     [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
 
@@ -23,13 +22,18 @@ public class LevelLayout : MonoBehaviour
 	
 	[NonSerialized] public bool CanDispose;
 
-    public void Setup(LayoutStyle style, List<LayoutShape> nextLayoutShapes, params LevelDecorator[] decorators)
+    public void Setup(LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
-		SetDoorActions(nextLayoutShapes);
+		SetDoorActions(nextLayoutShapes, isEndOfZone);
         SetLayoutStyle(style);
     }
 
-	private void SetDoorActions(List<LayoutShape> nextLayoutShapes)
+	public bool HasDoors()
+	{
+		return doors != null && doors.Count > 0;
+	}
+
+	private void SetDoorActions(List<LayoutShape> nextLayoutShapes, bool isEndOfZone)
 	{
 		if(doors == null || doors.Count == 0) return;
 
@@ -43,10 +47,17 @@ public class LevelLayout : MonoBehaviour
 
             if (i < nextLayoutShapes.Count)
             {
-                var nextId = nextLayoutShapes[i];
+                var nextShape = nextLayoutShapes[i];
                 var offset = NextLayoutOffsets[i];
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
-                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(triggeredLayout: this, nextId, offset, rotation, null);
+                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(triggeredLayout: this, nextShape, offset, rotation, null);
+
+				//If end of zone, start deactivation process of current zone
+				if (isEndOfZone && i == nextLayoutShapes.Count - 1)
+				{
+					var manager = LevelLayoutManager.Instance;
+					manager.StartCoroutine(manager.DeactivateLevelLayouts());
+				}
 
 				doors[i].SetDoorState(DoorState.Closed);
                 doors[i].SetDoorAction(action);
@@ -179,6 +190,7 @@ public class LevelLayout : MonoBehaviour
 public record Layout
 {
 	public bool enable;
+	public int zone;
 	public List<LayoutShape> nextLayoutShapes;
 	public LayoutStyle style;
 }
