@@ -35,6 +35,7 @@ Transform:
   - {fileID: 8723747163671724088}
   - {fileID: 5059803675649269125}
   - {fileID: 5302707136097631776}
+  - {fileID: 6715209734644477341}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2267188942709728084
@@ -289,6 +290,81 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &4611224216187472829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6715209734644477341}
+  - component: {fileID: 312506489246746795}
+  - component: {fileID: 6761682470348577283}
+  m_Layer: 0
+  m_Name: Colliders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6715209734644477341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4611224216187472829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8887727145332382973}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &312506489246746795
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4611224216187472829}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.30425477, y: 3.5840642, z: 10.465506}
+  m_Center: {x: -2.047526, y: 1.6779639, z: 5.414706}
+--- !u!65 &6761682470348577283
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4611224216187472829}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.30504048, y: 3.5840642, z: 10.465506}
+  m_Center: {x: 2.0429463, y: 1.6779639, z: 5.414706}
 --- !u!1 &7194070670104787344
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,7 +557,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -553,7 +630,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -584,6 +662,14 @@ PrefabInstance:
     - target: {fileID: 3345242961371951277, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
       propertyPath: m_Name
       value: entrance_door
+      objectReference: {fileID: 0}
+    - target: {fileID: 3345242961371951277, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7514537173451202608, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 1.2985016
       objectReference: {fileID: 0}
     - target: {fileID: 8075702305741423895, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
       propertyPath: m_LocalScale.y
@@ -725,7 +811,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -864,7 +951,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -936,7 +1024,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 906464992422499522, guid: b8279e54ef06fa6468966c42094ec9d4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1003,7 +1092,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1204,7 +1294,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1276,7 +1367,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 906464992422499522, guid: b8279e54ef06fa6468966c42094ec9d4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1564,7 +1656,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1636,7 +1729,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall_joint
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6489958114811354402, guid: de6acda2912efc4409fdac406b1ec4ad, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
