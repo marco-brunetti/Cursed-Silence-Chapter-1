@@ -11,7 +11,7 @@ public class LevelLayoutManager : MonoBehaviour
     private LevelLayout currentLayout;
     [SerializeField] private TextAsset mapJson;
 
-    private HashSet<LevelLayout> activeLayouts = new();
+    private HashSet<LevelLayout> layoutPool = new();
     private Queue<LevelLayout> deactivateQueue = new();
     private LevelLayout[] layoutPrefabs;
     private List<Layout> loadedMap = new();
@@ -31,7 +31,7 @@ public class LevelLayoutManager : MonoBehaviour
 
     private void Start()
     {
-        if (currentLayout) activeLayouts.Add(currentLayout);
+        if (currentLayout) layoutPool.Add(currentLayout);
         //StartCoroutine(DeactivateLevelLayouts());
     }
 
@@ -57,18 +57,18 @@ public class LevelLayoutManager : MonoBehaviour
 
     public void SetCurrentLayout(LevelLayout newCurrent)
     {
-        MarkForDeactivation(exceptions: new() { currentLayout });
-        currentLayout = newCurrent;
+        //MarkForDeactivation(exceptions: new() { currentLayout });
+        //currentLayout = newCurrent;
     }
 
     public void ActivateLayout(LevelLayout triggeredLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
     {
-        var nextLayout = activeLayouts.FirstOrDefault(x => x.Shape == nextShape && !x.gameObject.activeInHierarchy);
+        var nextLayout = layoutPool.FirstOrDefault(x => x.Shape == nextShape && !x.gameObject.activeInHierarchy);
 
         if (!nextLayout)
         {
             nextLayout = Instantiate(Array.Find(layoutPrefabs, e => e.Shape == nextShape));
-            activeLayouts.Add(nextLayout);
+            layoutPool.Add(nextLayout);
         }
 
         if (triggeredLayout)
@@ -90,7 +90,9 @@ public class LevelLayoutManager : MonoBehaviour
         //    decorator.ApplyDecorator(levelLayout);
         //}
 
-        MarkForDeactivation(exceptions: new() { currentLayout, nextLayout });
+        var mapLayout = loadedMap[currentLayoutIndex];
+        var isEndOfZone = currentLayoutIndex < loadedMap.Count - 1 && mapLayout.zone != loadedMap[currentLayoutIndex + 1].zone;
+
         currentLayout = nextLayout;
 
         if(currentLayoutIndex == loadedMap.Count - 1)
@@ -100,26 +102,8 @@ public class LevelLayoutManager : MonoBehaviour
         }
         else
         {
+            currentLayout.Setup(currentLayoutIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
             currentLayoutIndex++;
-            var mapLayout = loadedMap[currentLayoutIndex];
-            var isEndOfZone = mapLayout.zone != loadedMap[currentLayoutIndex + 1].zone;
-            currentLayout.Setup(mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
-        }
-    }
-
-    private void MarkForDeactivation(List<LevelLayout> exceptions)
-    {
-        foreach (var layout in activeLayouts)
-        {
-            if (exceptions.Contains(layout))
-            {
-                layout.CanDispose = false;
-            }
-            else
-            {
-                layout.CanDispose = true;
-                deactivateQueue.Enqueue(layout);
-            }
         }
     }
 
@@ -128,8 +112,21 @@ public class LevelLayoutManager : MonoBehaviour
         while (deactivateQueue.Count > 0)
         {
             var layout = deactivateQueue.Dequeue();
-            if (layout.CanDispose) layout.gameObject.SetActive(false);
+            layout.gameObject.SetActive(false);
             yield return null;
+        }
+
+        MarkForDeactivation();
+    }
+
+    private void MarkForDeactivation()
+    {
+        foreach (var layout in layoutPool)
+        {
+            if (layout.MapIndex <= currentLayoutIndex)
+            {
+                deactivateQueue.Enqueue(layout);
+            }
         }
     }
 }

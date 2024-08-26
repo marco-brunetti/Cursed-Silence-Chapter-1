@@ -19,11 +19,12 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private MeshRenderer[] windowWallRenderers;
 	[SerializeField] private MeshRenderer[] ceilingRenderers;
 	[SerializeField] private MeshRenderer[] floorRenderers;
-	
-	[NonSerialized] public bool CanDispose;
 
-    public void Setup(LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
+	public int MapIndex { get; private set; }
+
+    public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
+		MapIndex = mapIndex;
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
         SetLayoutStyle(style);
     }
