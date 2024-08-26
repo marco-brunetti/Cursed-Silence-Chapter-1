@@ -15,6 +15,7 @@ public class Behaviour_GenericAction : MonoBehaviour, IBehaviour
         this.action = action;
         this.onInteraction = onInteraction;
         this.onInspection = onInspection;
+		_deactivated = false;
     }
 
     public void Behaviour(bool isInteracting, bool isInspecting)

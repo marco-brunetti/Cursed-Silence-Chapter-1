@@ -27,6 +27,10 @@ public class LevelLayout : MonoBehaviour
 
     public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
+		if(nextLayoutShapes == null)
+		{
+			Debug.Log("Test");
+		}
 		MapIndex = mapIndex;
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
         SetLayoutStyle(style);
