@@ -10,7 +10,8 @@ public class LevelLayout : MonoBehaviour
     [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
     [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
 
-    [SerializeField] private List<Behaviour_DoorNew> doors;
+	[SerializeField] private GameObject entranceDoor;
+	[SerializeField] private List<Behaviour_DoorNew> doors;
 	[SerializeField] private LayoutData layoutData;
 
 	[Header("Style")]
@@ -20,7 +21,9 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private MeshRenderer[] ceilingRenderers;
 	[SerializeField] private MeshRenderer[] floorRenderers;
 
-	public int MapIndex { get; private set; }
+	[NonSerialized] public int MapIndex = -1;
+
+	private List<Vector3> initialDoorRotations = new();
 
     public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
@@ -34,12 +37,20 @@ public class LevelLayout : MonoBehaviour
 		return doors != null && doors.Count > 0;
 	}
 
+	public void EntranceDoorEnabled(bool enabled)
+	{
+		entranceDoor.SetActive(enabled);
+	}
+
 	private void SetDoorActions(List<LayoutShape> nextLayoutShapes, bool isEndOfZone)
 	{
-		if(doors == null || doors.Count == 0) return;
+		entranceDoor.SetActive(false);
+		if (doors == null || doors.Count == 0) return;
 
 		for(int i = 0; i < doors.Count; i++)
 		{
+			initialDoorRotations.Add(doors[i].transform.localEulerAngles);
+
 			if(nextLayoutShapes == null || nextLayoutShapes.Count == 0 || i >= nextLayoutShapes.Count || (nextLayoutShapes[i] == LayoutShape.None))
 			{
                 doors[i].SetDoorState(DoorState.Locked);
@@ -53,7 +64,7 @@ public class LevelLayout : MonoBehaviour
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
                 UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(triggeredLayout: this, nextShape, offset, rotation, null);
 
-				//If end of zone, start deactivation process of current zone
+				//If end of zone, start deactivation process of previous zone
 				if (isEndOfZone && i == nextLayoutShapes.Count - 1)
 				{
 					var manager = LevelLayoutManager.Instance;
@@ -65,6 +76,14 @@ public class LevelLayout : MonoBehaviour
             }
         }
     }
+
+	private void OnDisable()
+	{
+		for(int i = 0; i < doors.Count; i++)
+		{
+			doors[i].transform.localEulerAngles = initialDoorRotations[i];
+		}
+	}
 
 	private void SetLayoutStyle(LayoutStyle style)
 	{
