@@ -95,7 +95,7 @@ public class LevelLayoutManager : MonoBehaviour
 
 		currentLayout = nextLayout;
 
-		if(currentLayoutIndex == loadedMap.Count - 1)
+		if(currentLayoutIndex == loadedMap.Count)
 		{
 			Debug.Log("No more layouts");
 			return;
