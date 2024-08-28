@@ -103,7 +103,7 @@ public class LevelLayoutManager : MonoBehaviour
 		else
 		{
 			currentLayout.Setup(currentLayoutIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
-			currentLayoutIndex++;
+			if(currentLayout.HasDoors()) currentLayoutIndex++;
 		}
 	}
 

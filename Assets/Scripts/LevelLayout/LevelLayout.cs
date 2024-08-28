@@ -21,19 +21,25 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private MeshRenderer[] ceilingRenderers;
 	[SerializeField] private MeshRenderer[] floorRenderers;
 
+	[Header("Lighting")]
+	[SerializeField] private LayoutLight[] style0Lights;
+	[SerializeField] private LayoutLight[] style1Lights;
+	[SerializeField] private LayoutLight[] style2Lights;
+	[SerializeField] private LayoutLight[] style3Lights;
+	[SerializeField] private LayoutLight[] style4Lights;
+
 	[NonSerialized] public int MapIndex = -1;
 
+	private LayoutStyle currentStyle;
 	private List<Vector3> initialDoorRotations = new();
 
     public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
-		if(nextLayoutShapes == null)
-		{
-			Debug.Log("Test");
-		}
+		currentStyle = style;
 		MapIndex = mapIndex;
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
-        SetLayoutStyle(style);
+        SetStyleMaterials();
+		SetStyleLighting();
     }
 
 	public bool HasDoors()
@@ -87,9 +93,11 @@ public class LevelLayout : MonoBehaviour
 		{
 			doors[i].transform.localEulerAngles = initialDoorRotations[i];
 		}
+
+		initialDoorRotations.Clear();
 	}
 
-	private void SetLayoutStyle(LayoutStyle style)
+	private void SetStyleMaterials()
 	{
 		Material upperMat = null;
 		Material lowerMat = null;
@@ -98,10 +106,10 @@ public class LevelLayout : MonoBehaviour
         Material windowDecorMat1 = null;
         Material windowDecorMat2 = null;
 
-        switch (style)
+        switch (currentStyle)
 		{
 			default:
-			case LayoutStyle.Style1:
+			case LayoutStyle.Style0:
 				upperMat = layoutData.WallMat1;
 				lowerMat = layoutData.LowerWallMat1;
 				ceilingMat = layoutData.CeilingMat1;
@@ -109,7 +117,7 @@ public class LevelLayout : MonoBehaviour
 				windowDecorMat1 = layoutData.WindowDecorMat1;
 				windowDecorMat2 = layoutData.WindowDecorMat1;
 				break;
-            case LayoutStyle.Style2:
+            case LayoutStyle.Style1:
                 upperMat = layoutData.WallMat2;
                 lowerMat = layoutData.LowerWallMat2;
                 ceilingMat = layoutData.CeilingMat2;
@@ -117,7 +125,7 @@ public class LevelLayout : MonoBehaviour
                 windowDecorMat1 = layoutData.WindowDecorMat2;
                 windowDecorMat2 = layoutData.WindowDecorMat2;
                 break;
-            case LayoutStyle.Style3:
+            case LayoutStyle.Style2:
                 upperMat = layoutData.WallMat3;
                 lowerMat = layoutData.LowerWallMat3;
                 ceilingMat = layoutData.CeilingMat3;
@@ -125,7 +133,7 @@ public class LevelLayout : MonoBehaviour
                 windowDecorMat1 = layoutData.WindowDecorMat3;
                 windowDecorMat2 = layoutData.WindowDecorMat3;
                 break;
-            case LayoutStyle.Style4:
+            case LayoutStyle.Style3:
                 upperMat = layoutData.WallMat4;
                 lowerMat = layoutData.LowerWallMat4;
                 ceilingMat = layoutData.CeilingMat4;
@@ -133,7 +141,7 @@ public class LevelLayout : MonoBehaviour
                 windowDecorMat1 = layoutData.WindowDecorMat4;
                 windowDecorMat2 = layoutData.WindowDecorMat4;
                 break;
-            case LayoutStyle.Style5:
+            case LayoutStyle.Style4:
                 upperMat = layoutData.WallMat5;
                 lowerMat = layoutData.LowerWallMat5;
                 ceilingMat = layoutData.CeilingMat5;
@@ -146,6 +154,34 @@ public class LevelLayout : MonoBehaviour
 
 		SetMaterials(upperMat, lowerMat, ceilingMat, floorMat, windowDecorMat1, windowDecorMat2);
 	}
+
+	private void SetStyleLighting()
+	{
+		foreach (var light in style0Lights)
+		{
+			light.gameObject.SetActive(currentStyle == LayoutStyle.Style0);
+		}
+
+        foreach (var light in style1Lights)
+        {
+            light.gameObject.SetActive(currentStyle == LayoutStyle.Style1);
+        }
+
+        foreach (var light in style2Lights)
+        {
+            light.gameObject.SetActive(currentStyle == LayoutStyle.Style2);
+        }
+
+        foreach (var light in style3Lights)
+        {
+            light.gameObject.SetActive(currentStyle == LayoutStyle.Style3);
+        }
+
+        foreach (var light in style4Lights)
+        {
+            light.gameObject.SetActive(currentStyle == LayoutStyle.Style4);
+        }
+    }
 
 	private void SetMaterials(Material upperMat = null, Material lowerMat = null,
 		Material ceilingMat = null, Material floorMat = null,

@@ -33,11 +33,11 @@ public class LayoutData : ScriptableObject
 
 public enum LayoutStyle
 {
+    Style0,
     Style1,
     Style2,
     Style3,
-    Style4,
-    Style5
+    Style4
 }
 
 public enum LayoutShape
