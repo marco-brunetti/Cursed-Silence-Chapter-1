@@ -14,6 +14,11 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private List<Behaviour_DoorNew> doors;
 	[SerializeField] private LayoutData layoutData;
 
+	[SerializeField] private Transform[] wallAnchors;
+	[SerializeField] private Transform[] ceilingAnchors;
+	[SerializeField] private Transform[] floorAnchors;
+
+
 	[Header("Style")]
 	[SerializeField] private MeshRenderer[] wallRenderers;
 	[SerializeField] private MeshRenderer[] doorWallRenderers;

@@ -17,7 +17,7 @@ public class LevelLayoutManager : MonoBehaviour
 	private List<Layout> loadedMap = new();
 	private LayoutMap layoutMap;
 
-	private int currentLayoutIndex = -1;
+	private int currentLayoutIndex;// = -1;
 
 	public static LevelLayoutManager Instance { get; private set; }
 	private void Awake()
@@ -41,8 +41,10 @@ public class LevelLayoutManager : MonoBehaviour
 
 		for (int i = 0; i < layoutMap.LayoutStates.Count; i++)
 		{
-			loadedMap.Add(layoutMap.LayoutStates[i]);
-			if (currentLayoutIndex == -1 && layoutMap.LayoutStates[i].enable) currentLayoutIndex = i;
+			if(layoutMap.LayoutStates[i].enable) loadedMap.Add(layoutMap.LayoutStates[i]);
+
+			/*loadedMap.Add(layoutMap.LayoutStates[i]);
+			if (currentLayoutIndex == -1 && layoutMap.LayoutStates[i].enable) currentLayoutIndex = i;*/
 		}
 
 		var currentMapLayout = loadedMap[currentLayoutIndex];
@@ -103,7 +105,8 @@ public class LevelLayoutManager : MonoBehaviour
 		else
 		{
 			currentLayout.Setup(currentLayoutIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
-			if(currentLayout.HasDoors()) currentLayoutIndex++;
+            if (currentLayoutIndex == 0) currentLayout.EntranceDoorEnabled(true);
+            if (currentLayout.HasDoors()) currentLayoutIndex++;
 		}
 	}
 
