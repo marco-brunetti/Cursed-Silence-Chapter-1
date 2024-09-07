@@ -8,7 +8,7 @@ public class Behaviour_SetCurrentLayout : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        LevelLayoutManager.Instance.SetCurrentLayout(_currentLayout);
+        //LevelLayoutManager.Instance.SetCurrentLayout(_currentLayout);
     }
 
     public bool IsInspectable()

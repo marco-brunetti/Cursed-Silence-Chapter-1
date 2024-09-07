@@ -6,7 +6,6 @@ using UnityEngine.Events;
 public class LevelLayout : MonoBehaviour
 {
 	[field: SerializeField] public LayoutShape Shape { get; private set; }
-
     [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
     [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
 
@@ -17,7 +16,6 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private Transform[] wallAnchors;
 	[SerializeField] private Transform[] ceilingAnchors;
 	[SerializeField] private Transform[] floorAnchors;
-
 
 	[Header("Style")]
 	[SerializeField] private MeshRenderer[] wallRenderers;
@@ -34,17 +32,16 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private LayoutLight[] style4Lights;
 
 	[NonSerialized] public int MapIndex = -1;
-
-	private LayoutStyle currentStyle;
+	private LayoutStyle style;
 	private List<Vector3> initialDoorRotations = new();
 
     public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
-		currentStyle = style;
+		this.style = style;
 		MapIndex = mapIndex;
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
-        SetStyleMaterials();
-		SetStyleLighting();
+        GetMaterials();
+		SetLighting();
     }
 
 	public bool HasDoors()
@@ -102,7 +99,16 @@ public class LevelLayout : MonoBehaviour
 		initialDoorRotations.Clear();
 	}
 
-	private void SetStyleMaterials()
+    private void SetLighting()
+    {
+		Array.ForEach(style0Lights, (x)=> x.gameObject.SetActive(style == LayoutStyle.Style0));
+		Array.ForEach(style1Lights, (x)=> x.gameObject.SetActive(style == LayoutStyle.Style1));
+		Array.ForEach(style2Lights, (x)=> x.gameObject.SetActive(style == LayoutStyle.Style2));
+		Array.ForEach(style3Lights, (x)=> x.gameObject.SetActive(style == LayoutStyle.Style3));
+		Array.ForEach(style4Lights, (x)=> x.gameObject.SetActive(style == LayoutStyle.Style4));
+    }
+
+    private void GetMaterials()
 	{
 		Material upperMat = null;
 		Material lowerMat = null;
@@ -111,7 +117,7 @@ public class LevelLayout : MonoBehaviour
         Material windowDecorMat1 = null;
         Material windowDecorMat2 = null;
 
-        switch (currentStyle)
+        switch (style)
 		{
 			default:
 			case LayoutStyle.Style0:
@@ -160,95 +166,54 @@ public class LevelLayout : MonoBehaviour
 		SetMaterials(upperMat, lowerMat, ceilingMat, floorMat, windowDecorMat1, windowDecorMat2);
 	}
 
-	private void SetStyleLighting()
+	private void SetMaterials
+		(Material upMat = null, Material lowMat = null, Material ceilMat = null,
+		 Material floorMat = null, Material winMat1 = null, Material winMat2 = null)
 	{
-		foreach (var light in style0Lights)
+		if(upMat || lowMat)
 		{
-			light.gameObject.SetActive(currentStyle == LayoutStyle.Style0);
+			Array.ForEach(wallRenderers, r =>
+			{
+                var mats = r.materials;
+                if (upMat) mats[0] = upMat;
+                if (lowMat) mats[1] = lowMat;
+                r.materials = mats;
+            });
+
+			Array.ForEach(doorWallRenderers, r =>
+			{
+                var mats = r.materials;
+                if (upMat) mats[1] = upMat;
+                if (lowMat) mats[0] = lowMat;
+                r.materials = mats;
+            });
 		}
 
-        foreach (var light in style1Lights)
-        {
-            light.gameObject.SetActive(currentStyle == LayoutStyle.Style1);
-        }
-
-        foreach (var light in style2Lights)
-        {
-            light.gameObject.SetActive(currentStyle == LayoutStyle.Style2);
-        }
-
-        foreach (var light in style3Lights)
-        {
-            light.gameObject.SetActive(currentStyle == LayoutStyle.Style3);
-        }
-
-        foreach (var light in style4Lights)
-        {
-            light.gameObject.SetActive(currentStyle == LayoutStyle.Style4);
-        }
-    }
-
-	private void SetMaterials(Material upperMat = null, Material lowerMat = null,
-		Material ceilingMat = null, Material floorMat = null,
-		Material windowDecorMat1 = null, Material windowDecorMat2 = null)
-	{
-		if(upperMat || lowerMat)
+		if(upMat || lowMat || winMat1 || winMat2)
 		{
-			foreach (var renderer in wallRenderers)
+			Array.ForEach(wallRenderers, r => {
+				var mats = r.materials;
+                if (lowMat) mats[0] = lowMat;
+                if (winMat2) mats[1] = winMat2;
+                if (winMat1) mats[3] = winMat1;
+                if (upMat) mats[4] = upMat;
+                r.materials = mats;
+            });
+
+			Array.ForEach(windowWallRenderers, r =>
 			{
-				var wallMaterials = renderer.materials;
-
-				if (upperMat) wallMaterials[0] = upperMat;
-				if (lowerMat) wallMaterials[1] = lowerMat;
-
-				renderer.materials = wallMaterials;
-			}
-
-			foreach (var renderer in doorWallRenderers)
-			{
-				var doorWallMaterials = renderer.materials;
-
-				if (upperMat) doorWallMaterials[1] = upperMat;
-				if (lowerMat) doorWallMaterials[0] = lowerMat;
-
-				renderer.materials = doorWallMaterials;
-			}
+                var mats = r.materials;
+                if (lowMat) mats[0] = lowMat;
+                if (winMat2) mats[1] = winMat2;
+                if (winMat1) mats[3] = winMat1;
+                if (upMat) mats[4] = upMat;
+                r.materials = mats;
+            });
 		}
 
-		if(upperMat || lowerMat || windowDecorMat1 || windowDecorMat2)
-		{
-			foreach (var renderer in windowWallRenderers)
-			{
-				var windowWallMaterials = renderer.materials;
+		if (ceilMat) Array.ForEach(ceilingRenderers, r => { var mats = r.materials; mats[0] = ceilMat; r.materials = mats; });
 
-				if (lowerMat) windowWallMaterials[0] = lowerMat;
-				if (windowDecorMat2) windowWallMaterials[1] = windowDecorMat2;
-				if (windowDecorMat1) windowWallMaterials[3] = windowDecorMat1;
-				if (upperMat) windowWallMaterials[4] = upperMat;
-
-				renderer.materials = windowWallMaterials;
-			}
-		}
-
-		if(ceilingMat)
-		{
-			foreach(var renderer in ceilingRenderers)
-			{
-				var ceilingMaterials = renderer.materials;
-				ceilingMaterials[0] = ceilingMat;
-				renderer.materials = ceilingMaterials;
-			}
-		}
-
-		if(floorMat)
-		{
-			foreach(var renderer in  floorRenderers)
-			{
-				var floorMaterials = renderer.materials;
-				floorMaterials[0] = floorMat;
-				renderer.materials = floorMaterials;
-			}
-		}
+		if(floorMat) Array.ForEach(floorRenderers, r => { var mats = r.materials; mats[0] = floorMat; r.materials = mats; });
 	}
 }
 

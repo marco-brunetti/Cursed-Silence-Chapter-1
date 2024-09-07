@@ -7,17 +7,15 @@ using UnityEngine;
 
 public class LevelLayoutManager : MonoBehaviour
 {
-
-	private LevelLayout currentLayout;
 	[SerializeField] private TextAsset mapJson;
 
-	private HashSet<LevelLayout> layoutPool = new();
+    private LevelLayout currentLayout;
+    private HashSet<LevelLayout> layoutPool = new();
 	private Queue<LevelLayout> deactivateQueue = new();
 	private LevelLayout[] layoutPrefabs;
-	private List<Layout> loadedMap = new();
 	private LayoutMap layoutMap;
-
-	private int currentLayoutIndex;// = -1;
+    private List<Layout> loadedMap = new();
+    private int currentIndex;
 
 	public static LevelLayoutManager Instance { get; private set; }
 	private void Awake()
@@ -32,7 +30,6 @@ public class LevelLayoutManager : MonoBehaviour
 	private void Start()
 	{
 		if (currentLayout) layoutPool.Add(currentLayout);
-		//StartCoroutine(DeactivateLevelLayouts());
 	}
 
 	private void SetupMap()
@@ -42,25 +39,10 @@ public class LevelLayoutManager : MonoBehaviour
 		for (int i = 0; i < layoutMap.LayoutStates.Count; i++)
 		{
 			if(layoutMap.LayoutStates[i].enable) loadedMap.Add(layoutMap.LayoutStates[i]);
-
-			/*loadedMap.Add(layoutMap.LayoutStates[i]);
-			if (currentLayoutIndex == -1 && layoutMap.LayoutStates[i].enable) currentLayoutIndex = i;*/
 		}
 
-		var currentMapLayout = loadedMap[currentLayoutIndex];
-
+		var currentMapLayout = loadedMap[currentIndex];
 		ActivateLayout(null, currentMapLayout.nextLayoutShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
-
-		//Sets up first level
-
-		//currentLayout = FindObjectOfType<LevelLayout>();
-		//currentLayout.Setup(currentMapLayout.style, currentMapLayout.nextLayoutShapes, isEndOfZone: false, null);
-	}
-
-	public void SetCurrentLayout(LevelLayout newCurrent)
-	{
-		//MarkForDeactivation(exceptions: new() { currentLayout });
-		//currentLayout = newCurrent;
 	}
 
 	public void ActivateLayout(LevelLayout triggeredLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
@@ -92,21 +74,21 @@ public class LevelLayoutManager : MonoBehaviour
 		//    decorator.ApplyDecorator(levelLayout);
 		//}
 
-		var mapLayout = loadedMap[currentLayoutIndex];
-		var isEndOfZone = currentLayoutIndex < loadedMap.Count - 1 && mapLayout.zone != loadedMap[currentLayoutIndex + 1].zone;
+		var mapLayout = loadedMap[currentIndex];
+		var isEndOfZone = currentIndex < loadedMap.Count - 1 && mapLayout.zone != loadedMap[currentIndex + 1].zone;
 
 		currentLayout = nextLayout;
 
-		if(currentLayoutIndex == loadedMap.Count)
+		if(currentIndex == loadedMap.Count)
 		{
 			Debug.Log("No more layouts");
 			return;
 		}
 		else
 		{
-			currentLayout.Setup(currentLayoutIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
-            if (currentLayoutIndex == 0) currentLayout.EntranceDoorEnabled(true);
-            if (currentLayout.HasDoors()) currentLayoutIndex++;
+			currentLayout.Setup(currentIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, null);
+            if (currentIndex == 0) currentLayout.EntranceDoorEnabled(true);
+            if (currentLayout.HasDoors()) currentIndex++;
 		}
 	}
 
@@ -126,24 +108,17 @@ public class LevelLayoutManager : MonoBehaviour
 
 	private void ActivateZoneEntranceDoor(int index)
 	{
-		if (deactivateQueue.Count == 0)
+		if (deactivateQueue.Count == 0 && index < loadedMap.Count)
 		{
-			if (index < loadedMap.Count)
-			{
-				var currentZoneEntrance = layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy);
-				currentZoneEntrance.EntranceDoorEnabled(true);
-			}
-		}
+            layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy).EntranceDoorEnabled(true);
+        }
 	}
 
 	private void MarkForDeactivation()
 	{
 		foreach (var layout in layoutPool)
 		{
-			if (layout.MapIndex <= currentLayoutIndex)
-			{
-				deactivateQueue.Enqueue(layout);
-			}
+			if (layout.MapIndex <= currentIndex) deactivateQueue.Enqueue(layout);
 		}
 	}
 }
