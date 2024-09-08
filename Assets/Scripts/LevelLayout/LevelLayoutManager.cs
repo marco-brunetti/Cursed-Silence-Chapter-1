@@ -116,7 +116,8 @@ public class LevelLayoutManager : MonoBehaviour
 
 		decorator.IsUsed = true;
         decorator.transform.parent = anchor;
-		decorator.transform.SetLocalPositionAndRotation(decorator.positionOffset, Quaternion.Euler(decorator.rotationOffset));
+		decorator.transform.SetLocalPositionAndRotation(decorator.Position, Quaternion.Euler(decorator.Rotation));
+		decorator.transform.localScale = decorator.Scale;
         decorator.gameObject.SetActive(true);
     }
 
