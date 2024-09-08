@@ -82,7 +82,7 @@ public class LevelLayout : MonoBehaviour
 		if (areFreeAnchorsReady) return;
 
         Array.ForEach(this.wallAnchors, anchor => {
-            var isAnchorFree = anchor.Cast<GameObject>().All(child => !child.activeInHierarchy);
+            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
             if (isAnchorFree) freeWallAnchors.Add(anchor);
         });
 

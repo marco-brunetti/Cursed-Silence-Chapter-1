@@ -8,6 +8,7 @@ using UnityEngine;
 public class LevelLayoutManager : MonoBehaviour
 {
 	[SerializeField] private TextAsset mapJson;
+	[SerializeField] private Transform decoratorPoolParent;
 
     private LayoutMap savedMap;
     private List<Layout> loadedMap = new();
@@ -15,12 +16,13 @@ public class LevelLayoutManager : MonoBehaviour
     private HashSet<LevelLayout> layoutPool = new();
 	private Queue<LevelLayout> deactivateQueue = new();
 
-	private LevelDecorator[] decoratorPrefabs;
+    private int currentIndex;
+    private System.Random random = new();
+    private LevelDecorator[] decoratorPrefabs;
 	private HashSet<LevelDecorator> wallDecoPool = new();
 	private HashSet<LevelDecorator> ceilingDecoPool = new();
 	private HashSet<LevelDecorator> floorDecoPool = new();
-    private int currentIndex;
-	private System.Random random = new();
+
 
 	public static LevelLayoutManager Instance { get; private set; }
 	private void Awake()
@@ -32,7 +34,6 @@ public class LevelLayoutManager : MonoBehaviour
 		decoratorPrefabs = Resources.LoadAll<LevelDecorator>("Decorators/");
 		SetupMap();
 		PrepareDecorators();
-
     }
 
 	private void SetupMap()
@@ -113,16 +114,18 @@ public class LevelLayoutManager : MonoBehaviour
         }
         while (decorator == null);
 
+		decorator.IsUsed = true;
         decorator.transform.parent = anchor;
-		decorator.transform.SetLocalPositionAndRotation(anchor.position + decorator.positionOffset, Quaternion.Euler(decorator.rotationOffset));
+		decorator.transform.SetLocalPositionAndRotation(decorator.positionOffset, Quaternion.Euler(decorator.rotationOffset));
         decorator.gameObject.SetActive(true);
     }
 
 	private void PrepareDecorators()
 	{
+		decoratorPoolParent.gameObject.SetActive(false); //Ensures all pool children are inactive
 		foreach(var prefab in decoratorPrefabs)
 		{
-			var decorator = Instantiate(prefab);
+			var decorator = Instantiate(prefab, decoratorPoolParent);
 
 			if (decorator.Compatibility.Contains(DecoratorCompatibility.Wall)) wallDecoPool.Add(decorator);
             if (decorator.Compatibility.Contains(DecoratorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
@@ -139,11 +142,49 @@ public class LevelLayoutManager : MonoBehaviour
 			var layout = deactivateQueue.Dequeue();
 			layout.gameObject.SetActive(false);
 			ActivateZoneEntranceDoor(layout.MapIndex + 1);
+			ResetDecorators(layout);
 			layout.MapIndex = -1;
 			yield return null;
 		}
 
 		MarkForDeactivation();
+	}
+
+	private void ResetDecorators(LevelLayout layout)
+	{
+        layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
+
+        foreach (var anchor in wallAnchors)
+        {
+			if(anchor.childCount ==  0) continue;
+            RemoveDecorators(anchor);
+        }
+
+        foreach (var anchor in ceilingAnchors)
+        {
+            if (anchor.childCount == 0) continue;
+            RemoveDecorators(anchor);
+        }
+
+        foreach (var anchor in floorAnchors)
+        {
+            if (anchor.childCount == 0) continue;
+            RemoveDecorators(anchor);
+        }
+    }
+
+	private void RemoveDecorators(Transform anchor)
+	{
+		foreach(Transform child in anchor)
+		{
+			if(child.TryGetComponent(out LevelDecorator decorator))
+			{
+                decorator.gameObject.SetActive(false);
+                decorator.transform.parent = decoratorPoolParent;
+				decorator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+				decorator.IsUsed = false;
+			}
+		}
 	}
 
 	private void ActivateZoneEntranceDoor(int index)

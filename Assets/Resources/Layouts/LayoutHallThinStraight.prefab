@@ -1045,14 +1045,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2444643587307499039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -2, y: 2.509, z: 2.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6911409695974046210}
   m_Father: {fileID: 2000641402297498854}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &2562329690497475183
 GameObject:
   m_ObjectHideFlags: 0
@@ -1528,14 +1528,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4245694452639356266}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -5.8, y: 2.509, z: 2.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 247330011285228488}
   m_Father: {fileID: 2000641402297498854}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &4268209089450221069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2309,6 +2309,18 @@ MonoBehaviour:
   doors:
   - {fileID: 4191145205934578913}
   layoutData: {fileID: 11400000, guid: 1f7803e134c4a7240b88ba2f1f6f6bfc, type: 2}
+  wallAnchors:
+  - {fileID: 2355920820329167699}
+  - {fileID: 7748751469530394827}
+  - {fileID: 2938609469110723932}
+  - {fileID: 7371747965266408618}
+  - {fileID: 2045211632446482150}
+  - {fileID: 4945609949538817903}
+  ceilingAnchors:
+  - {fileID: 5896794679097668511}
+  - {fileID: 8018587196770488369}
+  - {fileID: 6940356452074504991}
+  floorAnchors: []
   wallRenderers:
   - {fileID: 3205984982488840596}
   - {fileID: 5818261613625762258}
@@ -2960,14 +2972,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7896518648868033521}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -10.5, y: 2.509, z: 2.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3679731485566298093}
   m_Father: {fileID: 2000641402297498854}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &7976049969035809637
 GameObject:
   m_ObjectHideFlags: 0
@@ -4226,6 +4238,14 @@ PrefabInstance:
     - target: {fileID: 3345242961371951277, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
       propertyPath: m_Name
       value: door_with_hinge (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7514537173451202608, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.6000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 7514537173451202608, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 1.2985016
       objectReference: {fileID: 0}
     - target: {fileID: 8075702305741423895, guid: 09cb5fc710db1b042abcfadc81805229, type: 3}
       propertyPath: m_LocalScale.y
