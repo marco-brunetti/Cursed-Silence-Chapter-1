@@ -9,12 +9,18 @@ public class LevelLayoutManager : MonoBehaviour
 {
 	[SerializeField] private TextAsset mapJson;
 
+    private LayoutMap savedMap;
+    private List<Layout> loadedMap = new();
+    private LevelLayout[] layoutPrefabs;
     private HashSet<LevelLayout> layoutPool = new();
 	private Queue<LevelLayout> deactivateQueue = new();
-	private LevelLayout[] layoutPrefabs;
-	private LayoutMap layoutMap;
-    private List<Layout> loadedMap = new();
+
+	private LevelDecorator[] decoratorPrefabs;
+	private HashSet<LevelDecorator> wallDecoPool = new();
+	private HashSet<LevelDecorator> ceilingDecoPool = new();
+	private HashSet<LevelDecorator> floorDecoPool = new();
     private int currentIndex;
+	private System.Random random = new();
 
 	public static LevelLayoutManager Instance { get; private set; }
 	private void Awake()
@@ -23,25 +29,28 @@ public class LevelLayoutManager : MonoBehaviour
 		else Destroy(this);
 
 		layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
+		decoratorPrefabs = Resources.LoadAll<LevelDecorator>("Decorators/");
 		SetupMap();
-	}
+		PrepareDecorators();
+
+    }
 
 	private void SetupMap()
 	{
-		layoutMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
+		savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-		for (int i = 0; i < layoutMap.LayoutStates.Count; i++)
+		for (int i = 0; i < savedMap.LayoutStates.Count; i++)
 		{
-			if(layoutMap.LayoutStates[i].enable) loadedMap.Add(layoutMap.LayoutStates[i]);
+			if(savedMap.LayoutStates[i].enable) loadedMap.Add(savedMap.LayoutStates[i]);
 		}
 
 		var currentMapLayout = loadedMap[currentIndex];
-		ActivateLayout(null, currentMapLayout.nextLayoutShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
+		ActivateLayout(null, currentMapLayout.nextShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
 	}
 
-	public void ActivateLayout(LevelLayout previousLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
+	public void ActivateLayout(Transform previousLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
 	{
-        if (currentIndex == loadedMap.Count)
+        if (currentIndex >= loadedMap.Count)
         {
             Debug.Log("End of map.");
             return;
@@ -55,29 +64,73 @@ public class LevelLayoutManager : MonoBehaviour
 			layoutPool.Add(newLayout);
 		}
 
-		if (previousLayout) newLayout.transform.parent = previousLayout.transform;
-
+		if (previousLayout) newLayout.transform.parent = previousLayout;
         newLayout.transform.SetLocalPositionAndRotation(position, rotation);
         newLayout.transform.parent = null;
         newLayout.gameObject.SetActive(true);
 
-        //levelLayout.Setup(LayoutStyle.Style2, doorActions: null, decorators: decorators);
+		var i = currentIndex;
+        var mapLayout = loadedMap[i];
+		var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
 
-        //foreach (var decorator in decorators)
-        //{
-        //    decorator.ApplyDecorator(levelLayout);
-        //}
+        newLayout.Setup(i, mapLayout.style, mapLayout.nextShapes, isEndOfZone, decorators: null);
+        if (i == 0) newLayout.EntranceDoorEnabled(true);
+        Decorate(newLayout);
+        if (newLayout.HasDoors()) currentIndex++;
+    }
 
-        var mapLayout = loadedMap[currentIndex];
-		var isEndOfZone = currentIndex < loadedMap.Count - 1 && mapLayout.zone != loadedMap[currentIndex + 1].zone;
+	private void Decorate(LevelLayout layout)
+	{
+		layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
 
-        if (currentIndex < loadedMap.Count)
+		foreach(var anchor in wallAnchors)
+		{
+            if (wallDecoPool == null || wallDecoPool.Count == 0 || wallDecoPool.All(x => x.IsUsed)) break;
+            AddDecorator(wallDecoPool, anchor);
+		}
+
+        foreach (var anchor in ceilingAnchors)
         {
-            newLayout.Setup(currentIndex, mapLayout.style, mapLayout.nextLayoutShapes, isEndOfZone, decorators: null);
-            if (currentIndex == 0) newLayout.EntranceDoorEnabled(true);
-            if (newLayout.HasDoors()) currentIndex++;
+            if (ceilingDecoPool == null || ceilingDecoPool.Count == 0 || ceilingDecoPool.All(x => x.IsUsed)) break;
+            AddDecorator(ceilingDecoPool, anchor);
+        }
+
+        foreach (var anchor in floorAnchors)
+        {
+            if (floorDecoPool == null || floorDecoPool.Count == 0 || floorDecoPool.All(x => x.IsUsed)) break;
+            AddDecorator(floorDecoPool, anchor);
         }
     }
+
+	private void AddDecorator(HashSet<LevelDecorator> pool, Transform anchor)
+	{
+        LevelDecorator decorator = null;
+
+        do
+        {
+            var i = random.Next(pool.Count);
+            decorator = pool.ElementAt(i).IsUsed ? null : pool.ElementAt(i);
+        }
+        while (decorator == null);
+
+        decorator.transform.parent = anchor;
+		decorator.transform.SetLocalPositionAndRotation(anchor.position + decorator.positionOffset, Quaternion.Euler(decorator.rotationOffset));
+        decorator.gameObject.SetActive(true);
+    }
+
+	private void PrepareDecorators()
+	{
+		foreach(var prefab in decoratorPrefabs)
+		{
+			var decorator = Instantiate(prefab);
+
+			if (decorator.Compatibility.Contains(DecoratorCompatibility.Wall)) wallDecoPool.Add(decorator);
+            if (decorator.Compatibility.Contains(DecoratorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
+            if (decorator.Compatibility.Contains(DecoratorCompatibility.Floor)) floorDecoPool.Add(decorator);
+
+			decorator.gameObject.SetActive(false);
+        }
+	}
 
 	public IEnumerator DeactivateLevelLayouts()
 	{
@@ -114,4 +167,12 @@ public record LayoutMap
 {
 	[JsonProperty("layoutStates")]
 	public List<Layout> LayoutStates;
+}
+
+public record Layout
+{
+    public bool enable;
+    public int zone;
+    public List<LayoutShape> nextShapes;
+    public LayoutStyle style;
 }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -38,6 +40,11 @@ public class LevelLayout : MonoBehaviour
 	private LayoutStyle style;
 	private List<Vector3> initialDoorRotations = new();
 
+	private bool areFreeAnchorsReady = false;
+    private List<Transform> freeWallAnchors = new();
+    private List<Transform> freeCeilingAnchors = new();
+    private List<Transform> freeFloorAnchors = new();
+
     public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
 	{
 		this.style = style;
@@ -45,19 +52,54 @@ public class LevelLayout : MonoBehaviour
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
         GetMaterials();
 		SetLighting();
+		FindFreeAnchors();
     }
+
+	public void AddDecorators(List<LevelDecorator> decorators)
+	{
+
+	}
 
 	public bool HasDoors()
 	{
 		return doors != null && doors.Count > 0;
 	}
 
-	public void EntranceDoorEnabled(bool enabled)
+    public void GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors)
+    {
+        wallAnchors = freeWallAnchors;
+        ceilingAnchors = freeCeilingAnchors;
+        floorAnchors = freeFloorAnchors;
+    }
+
+    public void EntranceDoorEnabled(bool enabled)
 	{
 		entranceDoor.SetActive(enabled);
 	}
 
-	private void SetDoorActions(List<LayoutShape> nextLayoutShapes, bool isEndOfZone)
+    private void FindFreeAnchors()
+    {
+		if (areFreeAnchorsReady) return;
+
+        Array.ForEach(this.wallAnchors, anchor => {
+            var isAnchorFree = anchor.Cast<GameObject>().All(child => !child.activeInHierarchy);
+            if (isAnchorFree) freeWallAnchors.Add(anchor);
+        });
+
+        Array.ForEach(this.ceilingAnchors, anchor => {
+            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
+            if (isAnchorFree) freeCeilingAnchors.Add(anchor);
+        });
+
+        Array.ForEach(this.floorAnchors, anchor => {
+            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
+            if (isAnchorFree) freeFloorAnchors.Add(anchor);
+        });
+
+		areFreeAnchorsReady = true;
+    }
+
+    private void SetDoorActions(List<LayoutShape> nextLayoutShapes, bool isEndOfZone)
 	{
 		entranceDoor.SetActive(false);
 		if (doors == null || doors.Count == 0) return;
@@ -77,7 +119,7 @@ public class LevelLayout : MonoBehaviour
                 var nextShape = nextLayoutShapes[i];
                 var offset = NextLayoutOffsets[i];
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
-                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(previousLayout: this, nextShape, offset, rotation, null);
+                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(previousLayout: transform, nextShape, offset, rotation, null);
 
 				//If end of zone, start deactivation process of previous zone
 				if (isEndOfZone && i == nextLayoutShapes.Count - 1)
@@ -217,12 +259,4 @@ public class LevelLayout : MonoBehaviour
 
 		if(floorMat) Array.ForEach(floorRenderers, r => { var mats = r.materials; mats[0] = floorMat; r.materials = mats; });
 	}
-}
-
-public record Layout
-{
-	public bool enable;
-	public int zone;
-	public List<LayoutShape> nextLayoutShapes;
-	public LayoutStyle style;
 }

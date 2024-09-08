@@ -1,17 +1,19 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class LevelDecorator : MonoBehaviour
 {
-    public GameObject decoratorObject;
-    public Vector3 positionOffset;
-    public Vector3 rotationOffset;
+    [field: SerializeField] public List<DecoratorCompatibility> Compatibility { get; private set; }
+    [field: SerializeField] public Vector3 positionOffset { get; private set; }
+    [field: SerializeField] public Vector3 rotationOffset { get; private set; }
 
-    public void ApplyDecorator(LevelLayout layout)
-    {
-        var decoratorInstance = Instantiate(decoratorObject);
-        decoratorInstance.transform.SetParent(layout.transform);
-        decoratorInstance.transform.localPosition = positionOffset;
-        decoratorInstance.transform.localRotation = Quaternion.Euler(rotationOffset);
-    }
+    [NonSerialized] public bool IsUsed;
+}
+
+public enum DecoratorCompatibility
+{
+    Ceiling,
+    Wall,
+    Floor
 }
