@@ -83,34 +83,37 @@ public class LevelLayoutManager : MonoBehaviour
 	private void Decorate(LevelLayout layout)
 	{
 		layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
+		SetAnchors(wallDecoPool, wallAnchors, layout.Shape);
+		SetAnchors(ceilingDecoPool, ceilingAnchors, layout.Shape);
+		SetAnchors(floorDecoPool, floorAnchors, layout.Shape);
+    }
 
-		foreach(var anchor in wallAnchors)
-		{
-            if (wallDecoPool == null || wallDecoPool.Count == 0 || wallDecoPool.All(x => x.IsUsed)) break;
-            AddDecorator(wallDecoPool, anchor);
-		}
-
-        foreach (var anchor in ceilingAnchors)
+	private void SetAnchors(HashSet<LevelDecorator> pool, List<Transform> anchors, LayoutShape shape)
+	{
+        foreach (var anchor in anchors)
         {
-            if (ceilingDecoPool == null || ceilingDecoPool.Count == 0 || ceilingDecoPool.All(x => x.IsUsed)) break;
-            AddDecorator(ceilingDecoPool, anchor);
-        }
+            if (pool == null ||
+                pool.Count == 0 ||
+                pool.All(x => (x.IsUsed || !x.Enable)) ||
+                !pool.Any(x => x.Layouts.Contains(shape)))
+            {
+                break;
+            }
 
-        foreach (var anchor in floorAnchors)
-        {
-            if (floorDecoPool == null || floorDecoPool.Count == 0 || floorDecoPool.All(x => x.IsUsed)) break;
-            AddDecorator(floorDecoPool, anchor);
+            AddDecorator(pool, anchor, shape);
         }
     }
 
-	private void AddDecorator(HashSet<LevelDecorator> pool, Transform anchor)
+	private void AddDecorator(HashSet<LevelDecorator> pool, Transform anchor, LayoutShape shape)
 	{
+		if(!pool.Any(x=>x.Layouts.Contains(shape))) return;
+
         LevelDecorator decorator = null;
 
         do
         {
-            var i = random.Next(pool.Count);
-            decorator = pool.ElementAt(i).IsUsed ? null : pool.ElementAt(i);
+			var e = pool.ElementAt(random.Next(pool.Count));
+            decorator = (e.enabled && !e.IsUsed) ? e : null;
         }
         while (decorator == null);
 
@@ -128,9 +131,9 @@ public class LevelLayoutManager : MonoBehaviour
 		{
 			var decorator = Instantiate(prefab, decoratorPoolParent);
 
-			if (decorator.Compatibility.Contains(DecoratorCompatibility.Wall)) wallDecoPool.Add(decorator);
-            if (decorator.Compatibility.Contains(DecoratorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
-            if (decorator.Compatibility.Contains(DecoratorCompatibility.Floor)) floorDecoPool.Add(decorator);
+			if (decorator.Anchors.Contains(AnchorCompatibility.Wall)) wallDecoPool.Add(decorator);
+            if (decorator.Anchors.Contains(AnchorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
+            if (decorator.Anchors.Contains(AnchorCompatibility.Floor)) floorDecoPool.Add(decorator);
 
 			decorator.gameObject.SetActive(false);
         }

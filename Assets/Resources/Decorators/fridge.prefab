@@ -1973,16 +1973,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1841c4163f33d4846ad11e87ae810ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NonInspectable: 1
-  InspectableOnly: 0
   InspectableInitialRotation: {x: 0, y: 0, z: 0}
+  InspectablePosition: {x: 0, y: 0, z: 0}
   RotateX: 0
   RotateY: 0
   FreezePlayerRotation: 0
   FreezePlayerMotion: 0
-  InteractionBehaviours:
-  - {fileID: 4513657291842495093}
-  InspectionBehaviours: []
   DeactivateBehaviours: 0
 --- !u!114 &7590299920957306254
 MonoBehaviour:
@@ -2000,13 +1996,14 @@ MonoBehaviour:
   _doorPivot: {fileID: 7344937067731055991}
   _openRotation: {fileID: 7406096527515533878}
   _closedRotation: {fileID: 6226607998904922869}
-  _collider: {fileID: 1707705561250866320}
+  _colliders: []
   _movementDurationInSeconds: 1
   _isLockedClip: {fileID: 0}
   _isUnlockedClip: {fileID: 0}
   _isOpeningClip: {fileID: 8300000, guid: b9fe57db89439b841bb7d6780cd5df92, type: 3}
   _isClosingClip: {fileID: 8300000, guid: 810c234b2de04f84eb85fb843577cad1, type: 3}
   _audioSource: {fileID: 5021851573784561046}
+  _volume: 0
   _renderer: {fileID: 0}
   _emmisiveMat: {fileID: 0}
   _opaqueMat: {fileID: 0}
@@ -3896,6 +3893,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8810198371691658845}
+  - component: {fileID: -5502963902695019547}
   m_Layer: 0
   m_Name: fridge
   m_TagString: Untagged
@@ -3923,6 +3921,24 @@ Transform:
   - {fileID: 4777198219300897822}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &-5502963902695019547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8965368550252479462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cebacb0f896d44f4d9f7ba429d7a20fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Enable>k__BackingField: 1
+  <Layouts>k__BackingField: 06000000
+  <Anchors>k__BackingField: 01000000
+  <Position>k__BackingField: {x: 0, y: -1.518, z: 0.377}
+  <Rotation>k__BackingField: {x: 0, y: 0, z: 0}
+  scale: {x: 0, y: 0, z: 0}
 --- !u!1 &9125000620215532645
 GameObject:
   m_ObjectHideFlags: 0
