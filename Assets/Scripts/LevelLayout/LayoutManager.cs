@@ -31,9 +31,9 @@ public class LayoutManager : MonoBehaviour
         layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
         savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-		for (int i = 0; i < savedMap.LayoutStates.Count; i++)
+		for (int i = 0; i < savedMap.Layouts.Count; i++)
 		{
-			if(savedMap.LayoutStates[i].enable) loadedMap.Add(savedMap.LayoutStates[i]);
+			if(savedMap.Layouts[i].enable) loadedMap.Add(savedMap.Layouts[i]);
 		}
 
 		var currentMapLayout = loadedMap[currentIndex];
@@ -101,18 +101,4 @@ public class LayoutManager : MonoBehaviour
 			if (layout.MapIndex <= currentIndex) deactivateQueue.Enqueue(layout);
 		}
 	}
-}
-
-public record LayoutMap
-{
-	[JsonProperty("layoutStates")]
-	public List<Layout> LayoutStates;
-}
-
-public record Layout
-{
-    public bool enable;
-    public int zone;
-    public List<LayoutShape> nextShapes;
-    public LayoutStyle style;
 }
