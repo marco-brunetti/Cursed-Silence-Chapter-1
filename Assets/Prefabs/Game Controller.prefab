@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 5002140583082712567}
   - component: {fileID: 4090123171316715630}
   - component: {fileID: 8733182912033659462}
+  - component: {fileID: 7887161016194276903}
   - component: {fileID: 2596039457986743299}
   - component: {fileID: 6065556919959241560}
   m_Layer: 0
@@ -115,6 +116,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapJson: {fileID: 4900000, guid: 241e843ae7b51a74d9c2684db3408faa, type: 3}
+  decoratorManager: {fileID: 7887161016194276903}
+--- !u!114 &7887161016194276903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839538313791289853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efd2d7351fdc7474cbad7bf47e6e500c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   decoratorPoolParent: {fileID: 7826411767848889575}
 --- !u!114 &2596039457986743299
 MonoBehaviour:

@@ -119,12 +119,12 @@ public class LevelLayout : MonoBehaviour
                 var nextShape = nextLayoutShapes[i];
                 var offset = NextLayoutOffsets[i];
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
-                UnityAction action = () => LevelLayoutManager.Instance.ActivateLayout(previousLayout: transform, nextShape, offset, rotation, null);
+                UnityAction action = () => LayoutManager.Instance.ActivateLayout(previousLayout: transform, nextShape, offset, rotation, null);
 
 				//If end of zone, start deactivation process of previous zone
 				if (isEndOfZone && i == nextLayoutShapes.Count - 1)
 				{
-					var manager = LevelLayoutManager.Instance;
+					var manager = LayoutManager.Instance;
 					manager.StartCoroutine(manager.DeactivateLevelLayouts());
 				}
 
