@@ -23,17 +23,12 @@ public class LayoutManager : MonoBehaviour
 		if (Instance == null) Instance = this;
 		else Destroy(this);
 
-		SetupMap();
-    }
-
-	private void SetupMap()
-	{
-        layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
-        savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
+		layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
+		savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
 		for (int i = 0; i < savedMap.Layouts.Count; i++)
 		{
-			if(savedMap.Layouts[i].enable) loadedMap.Add(savedMap.Layouts[i]);
+			if (savedMap.Layouts[i].enable) loadedMap.Add(savedMap.Layouts[i]);
 		}
 
 		var currentMapLayout = loadedMap[currentIndex];
@@ -78,7 +73,7 @@ public class LayoutManager : MonoBehaviour
 			var layout = deactivateQueue.Dequeue();
 			layout.gameObject.SetActive(false);
 			ActivateZoneEntranceDoor(layout.MapIndex + 1);
-			decoratorManager.ResetDecorators(layout);
+			decoratorManager.RemoveFrom(layout);
 			layout.MapIndex = -1;
 			yield return null;
 		}

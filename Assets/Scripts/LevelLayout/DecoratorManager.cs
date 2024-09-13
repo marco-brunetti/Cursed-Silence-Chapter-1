@@ -5,6 +5,7 @@ using UnityEngine;
 public class DecoratorManager : MonoBehaviour
 {
 	[SerializeField] private Transform decoratorPoolParent;
+	[SerializeField] private LevelItemManager levelItemManager;
 
     private System.Random random = new();
     private LevelDecorator[] decoratorPrefabs;
@@ -19,8 +20,23 @@ public class DecoratorManager : MonoBehaviour
 		if (Instance == null) Instance = this;
 		else Destroy(this);
 
-        PrepareDecorators();
-    }
+		decoratorPoolParent.gameObject.SetActive(false); //Ensures all pool children are inactive
+
+		decoratorPrefabs = Resources.LoadAll<LevelDecorator>("Decorators/");
+
+
+		//TODO: instantiate only when using decorators
+		foreach (var prefab in decoratorPrefabs)
+		{
+			var decorator = Instantiate(prefab, decoratorPoolParent);
+
+			if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Wall)) wallDecoPool.Add(decorator);
+			if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
+			if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Floor)) floorDecoPool.Add(decorator);
+
+			decorator.gameObject.SetActive(false);
+		}
+	}
 
 	public void Decorate(LevelLayout layout)
 	{
@@ -30,9 +46,9 @@ public class DecoratorManager : MonoBehaviour
 		SetAnchors(floorDecoPool, floorAnchors, layout.Shape);
     }
 
-	private void SetAnchors(HashSet<LevelDecorator> pool, List<Transform> anchors, LayoutShape shape)
+	private void SetAnchors(HashSet<LevelDecorator> pool, List<Transform> layoutAnchors, LayoutShape shape)
 	{
-        foreach (var anchor in anchors)
+        foreach (var anchor in layoutAnchors)
         {
             if (pool == null ||
                 pool.Count == 0 ||
@@ -46,7 +62,7 @@ public class DecoratorManager : MonoBehaviour
         }
     }
 
-	private void AddDecorator(HashSet<LevelDecorator> pool, Transform anchor, LayoutShape shape)
+	private void AddDecorator(HashSet<LevelDecorator> pool, Transform layoutAnchor, LayoutShape shape)
 	{
 		if(!pool.Any(x=>x.Layouts.Contains(shape))) return;
 
@@ -60,56 +76,38 @@ public class DecoratorManager : MonoBehaviour
         while (decorator == null);
 
 		decorator.IsUsed = true;
-        decorator.transform.parent = anchor;
+        decorator.transform.parent = layoutAnchor;
 		decorator.transform.SetLocalPositionAndRotation(decorator.Position, Quaternion.Euler(decorator.Rotation));
 		decorator.transform.localScale = decorator.Scale;
         decorator.gameObject.SetActive(true);
     }
 
-	private void PrepareDecorators()
-	{
-		decoratorPoolParent.gameObject.SetActive(false); //Ensures all pool children are inactive
-
-        decoratorPrefabs = Resources.LoadAll<LevelDecorator>("Decorators/");
-
-        foreach (var prefab in decoratorPrefabs)
-		{
-			var decorator = Instantiate(prefab, decoratorPoolParent);
-
-			if (decorator.Anchors.Contains(AnchorCompatibility.Wall)) wallDecoPool.Add(decorator);
-            if (decorator.Anchors.Contains(AnchorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
-            if (decorator.Anchors.Contains(AnchorCompatibility.Floor)) floorDecoPool.Add(decorator);
-
-			decorator.gameObject.SetActive(false);
-        }
-	}
-
-	public void ResetDecorators(LevelLayout layout)
+	public void RemoveFrom(LevelLayout layout)
 	{
         layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
 
-        foreach (var anchor in wallAnchors)
+        foreach (var layoutAnchor in wallAnchors)
         {
-			if(anchor.childCount ==  0) continue;
-            RemoveDecorators(anchor);
+			if(layoutAnchor.childCount ==  0) continue;
+            RemoveDecorators(layoutAnchor);
         }
 
-        foreach (var anchor in ceilingAnchors)
+        foreach (var layoutAnchor in ceilingAnchors)
         {
-            if (anchor.childCount == 0) continue;
-            RemoveDecorators(anchor);
+            if (layoutAnchor.childCount == 0) continue;
+            RemoveDecorators(layoutAnchor);
         }
 
-        foreach (var anchor in floorAnchors)
+        foreach (var layoutAnchor in floorAnchors)
         {
-            if (anchor.childCount == 0) continue;
-            RemoveDecorators(anchor);
+            if (layoutAnchor.childCount == 0) continue;
+            RemoveDecorators(layoutAnchor);
         }
     }
 
-	private void RemoveDecorators(Transform anchor)
+	private void RemoveDecorators(Transform layoutAnchor)
 	{
-		foreach(Transform child in anchor)
+		foreach(Transform child in layoutAnchor)
 		{
 			if(child.TryGetComponent(out LevelDecorator decorator))
 			{
