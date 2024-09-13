@@ -19,10 +19,10 @@ public record Layout
 
 public record LayoutDecorator
 {
-    int id;
+	public int id { get; set; }
 }
 
 public record LayoutItems
 {
-    int id;
+	public int id { get; set; }
 }

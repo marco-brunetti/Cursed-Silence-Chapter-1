@@ -14,7 +14,8 @@ public class LevelItemManager : MonoBehaviour
 
 	public void AddItems(Transform[] itemAnchors)
 	{
-		var freeAnchors = new List<Transform>(); 
+		var freeAnchors = new List<Transform>();
+
 		Array.ForEach(itemAnchors, anchor => {
 			var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
 			if (isAnchorFree) freeAnchors.Add(anchor);

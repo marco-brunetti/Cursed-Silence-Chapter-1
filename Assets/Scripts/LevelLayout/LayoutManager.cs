@@ -62,6 +62,7 @@ public class LayoutManager : MonoBehaviour
 
         newLayout.Setup(i, mapLayout.style, mapLayout.nextShapes, isEndOfZone, decorators: null);
         if (i == 0) newLayout.EntranceDoorEnabled(true);
+		newLayout.DecoratorList = mapLayout.decorators;
         decoratorManager.Decorate(newLayout);
         if (newLayout.HasDoors()) currentIndex++;
     }

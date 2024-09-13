@@ -36,6 +36,7 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private LayoutLight[] style4Lights;
 
 	[NonSerialized] public int MapIndex = -1;
+	[NonSerialized] public List<LayoutDecorator> DecoratorList = new();
 
 	private LayoutStyle style;
 	private List<Vector3> initialDoorRotations = new();
@@ -66,10 +67,10 @@ public class LevelLayout : MonoBehaviour
 	}
 
     public void GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors)
-    {
-        wallAnchors = freeWallAnchors;
-        ceilingAnchors = freeCeilingAnchors;
-        floorAnchors = freeFloorAnchors;
+    {	
+		wallAnchors = new(freeWallAnchors);
+		ceilingAnchors = new(freeCeilingAnchors);
+		floorAnchors = new(freeFloorAnchors);
     }
 
     public void EntranceDoorEnabled(bool enabled)
