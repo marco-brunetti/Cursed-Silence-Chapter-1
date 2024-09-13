@@ -10,11 +10,12 @@ public class LayoutManager : MonoBehaviour
 	[SerializeField] private TextAsset mapJson;
 	[SerializeField] private DecoratorManager decoratorManager;
 
-    private int currentIndex;
-    private LayoutMap savedMap;
-    private List<Layout> loadedMap = new();
-    private LevelLayout[] layoutPrefabs;
-    private HashSet<LevelLayout> layoutPool = new();
+	private int currentIndex;
+	private LayoutMap savedMap;
+	private List<Layout> loadedMap = new();
+	private LevelLayout mainLevel;
+	private LevelLayout[] layoutPrefabs;
+	private HashSet<LevelLayout> layoutPool = new();
 	private Queue<LevelLayout> deactivateQueue = new();
 
 	public static LayoutManager Instance { get; private set; }
@@ -25,6 +26,9 @@ public class LayoutManager : MonoBehaviour
 
 		layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
 		savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
+
+		mainLevel = Instantiate(Array.Find(layoutPrefabs, x => x.Shape == LayoutShape.MainLevel));
+		mainLevel.gameObject.SetActive(false);
 
 		for (int i = 0; i < savedMap.Layouts.Count; i++)
 		{
@@ -37,35 +41,44 @@ public class LayoutManager : MonoBehaviour
 
 	public void ActivateLayout(Transform previousLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
 	{
-        if (currentIndex >= loadedMap.Count)
-        {
-            Debug.Log("End of map.");
-            return;
-        }
-
-        var newLayout = layoutPool.FirstOrDefault(x => x.Shape == nextShape && !x.gameObject.activeInHierarchy);
-
-		if (!newLayout)
+		if (currentIndex >= loadedMap.Count)
 		{
-			newLayout = Instantiate(Array.Find(layoutPrefabs, x => x.Shape == nextShape));
-			layoutPool.Add(newLayout);
+			Debug.Log("End of map.");
+			return;
+		}
+
+		LevelLayout newLayout = null;
+
+		if(nextShape == LayoutShape.MainLevel)
+		{
+			newLayout = mainLevel;
+		}
+		else
+		{
+			newLayout = layoutPool.FirstOrDefault(x => x.Shape == nextShape && !x.gameObject.activeInHierarchy);
+
+			if (!newLayout)
+			{
+				newLayout = Instantiate(Array.Find(layoutPrefabs, x => x.Shape == nextShape));
+				layoutPool.Add(newLayout);
+			}
 		}
 
 		if (previousLayout) newLayout.transform.parent = previousLayout;
-        newLayout.transform.SetLocalPositionAndRotation(position, rotation);
-        newLayout.transform.parent = null;
-        newLayout.gameObject.SetActive(true);
+		newLayout.transform.SetLocalPositionAndRotation(position, rotation);
+		newLayout.transform.parent = null;
+		newLayout.gameObject.SetActive(true);
 
 		var i = currentIndex;
-        var mapLayout = loadedMap[i];
+		var mapLayout = loadedMap[i];
 		var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
 
-        newLayout.Setup(i, mapLayout.style, mapLayout.nextShapes, isEndOfZone, decorators: null);
-        if (i == 0) newLayout.EntranceDoorEnabled(true);
+		newLayout.Setup(i, mapLayout.style, mapLayout.nextShapes, isEndOfZone, decorators: null);
+		if (i == 0) newLayout.EntranceDoorEnabled(true);
 		newLayout.DecoratorList = mapLayout.decorators;
-        decoratorManager.Decorate(newLayout);
-        if (newLayout.HasDoors()) currentIndex++;
-    }
+		decoratorManager.Decorate(newLayout);
+		if (newLayout.HasDoors()) currentIndex++;
+	}
 
 	public IEnumerator DeactivateLevelLayouts()
 	{
@@ -86,8 +99,8 @@ public class LayoutManager : MonoBehaviour
 	{
 		if (deactivateQueue.Count == 0 && index < loadedMap.Count)
 		{
-            layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy).EntranceDoorEnabled(true);
-        }
+			layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy).EntranceDoorEnabled(true);
+		}
 	}
 
 	private void MarkForDeactivation()
