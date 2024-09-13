@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class DecoratorManager : MonoBehaviour
 {
@@ -16,33 +14,14 @@ public class DecoratorManager : MonoBehaviour
 	private Dictionary<int, LevelDecorator> ceilingDecoPool = new();
 	private Dictionary<int, LevelDecorator> floorDecoPool = new();
 
-	//private HashSet<LevelDecorator> wallDecoPool = new();
-	//private HashSet<LevelDecorator> ceilingDecoPool = new();
-	//private HashSet<LevelDecorator> floorDecoPool = new();
-
-
-	public static DecoratorManager Instance { get; private set; }
 	private void Awake()
 	{
-		if (Instance == null) Instance = this;
-		else Destroy(this);
-
 		decoratorPoolParent.gameObject.SetActive(false); //Ensures all pool children are inactive
 
 		prefabResources = Resources.LoadAll<LevelDecorator>("Decorators/");
 
-
-		//TODO: instantiate only when using decorators
 		foreach (var prefab in prefabResources)
 		{
-			//var decorator = Instantiate(prefab, decoratorPoolParent);
-
-			//if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Wall)) wallDecoPool.Add(decorator);
-			//if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Ceiling)) ceilingDecoPool.Add(decorator);
-			//if (decorator.LayoutAnchors.Contains(LayoutAnchorCompatibility.Floor)) floorDecoPool.Add(decorator);
-
-			//decorator.gameObject.SetActive(false);
-
 			prefabs.Add(prefab.Id, prefab);
 		}
 	}
@@ -113,6 +92,7 @@ public class DecoratorManager : MonoBehaviour
 		decorator.transform.parent = anchors[0];
 		decorator.transform.SetLocalPositionAndRotation(decorator.Position, Quaternion.Euler(decorator.Rotation));
 		decorator.transform.localScale = decorator.Scale;
+		levelItemManager.AddItems(decorator);
 		decorator.gameObject.SetActive(true);
 		anchors.RemoveAt(0);
 	}
@@ -123,20 +103,17 @@ public class DecoratorManager : MonoBehaviour
 
 		foreach (var layoutAnchor in wallAnchors)
 		{
-			if(layoutAnchor.childCount ==  0) continue;
-			RemoveDecorators(layoutAnchor);
+			if(layoutAnchor.childCount >  0) RemoveDecorators(layoutAnchor);
 		}
 
 		foreach (var layoutAnchor in ceilingAnchors)
 		{
-			if (layoutAnchor.childCount == 0) continue;
-			RemoveDecorators(layoutAnchor);
+			if (layoutAnchor.childCount > 0) RemoveDecorators(layoutAnchor);
 		}
 
 		foreach (var layoutAnchor in floorAnchors)
 		{
-			if (layoutAnchor.childCount == 0) continue;
-			RemoveDecorators(layoutAnchor);
+			if (layoutAnchor.childCount > 0) RemoveDecorators(layoutAnchor);
 		}
 	}
 
@@ -147,6 +124,7 @@ public class DecoratorManager : MonoBehaviour
 			if(child.TryGetComponent(out LevelDecorator decorator))
 			{
 				decorator.gameObject.SetActive(false);
+				levelItemManager.RemoveFrom(decorator);
 				decorator.transform.parent = decoratorPoolParent;
 				decorator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 				decorator.IsUsed = false;

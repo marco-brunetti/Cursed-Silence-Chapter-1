@@ -4,30 +4,38 @@ using UnityEngine;
 
 public class LevelDecorator : MonoBehaviour
 {
-    [field: SerializeField, Header("Decorator parameters")] public int Id { get; private set; } = 0;
-    [field: SerializeField] public bool Enable { get; private set; } = true;
-    [field: SerializeField] public List<LayoutShape> Layouts { get; private set; }
-    [field: SerializeField] public List<LayoutAnchorCompatibility> LayoutAnchors { get; private set; }
-    [field: SerializeField] public Vector3 Position { get; private set; }
-    [field: SerializeField] public Vector3 Rotation { get; private set; }
+	[field: SerializeField, Header("Decorator parameters")] public int Id { get; private set; } = 0;
+	[field: SerializeField] public bool Enable { get; private set; } = true;
+	[field: SerializeField] public List<LayoutShape> Layouts { get; private set; }
+	[field: SerializeField] public List<LayoutAnchorCompatibility> LayoutAnchors { get; private set; }
+	[field: SerializeField] public Vector3 Position { get; private set; }
+	[field: SerializeField] public Vector3 Rotation { get; private set; }
 
-    [SerializeField] private Vector3 scale;
+	[SerializeField] private Vector3 scale;
 
-    [field: SerializeField, Header("Item parameters")] public List<Transform> ItemAnchors {  get; private set; }
+	[Header("Item parameters")]
+	[SerializeField] private List<Transform> itemAnchors;
+	[NonSerialized] public List<LevelItem> ItemList = new();
 
-    [NonSerialized] public bool IsUsed;
-    public Vector3 Scale 
-    {
-        get
-        {
-            return scale == Vector3.zero ? transform.localScale : scale;
-        }
-    }
+	[NonSerialized] public bool IsUsed;
+
+	public Vector3 Scale 
+	{
+		get
+		{
+			return scale == Vector3.zero ? transform.localScale : scale;
+		}
+	}
+
+	public List<Transform> GetItemAnchors()
+	{
+		return new(itemAnchors);
+	}
 }
 
 public enum LayoutAnchorCompatibility
 {
-    Ceiling,
-    Wall,
-    Floor
+	Ceiling,
+	Wall,
+	Floor
 }
