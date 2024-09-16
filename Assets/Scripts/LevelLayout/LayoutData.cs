@@ -1,8 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LayoutData", menuName = "ScriptableObjects/LayoutData", order = 1)]
 public class LayoutData : ScriptableObject
 {
+	[Header("LayoutPrefabs")]
+	public Dictionary<LayoutType, LevelLayout> prefabs = new();
+
+
 	[Header("Style0: Original blue cursed silence layout")]
 	public Material WallMat1;
 	public Material LowerWallMat1;
@@ -35,24 +40,43 @@ public class LayoutData : ScriptableObject
 	public Material WindowDecorMat5;
 }
 
-public enum LayoutStyle
-{
-	Style0,
-	Style1,
-	Style2,
-	Style3,
-	Style4
-}
+// style0: reserved for main level and related
+// style1: modern house
+// style2: old house
+// style3: abandoned structure
+// style4: psychiatric ward
 
-public enum LayoutShape
+public enum LayoutType
 {
-	None,
-	HallStraight,
-	HallShortT,
-	HallLongT,
-	HallLeftL,
-	HallRightL,
-	HallThinStraight,
-	RoomSmall,
-	MainLevel
+    None,
+
+    MainLevelStyle0,
+	StraightHallwayStyle1,
+	StraightHallwayStyle2,
+	StraightHallwayStyle3,
+	StraightHallwayStyle4,
+
+	THallwayStyle1,
+	THallwayStyle2,
+	THallwayStyle3,
+	THallwayStyle4,
+
+	LeftLHallwayStyle1,
+	LeftLHallwayStyle2,
+	LeftLHallwayStyle3,
+
+	RightLHallwayStyle1,
+	RightLHallwayStyle2,
+	RightLHallwayStyle3,
+
+	SmallOfficeStyle1,
+	BedroomStyle2,
+	BathroomStyle3,
+	ShedStyle3,
+	TinyCellStyle4,
+	FoodStackStyle1,
+	TinyHouseVintageStyle2,
+	PaintingRoomStyle1,
+	PlayingRoomStyle1,
+	PlayingRoomStyle2
 }

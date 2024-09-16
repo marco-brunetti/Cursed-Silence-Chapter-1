@@ -11,10 +11,9 @@ public record Layout
 {
     public bool enable;
     public int zone;
-    public LayoutStyle style;
     public List<LayoutDecorator> decorators;
     public List<LayoutItems> layoutItems;
-    public List<LayoutShape> nextShapes;
+    public List<LayoutType> nextShapes;
 }
 
 public record LayoutDecorator

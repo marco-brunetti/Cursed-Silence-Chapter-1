@@ -42,9 +42,9 @@ GameObject:
   - component: {fileID: 5002140583082712567}
   - component: {fileID: 4090123171316715630}
   - component: {fileID: 8733182912033659462}
-  - component: {fileID: 7887161016194276903}
   - component: {fileID: 2596039457986743299}
   - component: {fileID: 6065556919959241560}
+  - component: {fileID: 4544341220101656769}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -116,20 +116,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapJson: {fileID: 4900000, guid: 241e843ae7b51a74d9c2684db3408faa, type: 3}
-  decoratorManager: {fileID: 7887161016194276903}
---- !u!114 &7887161016194276903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839538313791289853}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efd2d7351fdc7474cbad7bf47e6e500c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  decoratorPoolParent: {fileID: 7826411767848889575}
+  layoutData: {fileID: 11400000, guid: 1f7803e134c4a7240b88ba2f1f6f6bfc, type: 2}
+  itemManager: {fileID: 4544341220101656769}
 --- !u!114 &2596039457986743299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +145,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2b1859bd91214a4e84c69447c0ed30f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4544341220101656769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839538313791289853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739d610d12d32844582697cf8950cc25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPoolParent: {fileID: 7826411767848889575}
 --- !u!1 &2456963405112195997
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,7 +296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7826411767848889575}
   m_Layer: 0
-  m_Name: decorator_pool_parent
+  m_Name: item_pool_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
