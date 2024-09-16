@@ -5,7 +5,7 @@ using UnityEngine;
 public class LayoutData : ScriptableObject
 {
 	[Header("LayoutPrefabs")]
-	public Dictionary<LayoutType, LevelLayout> prefabs = new();
+	public List<LevelLayout> prefabs = new();
 
 
 	[Header("Style0: Original blue cursed silence layout")]

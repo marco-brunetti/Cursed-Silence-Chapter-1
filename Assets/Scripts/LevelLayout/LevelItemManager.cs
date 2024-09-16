@@ -7,10 +7,10 @@ public class LevelItemManager : MonoBehaviour
 	private System.Random random = new();
 	private Leveltem[] prefabResources;
 	private Dictionary<int, Leveltem> prefabs = new();
-	private Dictionary<int, Leveltem> decoPool = new();
-	private Dictionary<int, Leveltem> wallDecoPool = new();
-	private Dictionary<int, Leveltem> ceilingDecoPool = new();
-	private Dictionary<int, Leveltem> floorDecoPool = new();
+	private Dictionary<int, Leveltem> itemPool = new();
+	private Dictionary<int, Leveltem> wallItemPool = new();
+	private Dictionary<int, Leveltem> ceilingItemPool = new();
+	private Dictionary<int, Leveltem> floorItemPool = new();
 
 	private void Awake()
 	{
@@ -58,7 +58,7 @@ public class LevelItemManager : MonoBehaviour
 
 	private Leveltem GetItem(int id)
 	{
-		if (decoPool.TryGetValue(id, out var item))
+		if (itemPool.TryGetValue(id, out var item))
 		{
 			//Makes sure the item is free for use
 			if(item.transform.parent = itemPoolParent)

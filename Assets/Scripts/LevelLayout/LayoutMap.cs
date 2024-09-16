@@ -11,17 +11,11 @@ public record Layout
 {
     public bool enable;
     public int zone;
-    public List<LayoutDecorator> decorators;
-    public List<LayoutItems> layoutItems;
+    public List<LayoutItem> items;
     public List<LayoutType> nextShapes;
 }
 
-public record LayoutDecorator
-{
-	public int id { get; set; }
-}
-
-public record LayoutItems
+public record LayoutItem
 {
 	public int id { get; set; }
 }

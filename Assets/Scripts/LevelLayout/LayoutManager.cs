@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +8,15 @@ using UnityEngine;
 public class LayoutManager : MonoBehaviour
 {
 	[SerializeField] private TextAsset mapJson;
-    [SerializeField] private LayoutData layoutData;
-    [SerializeField] private LevelItemManager itemManager;
+	[SerializeField] private LayoutData layoutData;
+	[SerializeField] private LevelItemManager itemManager;
 
-    private int currentIndex;
+	private int currentIndex;
 	private LayoutMap savedMap;
 	private List<Layout> loadedMap = new();
 	private LevelLayout mainLevel;
-    private Dictionary<LayoutType, LevelLayout> layoutPool = new();
-    private Queue<KeyValuePair<LayoutType, LevelLayout>> deactivateQueue = new();
+	private HashSet<LevelLayout> layoutPool = new();
+	private Queue<LevelLayout> deactivateQueue = new();
 
 	public static LayoutManager Instance { get; private set; }
 	private void Awake()
@@ -25,10 +26,12 @@ public class LayoutManager : MonoBehaviour
 
 		savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-		if (layoutData.prefabs.TryGetValue(LayoutType.MainLevelStyle0, out var mainLevelPrefab))
-		{
-            mainLevel = Instantiate(mainLevelPrefab);
-            mainLevel.gameObject.SetActive(false);
+		var mainLevelPrefab = layoutData.prefabs.FirstOrDefault(x => x != null && x.Type == LayoutType.MainLevelStyle0);
+
+        if (mainLevelPrefab)
+        {
+			mainLevel = Instantiate(mainLevelPrefab);
+			mainLevel.gameObject.SetActive(false);
         }
 
 		for (int i = 0; i < savedMap.Layouts.Count; i++)
@@ -37,10 +40,10 @@ public class LayoutManager : MonoBehaviour
 		}
 
 		var currentMapLayout = loadedMap[currentIndex];
-		ActivateLayout(null, currentMapLayout.nextShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
+		ActivateLayout(null, currentMapLayout.nextShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero));
 	}
 
-	public void ActivateLayout(Transform previousLayout, LayoutType nextShape, Vector3 position, Quaternion rotation, params Leveltem[] decorators)
+	public void ActivateLayout(Transform previousLayout, LayoutType nextType, Vector3 position, Quaternion rotation)
 	{
 		if (currentIndex >= loadedMap.Count)
 		{
@@ -50,25 +53,29 @@ public class LayoutManager : MonoBehaviour
 
 		LevelLayout newLayout = null;
 
-		if(nextShape == LayoutType.MainLevelStyle0 && mainLevel)
+		if(nextType == LayoutType.MainLevelStyle0 && mainLevel)
 		{
 			newLayout = mainLevel;
 		}
 		else
 		{
-			if(!layoutPool.TryGetValue(nextShape, out newLayout))
+			newLayout = layoutPool.FirstOrDefault(x => x!= null && x.Type == nextType && !x.gameObject.activeInHierarchy);
+
+			if (!newLayout)
 			{
-				if(layoutData.prefabs.TryGetValue(nextShape, out newLayout))
+				var prefab = layoutData.prefabs.FirstOrDefault(x=> x!= null && x.Type == nextType);
+
+				if(prefab)
 				{
-					newLayout = Instantiate(newLayout);
-					layoutPool.Add(newLayout.Shape, newLayout);
+                    newLayout = Instantiate(prefab);
+                    layoutPool.Add(newLayout);
                 }
 				else
 				{
-					Debug.Log($"Layout shape {nextShape} not found.");
+					Debug.Log($"Level type {nextType} not found.");
 					return;
 				}
-            }
+			}
 		}
 
 		if (previousLayout) newLayout.transform.parent = previousLayout;
@@ -82,7 +89,7 @@ public class LayoutManager : MonoBehaviour
 
 		newLayout.Setup(i, mapLayout.nextShapes, isEndOfZone, decorators: null);
 		if (i == 0) newLayout.EntranceDoorEnabled(true);
-		newLayout.ItemList = mapLayout.decorators;
+		newLayout.ItemList = mapLayout.items;
 		itemManager.FillItems(newLayout);
 		if (newLayout.HasDoors()) currentIndex++;
 	}
@@ -92,10 +99,10 @@ public class LayoutManager : MonoBehaviour
 		while (deactivateQueue.Count > 0)
 		{
 			var layout = deactivateQueue.Dequeue();
-			layout.Value.gameObject.SetActive(false);
-			ActivateZoneEntranceDoor(layout.Value.MapIndex + 1);
-			itemManager.RemoveFrom(layout.Value);
-			layout.Value.MapIndex = -1;
+			layout.gameObject.SetActive(false);
+			ActivateZoneEntranceDoor(layout.MapIndex + 1);
+			itemManager.RemoveFrom(layout);
+			layout.MapIndex = -1;
 			yield return null;
 		}
 
@@ -106,7 +113,7 @@ public class LayoutManager : MonoBehaviour
 	{
 		if (deactivateQueue.Count == 0 && index < loadedMap.Count)
 		{
-			layoutPool.FirstOrDefault(x => x.Value.MapIndex == index && x.Value.gameObject.activeInHierarchy).Value.EntranceDoorEnabled(true);
+			layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy).EntranceDoorEnabled(true);
 		}
 	}
 
@@ -114,7 +121,7 @@ public class LayoutManager : MonoBehaviour
 	{
 		foreach (var layout in layoutPool)
 		{
-			if (layout.Value.MapIndex <= currentIndex) deactivateQueue.Enqueue(layout);
+			if (layout.MapIndex <= currentIndex) deactivateQueue.Enqueue(layout);
 		}
 	}
 }

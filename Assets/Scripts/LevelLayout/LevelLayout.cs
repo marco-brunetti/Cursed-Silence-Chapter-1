@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class LevelLayout : MonoBehaviour
 {
-	[field: SerializeField] public LayoutType Shape { get; private set; }
+	[field: SerializeField] public LayoutType Type { get; private set; }
 
     [field: SerializeField] public List<Vector3> NextLayoutOffsets { get; private set; }
     [field: SerializeField] public List<Vector3> NextLayoutRotations { get; private set; }
@@ -34,7 +34,7 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private LayoutLight[] style4Lights;
 
 	[NonSerialized] public int MapIndex = -1;
-	[NonSerialized] public List<LayoutDecorator> ItemList = new();
+	[NonSerialized] public List<LayoutItem> ItemList = new();
 
 	private List<Vector3> initialDoorRotations = new();
 
@@ -109,7 +109,7 @@ public class LevelLayout : MonoBehaviour
                 var nextShape = nextLayoutShapes[i];
                 var offset = NextLayoutOffsets[i];
                 var rotation = Quaternion.Euler(NextLayoutRotations[i]);
-                UnityAction action = () => LayoutManager.Instance.ActivateLayout(previousLayout: transform, nextShape, offset, rotation, null);
+                UnityAction action = () => LayoutManager.Instance.ActivateLayout(previousLayout: transform, nextShape, offset, rotation);
 
 				//If end of zone, start deactivation process of previous zone
 				if (isEndOfZone && i == nextLayoutShapes.Count - 1)
