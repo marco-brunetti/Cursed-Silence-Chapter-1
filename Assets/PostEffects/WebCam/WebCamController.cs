@@ -9,7 +9,7 @@ public class WebCamController : MonoBehaviour {
     int fps = 60;
     Texture2D texture;
     WebCamTexture webcamTexture;
-    Color32[] colors = null;
+    //Color32[] colors = null;
 
 
     // Use this for initialization

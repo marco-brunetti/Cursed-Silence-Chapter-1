@@ -8,7 +8,7 @@ using UnityEngine;
 public class LayoutManager : MonoBehaviour
 {
 	[SerializeField] private TextAsset mapJson;
-	[SerializeField] private DecoratorManager decoratorManager;
+	[SerializeField] private LevelItemManager decoratorManager;
 
 	private int currentIndex;
 	private LayoutMap savedMap;
@@ -27,8 +27,12 @@ public class LayoutManager : MonoBehaviour
 		layoutPrefabs = Resources.LoadAll<LevelLayout>("Layouts/");
 		savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-		mainLevel = Instantiate(Array.Find(layoutPrefabs, x => x.Shape == LayoutShape.MainLevel));
-		mainLevel.gameObject.SetActive(false);
+		var mainLevelPrefab = Array.Find(layoutPrefabs, x => x.Shape == LayoutShape.MainLevel);
+        if(mainLevelPrefab)
+		{
+            mainLevel = Instantiate(mainLevelPrefab);
+            mainLevel.gameObject.SetActive(false);
+        }
 
 		for (int i = 0; i < savedMap.Layouts.Count; i++)
 		{
@@ -39,7 +43,7 @@ public class LayoutManager : MonoBehaviour
 		ActivateLayout(null, currentMapLayout.nextShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero), null);
 	}
 
-	public void ActivateLayout(Transform previousLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params LevelDecorator[] decorators)
+	public void ActivateLayout(Transform previousLayout, LayoutShape nextShape, Vector3 position, Quaternion rotation, params Leveltem[] decorators)
 	{
 		if (currentIndex >= loadedMap.Count)
 		{
@@ -49,7 +53,7 @@ public class LayoutManager : MonoBehaviour
 
 		LevelLayout newLayout = null;
 
-		if(nextShape == LayoutShape.MainLevel)
+		if(nextShape == LayoutShape.MainLevel && mainLevel)
 		{
 			newLayout = mainLevel;
 		}
@@ -75,8 +79,8 @@ public class LayoutManager : MonoBehaviour
 
 		newLayout.Setup(i, mapLayout.style, mapLayout.nextShapes, isEndOfZone, decorators: null);
 		if (i == 0) newLayout.EntranceDoorEnabled(true);
-		newLayout.DecoratorList = mapLayout.decorators;
-		decoratorManager.Decorate(newLayout);
+		newLayout.ItemList = mapLayout.decorators;
+		decoratorManager.FillItems(newLayout);
 		if (newLayout.HasDoors()) currentIndex++;
 	}
 

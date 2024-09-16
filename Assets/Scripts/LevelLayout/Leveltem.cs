@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelDecorator : MonoBehaviour
+public class Leveltem : MonoBehaviour
 {
 	[field: SerializeField, Header("Decorator parameters")] public int Id { get; private set; } = 0;
 	[field: SerializeField] public bool Enable { get; private set; } = true;
@@ -15,7 +15,6 @@ public class LevelDecorator : MonoBehaviour
 
 	[Header("Item parameters")]
 	[SerializeField] private List<Transform> itemAnchors;
-	[NonSerialized] public List<LevelItem> ItemList = new();
 
 	[NonSerialized] public bool IsUsed;
 

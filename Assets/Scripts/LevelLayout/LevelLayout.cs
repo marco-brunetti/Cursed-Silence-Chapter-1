@@ -34,7 +34,7 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private LayoutLight[] style4Lights;
 
 	[NonSerialized] public int MapIndex = -1;
-	[NonSerialized] public List<LayoutDecorator> DecoratorList = new();
+	[NonSerialized] public List<LayoutDecorator> ItemList = new();
 
 	private LayoutStyle style;
 	private List<Vector3> initialDoorRotations = new();
@@ -44,7 +44,7 @@ public class LevelLayout : MonoBehaviour
     private List<Transform> freeCeilingAnchors = new();
     private List<Transform> freeFloorAnchors = new();
 
-    public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params LevelDecorator[] decorators)
+    public void Setup(int mapIndex, LayoutStyle style, List<LayoutShape> nextLayoutShapes, bool isEndOfZone, params Leveltem[] decorators)
 	{
 		this.style = style;
 		MapIndex = mapIndex;

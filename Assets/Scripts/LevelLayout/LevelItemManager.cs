@@ -1,48 +1,67 @@
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelItemManager : MonoBehaviour
 {
 	[SerializeField] private Transform itemPoolParent;
-
-	private LevelItem[] prefabResources;
-	private Dictionary<int, LevelItem> prefabs = new();
-	private Dictionary<int, LevelItem> itemPool;
+	private System.Random random = new();
+	private Leveltem[] prefabResources;
+	private Dictionary<int, Leveltem> prefabs = new();
+	private Dictionary<int, Leveltem> decoPool = new();
+	private Dictionary<int, Leveltem> wallDecoPool = new();
+	private Dictionary<int, Leveltem> ceilingDecoPool = new();
+	private Dictionary<int, Leveltem> floorDecoPool = new();
 
 	private void Awake()
 	{
-		prefabResources = Resources.LoadAll<LevelItem>("Items/");
+		itemPoolParent.gameObject.SetActive(false); //Ensures all pool children are inactive
+
+		prefabResources = Resources.LoadAll<Leveltem>("Items/");
+
+		foreach (var prefab in prefabResources)
+		{
+			prefabs.Add(prefab.Id, prefab);
+		}
 	}
 
-	public void AddItems(LevelDecorator decorator)
+	//In the map generator, make sure the ids are compatible with this layout shape
+	public void FillItems(LevelLayout layout)
 	{
-		var freeAnchors = new List<Transform>();
+		if (layout.ItemList == null) return;
 
-		decorator.GetItemAnchors().ForEach(x => { 
-			var isFree = x.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
-			if(isFree) freeAnchors.Add(x);
-		});
+		layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
 
-		foreach(var itemReference in decorator.ItemList) 
+		foreach(var itemReference in layout.ItemList)
 		{
-			var item = GetItem(itemReference.Id);
+			var item = GetItem(itemReference.id);
 			if (item == null) continue;
 
-			if (freeAnchors.Count > 0)
+			if (ceilingAnchors.Count > 0 && item.LayoutAnchors.Contains(LayoutAnchorCompatibility.Ceiling))
 			{
-				AddItem(itemReference, freeAnchors);
+				AddItem(item, ceilingAnchors);
+				continue;
+			}
+
+			if (wallAnchors.Count > 0 && item.LayoutAnchors.Contains(LayoutAnchorCompatibility.Wall))
+			{
+				AddItem(item, wallAnchors);
+				continue;
+			}
+
+			if (floorAnchors.Count > 0 && item.LayoutAnchors.Contains(LayoutAnchorCompatibility.Floor))
+			{
+				AddItem(item, floorAnchors);
 				continue;
 			}
 		}
 	}
 
-	private LevelItem GetItem(int id)
+	private Leveltem GetItem(int id)
 	{
-		if (itemPool.TryGetValue(id, out var item))
+		if (decoPool.TryGetValue(id, out var item))
 		{
 			//Makes sure the item is free for use
-			if (item.transform.parent = itemPoolParent)
+			if(item.transform.parent = itemPoolParent)
 			{
 				return item;
 			}
@@ -53,7 +72,7 @@ public class LevelItemManager : MonoBehaviour
 			}
 		}
 
-		if (prefabs.TryGetValue(id, out var prefab))
+		if(prefabs.TryGetValue(id, out var prefab))
 		{
 			var instance = Instantiate(prefab, itemPoolParent);
 			instance.transform.parent = itemPoolParent;
@@ -65,7 +84,7 @@ public class LevelItemManager : MonoBehaviour
 		return null;
 	}
 
-	private void AddItem(LevelItem item, List<Transform> anchors)
+	private void AddItem(Leveltem item, List<Transform> anchors)
 	{
 		item.IsUsed = true;
 		item.transform.parent = anchors[0];
@@ -75,19 +94,31 @@ public class LevelItemManager : MonoBehaviour
 		anchors.RemoveAt(0);
 	}
 
-	public void RemoveFrom(LevelDecorator decorator)
+	public void RemoveFrom(LevelLayout layout)
 	{
-		decorator.GetItemAnchors().ForEach(x =>
+		layout.GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors);
+
+		foreach (var layoutAnchor in wallAnchors) //15
 		{
-			if(x.childCount > 0) RemoveItems(x);
-		});
+			if(layoutAnchor.childCount >  0) RemoveItemFrom(layoutAnchor);
+		}
+
+		foreach (var layoutAnchor in ceilingAnchors) //15
+        {
+			if (layoutAnchor.childCount > 0) RemoveItemFrom(layoutAnchor);
+		}
+
+		foreach (var layoutAnchor in floorAnchors) //15
+        {
+			if (layoutAnchor.childCount > 0) RemoveItemFrom(layoutAnchor);
+		}
 	}
 
-	private void RemoveItems(Transform anchor)
+	private void RemoveItemFrom(Transform layoutAnchor) 
 	{
-		foreach (Transform child in anchor)
-		{
-			if (child.TryGetComponent(out LevelItem item))
+		foreach(Transform child in layoutAnchor) //40
+        {
+			if(child.TryGetComponent(out Leveltem item))
 			{
 				item.gameObject.SetActive(false);
 				item.transform.parent = itemPoolParent;
