@@ -4,9 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "LayoutData", menuName = "ScriptableObjects/LayoutData", order = 1)]
 public class LayoutData : ScriptableObject
 {
-	[Header("LayoutPrefabs")]
+	[Header("Layout Prefabs")]
 	public List<LevelLayout> prefabs = new();
 
+	[Header("Item Prefabs")]
+	public LevelItem[] itemPrefabs;
 
 	[Header("Style0: Original blue cursed silence layout")]
 	public Material WallMat1;
@@ -38,6 +40,13 @@ public class LayoutData : ScriptableObject
 	public Material FloorMat5;
 	public Material CeilingMat5;
 	public Material WindowDecorMat5;
+}
+
+public enum LayoutItemSize
+{
+	Small,
+	Medium,
+	Large
 }
 
 // style0: reserved for main level and related

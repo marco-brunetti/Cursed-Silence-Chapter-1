@@ -15,9 +15,9 @@ public class LevelLayout : MonoBehaviour
 	[SerializeField] private List<Behaviour_DoorNew> doors;
 	[SerializeField] private LayoutData layoutData;
 
-	[SerializeField] private Transform[] wallAnchors;
-	[SerializeField] private Transform[] ceilingAnchors;
-	[SerializeField] private Transform[] floorAnchors;
+	[SerializeField] private Transform[] smallAnchors;
+	[SerializeField] private Transform[] mediumAnchors;
+	[SerializeField] private Transform[] largeAnchors;
 
 	[Header("Style")]
 	[SerializeField] private MeshRenderer[] wallRenderers;
@@ -38,16 +38,10 @@ public class LevelLayout : MonoBehaviour
 
 	private List<Vector3> initialDoorRotations = new();
 
-	private bool areFreeAnchorsReady = false;
-    private List<Transform> freeWallAnchors = new();
-    private List<Transform> freeCeilingAnchors = new();
-    private List<Transform> freeFloorAnchors = new();
-
-    public void Setup(int mapIndex, List<LayoutType> nextLayoutShapes, bool isEndOfZone, params Leveltem[] decorators)
+    public void Setup(int mapIndex, List<LayoutType> nextLayoutShapes, bool isEndOfZone, params LevelItem[] decorators)
 	{
 		MapIndex = mapIndex;
 		SetDoorActions(nextLayoutShapes, isEndOfZone);
-		FindFreeAnchors();
     }
 
 	public bool HasDoors()
@@ -55,39 +49,17 @@ public class LevelLayout : MonoBehaviour
 		return doors != null && doors.Count > 0;
 	}
 
-    public void GetFreeAnchors(out List<Transform> wallAnchors, out List<Transform> ceilingAnchors, out List<Transform> floorAnchors)
+    public void GetAnchors(out List<Transform> smallAnchors, out List<Transform> mediumAnchors, out List<Transform> largeAnchors)
     {	
-		wallAnchors = new(freeWallAnchors);
-		ceilingAnchors = new(freeCeilingAnchors);
-		floorAnchors = new(freeFloorAnchors);
+		smallAnchors = new(this.smallAnchors);
+		mediumAnchors = new(this.mediumAnchors);
+		largeAnchors = new(this.largeAnchors);
     }
 
     public void EntranceDoorEnabled(bool enabled)
 	{
 		entranceDoor.SetActive(enabled);
 	}
-
-    private void FindFreeAnchors()
-    {
-		if (areFreeAnchorsReady) return;
-
-        Array.ForEach(this.wallAnchors, anchor => {
-            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
-            if (isAnchorFree) freeWallAnchors.Add(anchor);
-        });
-
-        Array.ForEach(this.ceilingAnchors, anchor => {
-            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
-            if (isAnchorFree) freeCeilingAnchors.Add(anchor);
-        });
-
-        Array.ForEach(this.floorAnchors, anchor => {
-            var isAnchorFree = anchor.Cast<Transform>().All(child => !child.gameObject.activeInHierarchy);
-            if (isAnchorFree) freeFloorAnchors.Add(anchor);
-        });
-
-		areFreeAnchorsReady = true;
-    }
 
     private void SetDoorActions(List<LayoutType> nextLayoutShapes, bool isEndOfZone)
 	{
