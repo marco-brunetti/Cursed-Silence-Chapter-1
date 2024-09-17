@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Layouts
 {
     [CreateAssetMenu(fileName = "LayoutData", menuName = "ScriptableObjects/LayoutData", order = 1)]
-    public class LayoutData : ScriptableObject
+    public class LayoutDataObject : ScriptableObject
     {
         public LevelLayout[] layoutPrefabs;
         public LevelItem[] itemPrefabs;

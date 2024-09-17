@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Layouts
 {
@@ -14,7 +15,7 @@ namespace Layouts
 
         [SerializeField] private GameObject entranceDoor;
         [SerializeField] private List<Behaviour_DoorNew> doors;
-        [SerializeField] private LayoutData layoutData;
+        [FormerlySerializedAs("layoutData")] [SerializeField] private LayoutDataObject layoutDataObject;
 
         [SerializeField] private Transform[] smallAnchors;
         [SerializeField] private Transform[] mediumAnchors;

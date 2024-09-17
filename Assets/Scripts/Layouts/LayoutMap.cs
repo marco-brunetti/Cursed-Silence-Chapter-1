@@ -5,19 +5,20 @@ namespace Layouts
 {
     public record LayoutMap
     {
-        [JsonProperty("layouts")] public List<Layout> Layouts;
+        [JsonProperty("layouts")] public List<LayoutData> Layouts;
     }
 
-    public record Layout
+    public record LayoutData
     {
         public bool enable;
         public int zone;
         public List<LayoutItem> items;
-        public List<LayoutType> nextShapes;
+        public LayoutType type;
+        public List<LayoutType> nextTypes;
     }
 
     public record LayoutItem
     {
-        public int id { get; set; }
+        public int id;
     }
 }

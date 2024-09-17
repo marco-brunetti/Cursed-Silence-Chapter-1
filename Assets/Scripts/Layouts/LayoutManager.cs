@@ -3,19 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Layouts
 {
     public class LayoutManager : MonoBehaviour
     {
         [SerializeField] private TextAsset mapJson;
-        [SerializeField] private LayoutData layoutData;
+        [FormerlySerializedAs("layoutData")] [SerializeField] private LayoutDataObject layoutDataObject;
         [SerializeField] private ItemManager itemManager;
 
         private int currentIndex;
         private LayoutMap savedMap;
         private Dictionary<LayoutType, LevelLayout> prefabs = new();
-        private List<Layout> loadedMap = new();
+        private List<LayoutData> loadedMap = new();
         private LevelLayout mainLevel;
         private HashSet<LevelLayout> layoutPool = new();
         private Queue<LevelLayout> deactivateQueue = new();
@@ -29,7 +30,7 @@ namespace Layouts
 
             savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-            foreach (var prefab in layoutData.layoutPrefabs)
+            foreach (var prefab in layoutDataObject.layoutPrefabs)
             {
                 if (prefab != null) prefabs.Add(prefab.Type, prefab);
             }
@@ -46,7 +47,7 @@ namespace Layouts
             }
 
             var currentMapLayout = loadedMap[currentIndex];
-            ActivateLayout(null, currentMapLayout.nextShapes[0], Vector3.zero, Quaternion.Euler(Vector3.zero));
+            ActivateLayout(null, currentMapLayout.type, Vector3.zero, Quaternion.Euler(Vector3.zero));
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -69,7 +70,7 @@ namespace Layouts
                 var mapLayout = loadedMap[i];
                 var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
 
-                layout.Setup(i, mapLayout.nextShapes, isEndOfZone, decorators: null);
+                layout.Setup(i, mapLayout.nextTypes, isEndOfZone, decorators: null);
                 if (i == 0) layout.EntranceDoorEnabled(true);
                 layout.ItemList = mapLayout.items;
                 itemManager.FillItems(layout);

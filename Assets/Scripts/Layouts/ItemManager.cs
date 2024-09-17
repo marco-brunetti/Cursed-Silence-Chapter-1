@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Layouts
 {
 	public class ItemManager : MonoBehaviour
 	{
 		[SerializeField] private Transform itemPoolParent;
-		[SerializeField] private LayoutData layoutData;
+		[FormerlySerializedAs("layoutData")] [SerializeField] private LayoutDataObject layoutDataObject;
 		private System.Random _random = new();
 		private LevelItem[] prefabResources;
 		private Dictionary<int, LevelItem> prefabs = new();
@@ -20,7 +21,7 @@ namespace Layouts
 		{
 			itemPoolParent.gameObject.SetActive(false);
 
-			foreach (var prefab in layoutData.itemPrefabs)
+			foreach (var prefab in layoutDataObject.itemPrefabs)
 			{
 				prefabs.Add(prefab.Id, prefab);
 			}
