@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Layouts
 {
-	public class LevelItemManager : MonoBehaviour
+	public class ItemManager : MonoBehaviour
 	{
 		[SerializeField] private Transform itemPoolParent;
 		[SerializeField] private LayoutData layoutData;
@@ -19,9 +19,7 @@ namespace Layouts
 		{
 			itemPoolParent.gameObject.SetActive(false);
 
-			prefabResources = layoutData.itemPrefabs;
-
-			foreach (var prefab in prefabResources)
+			foreach (var prefab in layoutData.itemPrefabs)
 			{
 				prefabs.Add(prefab.Id, prefab);
 			}

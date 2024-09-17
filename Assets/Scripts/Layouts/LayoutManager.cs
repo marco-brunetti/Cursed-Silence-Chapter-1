@@ -10,10 +10,11 @@ namespace Layouts
     {
         [SerializeField] private TextAsset mapJson;
         [SerializeField] private LayoutData layoutData;
-        [SerializeField] private LevelItemManager itemManager;
+        [SerializeField] private ItemManager itemManager;
 
         private int currentIndex;
         private LayoutMap savedMap;
+        private Dictionary<LayoutType, LevelLayout> prefabs = new();
         private List<Layout> loadedMap = new();
         private LevelLayout mainLevel;
         private HashSet<LevelLayout> layoutPool = new();
@@ -28,18 +29,20 @@ namespace Layouts
 
             savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-            var mainLevelPrefab =
-                layoutData.prefabs.FirstOrDefault(x => x != null && x.Type == LayoutType.MainLevelStyle0);
-
-            if (mainLevelPrefab)
+            foreach (var prefab in layoutData.layoutPrefabs)
             {
-                mainLevel = Instantiate(mainLevelPrefab);
+                if (prefab != null) prefabs.Add(prefab.Type, prefab);
+            }
+
+            if (GetLayout(LayoutType.MainLevelStyle0, out var layout))
+            {
+                mainLevel = layout;
                 mainLevel.gameObject.SetActive(false);
             }
 
-            for (int i = 0; i < savedMap.Layouts.Count; i++)
+            foreach (var t in savedMap.Layouts.Where(t => t.enable))
             {
-                if (savedMap.Layouts[i].enable) loadedMap.Add(savedMap.Layouts[i]);
+                loadedMap.Add(t);
             }
 
             var currentMapLayout = loadedMap[currentIndex];
@@ -55,48 +58,52 @@ namespace Layouts
                 return;
             }
 
-            LevelLayout newLayout = null;
-
-            if (nextType == LayoutType.MainLevelStyle0 && mainLevel)
+            if (GetLayout(nextType, out var layout))
             {
-                newLayout = mainLevel;
+                if (previousLayout) layout.transform.parent = previousLayout;
+                layout.transform.SetLocalPositionAndRotation(position, rotation);
+                layout.transform.parent = null;
+                layout.gameObject.SetActive(true);
+
+                var i = currentIndex;
+                var mapLayout = loadedMap[i];
+                var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
+
+                layout.Setup(i, mapLayout.nextShapes, isEndOfZone, decorators: null);
+                if (i == 0) layout.EntranceDoorEnabled(true);
+                layout.ItemList = mapLayout.items;
+                itemManager.FillItems(layout);
+                if (layout.HasDoors()) currentIndex++;
+            }
+        }
+
+        private bool GetLayout(LayoutType type, out LevelLayout layout)
+        {
+            if (type == LayoutType.MainLevelStyle0 && mainLevel)
+            {
+                layout = mainLevel;
+                return true;
+            }
+
+            layout = layoutPool.FirstOrDefault(x =>
+                x != null && x.Type == type && !x.gameObject.activeInHierarchy);
+
+            if (layout)
+            {
+                return true;
             }
             else
             {
-                newLayout = layoutPool.FirstOrDefault(x =>
-                    x != null && x.Type == nextType && !x.gameObject.activeInHierarchy);
-
-                if (!newLayout)
+                if (prefabs.TryGetValue(type, out var prefab))
                 {
-                    var prefab = layoutData.prefabs.FirstOrDefault(x => x != null && x.Type == nextType);
-
-                    if (prefab)
-                    {
-                        newLayout = Instantiate(prefab);
-                        layoutPool.Add(newLayout);
-                    }
-                    else
-                    {
-                        Debug.Log($"Level type {nextType} not found.");
-                        return;
-                    }
+                    layout = Instantiate(prefab);
+                    layoutPool.Add(layout);
+                    return true;
                 }
             }
 
-            if (previousLayout) newLayout.transform.parent = previousLayout;
-            newLayout.transform.SetLocalPositionAndRotation(position, rotation);
-            newLayout.transform.parent = null;
-            newLayout.gameObject.SetActive(true);
-
-            var i = currentIndex;
-            var mapLayout = loadedMap[i];
-            var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
-
-            newLayout.Setup(i, mapLayout.nextShapes, isEndOfZone, decorators: null);
-            if (i == 0) newLayout.EntranceDoorEnabled(true);
-            newLayout.ItemList = mapLayout.items;
-            itemManager.FillItems(newLayout);
-            if (newLayout.HasDoors()) currentIndex++;
+            Debug.Log($"Level type {type} not found.");
+            return false;
         }
 
         public IEnumerator DeactivateLevelLayouts()
@@ -119,7 +126,7 @@ namespace Layouts
             if (deactivateQueue.Count == 0 && index < loadedMap.Count)
             {
                 layoutPool.FirstOrDefault(x => x.MapIndex == index && x.gameObject.activeInHierarchy)
-                    .EntranceDoorEnabled(true);
+                    ?.EntranceDoorEnabled(true);
             }
         }
 

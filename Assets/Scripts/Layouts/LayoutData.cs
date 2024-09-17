@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Layouts
@@ -6,9 +5,8 @@ namespace Layouts
     [CreateAssetMenu(fileName = "LayoutData", menuName = "ScriptableObjects/LayoutData", order = 1)]
     public class LayoutData : ScriptableObject
     {
-        [Header("Layout Prefabs")] public List<LevelLayout> prefabs = new();
-
-        [Header("Item Prefabs")] public LevelItem[] itemPrefabs;
+        public LevelLayout[] layoutPrefabs;
+        public LevelItem[] itemPrefabs;
 
         [Header("Style0: Original blue cursed silence layout")]
         public Material WallMat1;
