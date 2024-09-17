@@ -20,9 +20,6 @@ namespace Layouts
 
         [NonSerialized] public bool IsUsed;
 
-        public Vector3 Scale
-        {
-            get { return scale == Vector3.zero ? transform.localScale : scale; }
-        }
+        public Vector3 Scale => scale == Vector3.zero ? transform.localScale : scale;
     }
 }

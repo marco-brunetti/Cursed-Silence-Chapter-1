@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Layouts
@@ -30,13 +31,10 @@ namespace Layouts
 		{
 			if (layout.ItemList == null) return;
 
-			layout.GetAnchors(out List<Transform> smallAnchors, out List<Transform> mediumAnchors, out List<Transform> largeAnchors);
+			layout.GetAnchors(out var smallAnchors, out var mediumAnchors, out var largeAnchors);
 
-			foreach(var itemReference in layout.ItemList)
+			foreach (var item in layout.ItemList.Select(itemReference => GetItem(itemReference.id)).Where(item => item))
 			{
-				var item = GetItem(itemReference.id);
-				if (!item) continue;
-
 				if (largeAnchors.Count > 0 && item.Size == LayoutItemSize.Large)
 				{
 					AddItem(item, largeAnchors);
