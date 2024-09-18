@@ -15,17 +15,10 @@ namespace Layouts
 
         [SerializeField] private GameObject entranceDoor;
         [SerializeField] private List<Behaviour_DoorNew> doors;
-        [FormerlySerializedAs("layoutData")] [SerializeField] private LayoutDataObject layoutDataObject;
 
         [SerializeField] private Transform[] smallAnchors;
         [SerializeField] private Transform[] mediumAnchors;
         [SerializeField] private Transform[] largeAnchors;
-
-        [Header("Style")] [SerializeField] private MeshRenderer[] wallRenderers;
-        [SerializeField] private MeshRenderer[] doorWallRenderers;
-        [SerializeField] private MeshRenderer[] windowWallRenderers;
-        [SerializeField] private MeshRenderer[] ceilingRenderers;
-        [SerializeField] private MeshRenderer[] floorRenderers;
 
         [NonSerialized] public int MapIndex = -1;
         [NonSerialized] public List<LayoutItem> ItemList = new();
