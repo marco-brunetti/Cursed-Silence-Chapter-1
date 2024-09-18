@@ -15,10 +15,16 @@ namespace Layouts
         public List<LayoutItem> items;
         public LayoutType type;
         public List<LayoutType> nextTypes;
+        public LayoutConfig config;
     }
 
     public record LayoutItem
     {
         public int id;
+    }
+
+    public record LayoutConfig
+    {
+        
     }
 }
