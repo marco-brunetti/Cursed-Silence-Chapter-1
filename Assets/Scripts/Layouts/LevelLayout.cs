@@ -29,7 +29,7 @@ namespace Layouts
             params LevelItem[] decorators)
         {
             MapIndex = mapIndex;
-            SetDoorActions(nextLayoutShapes, isEndOfZone);
+            if(doors.Count > 0) SetDoorActions(nextLayoutShapes, isEndOfZone);
         }
 
         public bool HasDoors()
