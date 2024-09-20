@@ -21,7 +21,7 @@ namespace Layouts
 		{
 			itemPoolParent.gameObject.SetActive(false);
 
-			foreach (var prefab in layoutDataObject.itemPrefabs)
+			foreach (var prefab in layoutDataObject.ItemPrefabs)
 			{
 				prefabs.Add(prefab.Id, prefab);
 			}

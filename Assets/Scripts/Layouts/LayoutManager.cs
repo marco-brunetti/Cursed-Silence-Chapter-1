@@ -30,7 +30,7 @@ namespace Layouts
 
             savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-            foreach (var prefab in layoutDataObject.layoutPrefabs)
+            foreach (var prefab in layoutDataObject.LayoutPrefabs)
             {
                 if (prefab != null) prefabs.Add(prefab.Type, prefab);
             }

@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Layouts
 {
     [CreateAssetMenu(fileName = "LayoutData", menuName = "ScriptableObjects/LayoutData", order = 1)]
     public class LayoutDataObject : ScriptableObject
     {
-        public LevelLayout[] layoutPrefabs;
-        public LevelItem[] itemPrefabs;
+        [FormerlySerializedAs("layoutPrefabs")] public LevelLayout[] LayoutPrefabs;
+        public LevelItem[] ItemPrefabs;
 
         [Header("Style0: Original blue cursed silence layout")]
         public Material WallMat1;
