@@ -12,10 +12,10 @@
           "id": 2
         }
       ],
-      "type": "THallwayStyle3",
+      "type": "StraightHallwayStyle1",
       "nextTypes":
       [
-        "BathroomStyle3"
+        "THallwayStyle1"
       ]
     },
     {
@@ -23,7 +23,8 @@
       "zone": 1,
       "nextTypes":
       [
-        "StraightHallwayStyle2"
+        "PlayingRoomStyle1",
+        "RightLHallwayStyle1"
       ]
     },
     {
@@ -31,7 +32,7 @@
       "zone": 1,
       "nextTypes":
       [
-        "StraightHallwayStyle3"
+        "LeftLHallwayStyle1"
       ]
     },
     {
@@ -39,7 +40,7 @@
       "zone": 1,
       "nextTypes": 
       [
-        "StraightHallwayStyle4"
+        "THallwayStyle1"
       ]
     },
     {
@@ -47,7 +48,8 @@
       "zone": 1,
       "nextTypes":
       [
-        "StraightHallwayStyle1"
+        "FoodStackStyle1",
+        "RightLHallwayStyle1"
       ]
     },
     {
@@ -55,20 +57,12 @@
       "zone": 1,
       "nextTypes":
       [
-        "StraightHallwayStyle1"
+        "SmallOfficeStyle1"
       ]
     },
     {
       "enable": "true",
       "zone": 1,
-      "nextTypes":
-      [
-        "StraightHallwayStyle1"
-      ]
-    },
-    {
-      "enable": "true",
-      "zone": 4,
       "nextTypes": null
     }
   ]

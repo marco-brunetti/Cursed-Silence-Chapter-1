@@ -29,6 +29,8 @@ namespace Layouts
             params LevelItem[] decorators)
         {
             MapIndex = mapIndex;
+            
+            entranceDoor.SetActive(false);
             if(doors.Count > 0) SetDoorActions(nextLayoutShapes, isEndOfZone);
         }
 
@@ -52,7 +54,6 @@ namespace Layouts
 
         private void SetDoorActions(List<LayoutType> nextLayoutShapes, bool isEndOfZone)
         {
-            entranceDoor.SetActive(false);
             if (doors == null || doors.Count == 0) return;
 
             for (int i = 0; i < doors.Count; i++)
