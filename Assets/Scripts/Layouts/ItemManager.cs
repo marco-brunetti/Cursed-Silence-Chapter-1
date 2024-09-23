@@ -33,32 +33,38 @@ namespace Layouts
 			if (layout.ItemList == null) return;
 
 			layout.GetAnchors(out var smallAnchors, out var mediumAnchors, out var largeAnchors);
-
-			foreach (var item in layout.ItemList.Select(itemReference => GetItem(itemReference.id)).Where(item => item))
+			
+			foreach(var item in layout.ItemList.ToList().Select(itemReference =>GetItem(itemReference, layout.ItemList)).Where(item => item && item.Size == LayoutItemSize.Large))
 			{
-				if (largeAnchors.Count > 0 && item.Size == LayoutItemSize.Large)
+				if (largeAnchors.Count <= 0 || !TryAddItem(item, new() { largeAnchors }))
 				{
-					AddItem(item, largeAnchors);
-					continue;
+					break;
 				}
-
-				if (mediumAnchors.Count > 0 && item.Size == LayoutItemSize.Medium)
+			}
+			
+			foreach(var item in layout.ItemList.ToList().Select(itemReference =>GetItem(itemReference, layout.ItemList)).Where(item => item && item.Size == LayoutItemSize.Medium))
+			{
+				if (largeAnchors.Count <= 0 || !TryAddItem(item, new() { largeAnchors, mediumAnchors }))
 				{
-					AddItem(item, mediumAnchors);
-					continue;
+					break;
 				}
-
-				if (smallAnchors.Count > 0 && item.Size == LayoutItemSize.Small)
+			}
+			
+			foreach(var item in layout.ItemList.ToList().Select(itemReference =>GetItem(itemReference, layout.ItemList)).Where(item => item && item.Size == LayoutItemSize.Small))
+			{
+				if (largeAnchors.Count <= 0 || !TryAddItem(item, new() { largeAnchors, mediumAnchors, smallAnchors }))
 				{
-					AddItem(item, smallAnchors);
+					break;
 				}
 			}
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
-		private LevelItem GetItem(int id)
+		private LevelItem GetItem(LayoutItem itemReference, List<LayoutItem> itemList)
 		{
-			if (itemPool.TryGetValue(id, out var item))
+			itemList.Remove(itemReference);
+			
+			if (itemPool.TryGetValue(itemReference.id, out var item))
 			{
 				//Makes sure the item is free for use
 				if(item.transform.parent == itemPoolParent)
@@ -67,12 +73,12 @@ namespace Layouts
 				}
 				else
 				{
-					Debug.Log($"Item with id: {id} being used.");
+					Debug.Log($"Item with id: {itemReference.id} being used.");
 					return null;
 				}
 			}
 
-			if(prefabs.TryGetValue(id, out var prefab))
+			if(prefabs.TryGetValue(itemReference.id, out var prefab))
 			{
 				var instance = Instantiate(prefab, itemPoolParent);
 				instance.transform.parent = itemPoolParent;
@@ -80,18 +86,38 @@ namespace Layouts
 				return instance;
 			}
 
-			Debug.Log($"Item with id: {id} not found.");
+			Debug.Log($"Item with id: {itemReference.id} not found.");
 			return null;
 		}
 
-		private void AddItem(LevelItem item, List<Transform> anchors)
+		private bool TryAddItem(LevelItem item, List<List<Transform>> anchorLists)
 		{
+			List<Transform> anchors = new();
+
+			foreach (var anchorList in anchorLists)
+			{
+				anchors.AddRange(anchorList);
+			}
+
+			Transform selectedAnchor;
+			
+			do
+			{
+				var anchor = anchors[_random.Next(0, anchors.Count)];
+				anchors.Remove(anchor);
+				selectedAnchor = anchor.childCount > 0 ? anchor : null;
+;
+			} while (selectedAnchor == null && anchors.Count > 0);
+			
+			if(!selectedAnchor) return false;
+
 			item.IsUsed = true;
-			item.transform.parent = anchors[0];
+			item.transform.parent = selectedAnchor;
 			item.transform.SetLocalPositionAndRotation(item.Position, Quaternion.Euler(item.Rotation));
 			item.transform.localScale = item.Scale;
 			item.gameObject.SetActive(true);
-			anchors.RemoveAt(0);
+
+			return true;
 		}
 
 		public void RemoveFrom(LevelLayout layout)
