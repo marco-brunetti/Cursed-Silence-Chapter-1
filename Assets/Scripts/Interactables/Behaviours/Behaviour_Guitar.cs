@@ -1,38 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Behaviour_Guitar : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField] private AudioClip[] _guitarStrumClips;
-    [SerializeField] private AudioSource _guitarStrumSource;
-    [SerializeField] private float _volume;
-    private int _currentStrumIndex;
-
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_Guitar : MonoBehaviour, IBehaviour
     {
-        if(isInteracting)
+        [SerializeField] private AudioClip[] _guitarStrumClips;
+        [SerializeField] private AudioSource _guitarStrumSource;
+        [SerializeField] private float _volume;
+        private int _currentStrumIndex;
+
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V
+            if(isInteracting)
             {
-                _currentStrumIndex = Random.Range(2, 4); //minInclusive, maxExclusive
-            }
-            else
-            {
-                _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
-            }
+                if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V
+                {
+                    _currentStrumIndex = Random.Range(2, 4); //minInclusive, maxExclusive
+                }
+                else
+                {
+                    _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
+                }
 
-            _guitarStrumSource.PlayOneShot(_guitarStrumClips[_currentStrumIndex], _volume * GameController.Instance.GlobalVolume);
+                _guitarStrumSource.PlayOneShot(_guitarStrumClips[_currentStrumIndex], _volume * GameController.Instance.GlobalVolume);
+            }
         }
-    }
 
-    public bool IsInspectable()
-    {
-        return false;
-    }
+        public bool IsInspectable()
+        {
+            return false;
+        }
 
-    public bool IsInteractable()
-    {
-        return true;
+        public bool IsInteractable()
+        {
+            return true;
+        }
     }
 }

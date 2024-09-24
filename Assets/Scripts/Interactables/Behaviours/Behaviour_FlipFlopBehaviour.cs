@@ -1,56 +1,59 @@
 using System.Collections;
 using UnityEngine;
 
-public class Behaviour_FlipFlopBehaviour : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [Header("Flip")]
-    [SerializeField] private GameObject[] _flipBehaviours;
-    [SerializeField] private float _flipDelay;
-
-    [Header("Flop")]
-    [SerializeField] private GameObject[] _flopBehaviours;
-    [SerializeField] private float _flopDelay;
-
-    private bool flip = true;
-
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_FlipFlopBehaviour : MonoBehaviour, IBehaviour
     {
-        StartCoroutine(FlipFlop(isInteracting, isInspecting));
-    }
+        [Header("Flip")]
+        [SerializeField] private GameObject[] _flipBehaviours;
+        [SerializeField] private float _flipDelay;
 
-    public bool IsInspectable()
-    {
-        return false;
-    }
+        [Header("Flop")]
+        [SerializeField] private GameObject[] _flopBehaviours;
+        [SerializeField] private float _flopDelay;
 
-    public bool IsInteractable()
-    {
-        return true;
-    }
+        private bool flip = true;
 
-    private IEnumerator FlipFlop(bool isInteracting, bool isInspecting)
-    {
-        if (flip)
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            yield return new WaitForSeconds(_flipDelay);
-
-            for(int i = 0; i < _flipBehaviours.Length; i++)
-            {
-                _flipBehaviours[i].GetComponent<IBehaviour>().Behaviour(isInteracting, isInspecting);
-            }
-
-            flip = false;
+            StartCoroutine(FlipFlop(isInteracting, isInspecting));
         }
-        else if(!flip)
+
+        public bool IsInspectable()
         {
-            yield return new WaitForSeconds(_flopDelay);
+            return false;
+        }
 
-            for (int i = 0; i < _flopBehaviours.Length; i++)
+        public bool IsInteractable()
+        {
+            return true;
+        }
+
+        private IEnumerator FlipFlop(bool isInteracting, bool isInspecting)
+        {
+            if (flip)
             {
-                _flopBehaviours[i].GetComponent<IBehaviour>().Behaviour(isInteracting, isInspecting);
-            }
+                yield return new WaitForSeconds(_flipDelay);
 
-            flip = true;
+                for(int i = 0; i < _flipBehaviours.Length; i++)
+                {
+                    _flipBehaviours[i].GetComponent<IBehaviour>().Behaviour(isInteracting, isInspecting);
+                }
+
+                flip = false;
+            }
+            else if(!flip)
+            {
+                yield return new WaitForSeconds(_flopDelay);
+
+                for (int i = 0; i < _flopBehaviours.Length; i++)
+                {
+                    _flopBehaviours[i].GetComponent<IBehaviour>().Behaviour(isInteracting, isInspecting);
+                }
+
+                flip = true;
+            }
         }
     }
 }

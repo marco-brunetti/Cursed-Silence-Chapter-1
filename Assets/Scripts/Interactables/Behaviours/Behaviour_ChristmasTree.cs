@@ -1,46 +1,49 @@
 using Player;
 using UnityEngine;
 
-public class Behaviour_ChristmasTree : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField] private GameObject _requiredGift;
-
-    [SerializeField] private Behaviour_DisplaySubtitles _ifGiftSubtitles;
-    [SerializeField] private Behaviour_DisplaySubtitles _ifNotGiftSubtitles;
-
-    [SerializeField] private GameObject _bodyGiftBox;
-    [SerializeField] private GameObject _emilyGiftBox;
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_ChristmasTree : MonoBehaviour, IBehaviour
     {
-        var playerController = PlayerController.Instance;
-        PlayerData playerData = PlayerController.Instance.PlayerData;
+        [SerializeField] private InventoryItem _requiredGift;
 
-        if(playerController.Inventory.Contains(_requiredGift, removeItem: true, destroyItem: true))
+        [SerializeField] private Behaviour_DisplaySubtitles _ifGiftSubtitles;
+        [SerializeField] private Behaviour_DisplaySubtitles _ifNotGiftSubtitles;
+
+        [SerializeField] private GameObject _bodyGiftBox;
+        [SerializeField] private GameObject _emilyGiftBox;
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            playerController.InspectablesSource.pitch = 0.9f;
-            playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+            var playerController = PlayerController.Instance;
+            PlayerData playerData = PlayerController.Instance.PlayerData;
 
-            _requiredGift = null;
+            if(playerController.Inventory.Contains(_requiredGift, removeItem: true, destroyItem: true))
+            {
+                playerController.InspectablesSource.pitch = 0.9f;
+                playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
-            _ifGiftSubtitles.Behaviour(isInteracting, isInspecting);
-            _bodyGiftBox.gameObject.SetActive(true);
-            _emilyGiftBox.gameObject.SetActive(true);
+                _requiredGift = null;
 
-            gameObject.GetComponent<Collider>().enabled = false;
+                _ifGiftSubtitles.Behaviour(isInteracting, isInspecting);
+                _bodyGiftBox.gameObject.SetActive(true);
+                _emilyGiftBox.gameObject.SetActive(true);
+
+                gameObject.GetComponent<Collider>().enabled = false;
+            }
+            else
+            {
+                _ifNotGiftSubtitles.Behaviour(isInteracting, isInspecting);
+            }
         }
-        else
+
+        public bool IsInspectable()
         {
-            _ifNotGiftSubtitles.Behaviour(isInteracting, isInspecting);
+            return false;
         }
-    }
 
-    public bool IsInspectable()
-    {
-        return false;
-    }
-
-    public bool IsInteractable()
-    {
-        return true;
+        public bool IsInteractable()
+        {
+            return true;
+        }
     }
 }

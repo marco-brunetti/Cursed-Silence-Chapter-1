@@ -1,84 +1,87 @@
-using SnowHorse.Utils;
 using System.Collections;
+using Player;
+using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Player;
 
-public class Behaviour_ActivateFinalCutscene : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [Header("Delays")]
-    [SerializeField] private float _activationDelay = 2f;
-    [SerializeField] private float _sceneUnloadDelay = 1.7f;
-
-    [Header("GameObjects")]
-    [SerializeField] private GameObject _finalCamera;
-    [SerializeField] private GameObject _idleMonster;
-    [SerializeField] private GameObject _jumpingMonster;
-
-    [Header("Other")]
-    [SerializeField] private Transform _targetRotation;
-
-    private bool _sceneActive;
-    bool _initialRotationSet;
-
-    private float _currentTime;
-
-    private Quaternion _initialRotation;
-
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_ActivateFinalCutscene : MonoBehaviour, IBehaviour
     {
-        StartCoroutine(FinalScene());
-    }
+        [Header("Delays")]
+        [SerializeField] private float _activationDelay = 2f;
+        [SerializeField] private float _sceneUnloadDelay = 1.7f;
 
-    private IEnumerator FinalScene()
-    {
-        yield return new WaitForSeconds(_activationDelay);
+        [Header("GameObjects")]
+        [SerializeField] private GameObject _finalCamera;
+        [SerializeField] private GameObject _idleMonster;
+        [SerializeField] private GameObject _jumpingMonster;
 
-        Destroy(PlayerController.Instance.gameObject);
+        [Header("Other")]
+        [SerializeField] private Transform _targetRotation;
 
-        _finalCamera.SetActive(true);
-        _idleMonster.SetActive(false);
-        _jumpingMonster.SetActive(true);
+        private bool _sceneActive;
+        bool _initialRotationSet;
 
-        _sceneActive = true;
+        private float _currentTime;
 
-        yield return new WaitForSeconds(_sceneUnloadDelay);
+        private Quaternion _initialRotation;
 
-        _finalCamera.SetActive(false);
-        UIManager.Instance.CanvasControl.OnSceneChanged(false);
-
-        SceneManager.LoadScene("Level_House");   
-    }
-
-
-    private void Update()
-    {
-        ManageCameraAnimation();
-    }
-
-    private void ManageCameraAnimation()
-    {
-        if (_sceneActive)
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if (!_initialRotationSet)
-            {
-                _initialRotation = _finalCamera.transform.rotation;
-                _initialRotationSet = true;
-            }
-
-            float percentage = Interpolation.Smoother(1.5f, ref _currentTime);
-
-            _finalCamera.transform.rotation = Quaternion.Slerp(_initialRotation, _targetRotation.rotation, percentage);
+            StartCoroutine(FinalScene());
         }
-    }
 
-    public bool IsInteractable()
-    {
-        return true;
-    }
+        private IEnumerator FinalScene()
+        {
+            yield return new WaitForSeconds(_activationDelay);
 
-    public bool IsInspectable()
-    {
-        return false;
+            Destroy(PlayerController.Instance.gameObject);
+
+            _finalCamera.SetActive(true);
+            _idleMonster.SetActive(false);
+            _jumpingMonster.SetActive(true);
+
+            _sceneActive = true;
+
+            yield return new WaitForSeconds(_sceneUnloadDelay);
+
+            _finalCamera.SetActive(false);
+            UIManager.Instance.CanvasControl.OnSceneChanged(false);
+
+            SceneManager.LoadScene("Level_House");   
+        }
+
+
+        private void Update()
+        {
+            ManageCameraAnimation();
+        }
+
+        private void ManageCameraAnimation()
+        {
+            if (_sceneActive)
+            {
+                if (!_initialRotationSet)
+                {
+                    _initialRotation = _finalCamera.transform.rotation;
+                    _initialRotationSet = true;
+                }
+
+                float percentage = Interpolation.Smoother(1.5f, ref _currentTime);
+
+                _finalCamera.transform.rotation = Quaternion.Slerp(_initialRotation, _targetRotation.rotation, percentage);
+            }
+        }
+
+        public bool IsInteractable()
+        {
+            return true;
+        }
+
+        public bool IsInspectable()
+        {
+            return false;
+        }
     }
 }

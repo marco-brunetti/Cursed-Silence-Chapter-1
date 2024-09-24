@@ -6,31 +6,30 @@ namespace Player
 {
     public class PlayerInventory : MonoBehaviour
     {
-        private List<GameObject> _inventory;
+        private HashSet<InventoryItem> _inventory = new();
         private PlayerData _playerData;
         
         private void Start()
         {
-            _inventory = new List<GameObject>() { null };
             _playerData = PlayerController.Instance.PlayerData;
         }
 
-        public void Add(Transform interactable)
+        public void Add(InventoryItem item)
         {
             PlayerController.Instance.InspectablesSource.pitch = 1;
             PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip,
                 0.2f * GameController.Instance.GlobalVolume);
      
-            interactable.SetParent(PlayerController.Instance.InventoryHolder);
+            item.transform.SetParent(PlayerController.Instance.InventoryHolder);
             
-            _inventory.Add(interactable.gameObject);
+            _inventory.Add(item);
         }
 
-        public bool Contains(GameObject item, bool removeItem, bool destroyItem)
+        public bool Contains(InventoryItem item, bool removeItem, bool destroyItem)
         {
             if(!item) return false;
             
-            var isInInventory = _inventory.Exists(x => x == item);
+            var isInInventory = _inventory.Contains(item);
 
             if (isInInventory)
             {
@@ -54,7 +53,7 @@ namespace Player
             {
                 if (removeItem)
                 {
-                    _inventory.Remove(component.gameObject);
+                    _inventory.Remove(component.GetComponent<InventoryItem>());
                     if(destroyItem) Destroy(component.gameObject);
                 }
                 

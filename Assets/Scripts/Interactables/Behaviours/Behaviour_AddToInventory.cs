@@ -1,51 +1,35 @@
 using Player;
 using UnityEngine;
 
-public class Behaviour_AddToInventory : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField] public Transform GameObjectToAdd;
-
-    private bool _addedToInventory;
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_AddToInventory : MonoBehaviour, IBehaviour
     {
-        if (!_addedToInventory && isInteracting)
-        {
-            GetInventoryObject();
+        [SerializeField] private InventoryItem inventoryItem;
 
-            PlayerController.Instance.Inventory.Add(GameObjectToAdd);
-            _addedToInventory = true;
-        }
-    }
-
-    private void GetInventoryObject()
-    {
-        if (GameObjectToAdd == null)
+        private bool _addedToInventory;
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if(gameObject.GetComponent<Interactable>() == null)
+            if (!_addedToInventory && isInteracting)
             {
-                if(transform.GetComponentInParent<Interactable>() == null)
+                if (!inventoryItem && !gameObject.TryGetComponent(out inventoryItem) && !gameObject.transform.parent.TryGetComponent(out inventoryItem))
                 {
-                    print("Didn't find inventory object! object: " + gameObject.name + "; parent: " + transform.parent.name);
+                    Debug.Log("Didn't find inventory object! object: " + gameObject.name + "; parent: " + transform.parent.name);
                 }
-                else
-                {
-                    GameObjectToAdd = transform.parent.transform;
-                }
-            }
-            else
-            {
-                GameObjectToAdd = gameObject.transform;
+
+                PlayerController.Instance.Inventory.Add(inventoryItem);
+                _addedToInventory = true;
             }
         }
-    }
 
-    public bool IsInteractable()
-    {
-        return true;
-    }
+        public bool IsInteractable()
+        {
+            return true;
+        }
 
-    public bool IsInspectable()
-    {
-        return false;
+        public bool IsInspectable()
+        {
+            return false;
+        }
     }
 }

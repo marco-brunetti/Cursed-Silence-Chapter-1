@@ -1,46 +1,49 @@
-using UnityEngine;
 using SnowHorse.Utils;
+using UnityEngine;
 
-public class Behaviour_ChangeLightState : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField] private bool _turnOn;
-    [SerializeField] private Behaviour_LightSwitch[] _switches;
-    [SerializeField] private bool _onInteraction;
-    [SerializeField] private bool _onInspection;
-
-
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_ChangeLightState : MonoBehaviour, IBehaviour
     {
-        if(_onInteraction && isInteracting)
+        [SerializeField] private bool _turnOn;
+        [SerializeField] private Behaviour_LightSwitch[] _switches;
+        [SerializeField] private bool _onInteraction;
+        [SerializeField] private bool _onInspection;
+
+
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            DeactivateLights(isInteracting, isInspecting);
+            if(_onInteraction && isInteracting)
+            {
+                DeactivateLights(isInteracting, isInspecting);
+            }
+            else if(_onInspection && isInspecting)
+            {
+                DeactivateLights(isInteracting, isInspecting);
+            }
+            else if(_onInteraction == false && _onInspection == false)
+            {
+                WarningTool.Print("Make sure to set activation type!", gameObject);
+            }
         }
-        else if(_onInspection && isInspecting)
+
+        public bool IsInspectable()
         {
-            DeactivateLights(isInteracting, isInspecting);
+            return _onInspection;
         }
-        else if(_onInteraction == false && _onInspection == false)
+
+        public bool IsInteractable()
         {
-            WarningTool.Print("Make sure to set activation type!", gameObject);
+            return _onInteraction;
         }
-    }
 
-    public bool IsInspectable()
-    {
-        return _onInspection;
-    }
-
-    public bool IsInteractable()
-    {
-        return _onInteraction;
-    }
-
-    private void DeactivateLights(bool isInteracting, bool isInspecting)
-    {
-        for (int i = 0; i < _switches.Length; i++)
+        private void DeactivateLights(bool isInteracting, bool isInspecting)
         {
-            _switches[i].isOn = !_turnOn; //set to the opposite of desired behaviour for now
-            _switches[i].Behaviour(isInteracting, isInspecting);
+            for (int i = 0; i < _switches.Length; i++)
+            {
+                _switches[i].isOn = !_turnOn; //set to the opposite of desired behaviour for now
+                _switches[i].Behaviour(isInteracting, isInspecting);
+            }
         }
     }
 }

@@ -1,33 +1,36 @@
 using System.Collections;
 using UnityEngine;
 
-public class Behaviour_DeactivateColliders : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField] private Collider[] _colliders;
-    [SerializeField] private float _delay;
-
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_DeactivateColliders : MonoBehaviour, IBehaviour
     {
-        StartCoroutine(Deactivate());
-    }
+        [SerializeField] private Collider[] _colliders;
+        [SerializeField] private float _delay;
 
-    public bool IsInspectable()
-    {
-        return false;
-    }
-
-    public bool IsInteractable()
-    {
-        return true;
-    }
-
-    private IEnumerator Deactivate()
-    {
-        yield return new WaitForSeconds(_delay);
-
-        for(int i = 0; i < _colliders.Length; i++)
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            _colliders[i].enabled = false;
+            StartCoroutine(Deactivate());
+        }
+
+        public bool IsInspectable()
+        {
+            return false;
+        }
+
+        public bool IsInteractable()
+        {
+            return true;
+        }
+
+        private IEnumerator Deactivate()
+        {
+            yield return new WaitForSeconds(_delay);
+
+            for(int i = 0; i < _colliders.Length; i++)
+            {
+                _colliders[i].enabled = false;
+            }
         }
     }
 }

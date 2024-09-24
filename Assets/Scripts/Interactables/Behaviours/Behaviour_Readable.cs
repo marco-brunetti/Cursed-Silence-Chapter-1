@@ -1,54 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using SnowHorse.Utils;
+using UnityEngine;
 
-public class Behaviour_Readable : MonoBehaviour, IBehaviour
+namespace Interactables.Behaviours
 {
-    [SerializeField, TextArea(20, 20)] private string _message;
-    [SerializeField, TextArea(20, 20)] private string _spanishMessage;
-    public void Behaviour(bool isInteracting, bool isInspecting)
+    public class Behaviour_Readable : MonoBehaviour, IBehaviour
     {
-        UIReadable readable = UIManager.Instance.Readable;
-        GameController gameController = GameController.Instance;
-
-        if(isInspecting)
+        [SerializeField, TextArea(20, 20)] private string _message;
+        [SerializeField, TextArea(20, 20)] private string _spanishMessage;
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            string message;
+            UIReadable readable = UIManager.Instance.Readable;
+            GameController gameController = GameController.Instance;
 
-            if(gameController.SelectedLanguage == Language.English)
+            if(isInspecting)
             {
-                message = _message;
-            }
-            else if(gameController.SelectedLanguage == Language.Spanish)
-            {
-                message = _spanishMessage;
+                string message;
+
+                if(gameController.SelectedLanguage == Language.English)
+                {
+                    message = _message;
+                }
+                else if(gameController.SelectedLanguage == Language.Spanish)
+                {
+                    message = _spanishMessage;
+                }
+                else
+                {
+                    message = _message;
+                }
+
+                if(message == "" || message == null)
+                {
+                    WarningTool.Print("Please check readable text!", gameObject);
+                }
+
+                readable.Display(message);
             }
             else
             {
-                message = _message;
+                readable.Display(null);
             }
-
-            if(message == "" || message == null)
-            {
-                WarningTool.Print("Please check readable text!", gameObject);
-            }
-
-            readable.Display(message);
         }
-        else
+
+        public bool IsInspectable()
         {
-            readable.Display(null);
+            return true;
         }
-    }
 
-    public bool IsInspectable()
-    {
-        return true;
-    }
-
-    public bool IsInteractable()
-    {
-        return false;
+        public bool IsInteractable()
+        {
+            return false;
+        }
     }
 }
