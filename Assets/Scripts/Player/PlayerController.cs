@@ -74,7 +74,6 @@ namespace Player
 
                 Interact();
                 Move();
-                InventoryManage();
                 PlayerAudio();
                 ManageStress();
                 ManageCameraDistortion();
@@ -117,11 +116,6 @@ namespace Player
         {
             _interactor.Interact(PlayerData, _input, Inspector);
             Inspector.ManageInspection(PlayerData, _input);
-        }
-
-        private void InventoryManage()
-        {
-            Inventory.Manage();
         }
 
         private void PlayerAudio()

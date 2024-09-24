@@ -41,6 +41,11 @@ namespace Player
             if (interactableObject.TryGetComponent(out Interactable interactable))
             {
                 _playerController.InteractableInSight = interactable;
+                
+                if (interactable.RequiredInventoryItems.Count > 0)
+                {
+                    //Show inventory required object in UI
+                }
 
                 if (Input.GetMouseButtonDown(0))
                 {

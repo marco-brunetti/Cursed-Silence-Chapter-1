@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ namespace Player
 
     public bool DeactivateBehaviours;
 
+    [NonSerialized] public List<GameObject> RequiredInventoryItems = new();
+
     private void Awake()
     {
         SetupInteractable();
@@ -32,6 +35,12 @@ namespace Player
         {
             if (behaviour != null)
             {
+                if(behaviour.GetType() is IRequireInventoryItem)
+                {
+                    var requireItem = behaviour.GetType() as IRequireInventoryItem;
+                    if (requireItem.RequiredObjects != null) RequiredInventoryItems.AddRange(requireItem.RequiredObjects);
+                }
+                
                 if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
                 if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
 

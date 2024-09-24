@@ -15,11 +15,6 @@ namespace Player
             _playerData = PlayerController.Instance.PlayerData;
         }
 
-        public void Manage()
-        {
-            
-        }
-
         public void Add(Transform interactable)
         {
             PlayerController.Instance.InspectablesSource.pitch = 1;
