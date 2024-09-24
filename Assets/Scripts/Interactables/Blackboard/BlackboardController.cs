@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SnowHorse.Utils;
 using System.Linq;
+using Player;
 
 public class BlackboardController : MonoBehaviour, IBehaviour
 {

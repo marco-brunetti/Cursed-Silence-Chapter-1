@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using SnowHorse.Utils;
+using Player;
 
 public class Behaviour_Oven : MonoBehaviour, IBehaviour
 {

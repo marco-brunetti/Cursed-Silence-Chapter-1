@@ -3,139 +3,145 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
-[RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
-[RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
-[RequireComponent(typeof(PlayerStressControl), typeof(PlayerAudio))]
-public class PlayerController : MonoBehaviour
+namespace Player
 {
-    public static PlayerController Instance { get; private set; }
-    [field: SerializeField] public PlayerInventory Inventory { get; private set; }
-    [field: SerializeField] public PlayerInspect Inspector { get; private set; }
-    [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
-    [field: SerializeField] public GameObject Player { get; private set; }
-
-    [SerializeField] private Transform _groundSpawnPoint;
-    [SerializeField] private PlayerDataScript _data;
-    [SerializeField] private PlayerMovement _movement;
-    [SerializeField] private PlayerRotate _rotator;
-    [SerializeField] private PlayerInput _input;
-    [SerializeField] private PlayerInteract _interactor;
-    [SerializeField] private PlayerAudio _audio;
-    [SerializeField] private PostProcessVolume _postProcessVolume;
-
-    [NonSerialized] public Interactable InteractableInSight;
-    [NonSerialized] public bool FreezePlayerMovement;
-    [NonSerialized] public bool FreezePlayerRotation;
-    [NonSerialized] public bool IsOutside;
-    [NonSerialized] public bool IsTeleporting;
-
-    [Header("Player Components")]
-    public GameObject CamHolder;
-    public Transform Camera;
-    public CinemachineVirtualCamera VirtualCamera;
-    public GameObject InventoryCamera;
-    public Transform InventoryHolder;
-    public Transform InspectorParent;
-
-
-    public AudioSource InspectablesSource;
-    public CharacterController Character;
-    public PlayerData PlayerData { get; private set; }
-
-    public bool IsSprinting { get; private set; }
-    public bool IsDistorted { get; private set; }
-
-    private BadTVEffect _camDistortion;
-
-    private void Awake()
+    [RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
+    [RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
+    [RequireComponent(typeof(PlayerStressControl), typeof(PlayerAudio))]
+    public class PlayerController : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
-            Destroy(gameObject);
-        else Instance = this;
+        public static PlayerController Instance { get; private set; }
+        [field: SerializeField] public PlayerInventory Inventory { get; private set; }
+        [field: SerializeField] public PlayerInspect Inspector { get; private set; }
+        [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
+        [field: SerializeField] public GameObject Player { get; private set; }
+
+        [SerializeField] private Transform _groundSpawnPoint;
+        [SerializeField] private PlayerDataScript _data;
+        [SerializeField] private PlayerMovement _movement;
+        [SerializeField] private PlayerRotate _rotator;
+        [SerializeField] private PlayerInput _input;
+        [SerializeField] private PlayerInteract _interactor;
+        [SerializeField] private PlayerAudio _audio;
+        [SerializeField] private PostProcessVolume _postProcessVolume;
+
+        [NonSerialized] public Interactable InteractableInSight;
+        [NonSerialized] public bool FreezePlayerMovement;
+        [NonSerialized] public bool FreezePlayerRotation;
+        [NonSerialized] public bool IsOutside;
+        [NonSerialized] public bool IsTeleporting;
+
+        [Header("Player Components")] public GameObject CamHolder;
+        public Transform Camera;
+        public CinemachineVirtualCamera VirtualCamera;
+        public GameObject InventoryCamera;
+        public Transform InventoryHolder;
+        public Transform InspectorParent;
 
 
-        PlayerData = _data.dataObject;
+        public AudioSource InspectablesSource;
+        public CharacterController Character;
+        public PlayerData PlayerData { get; private set; }
 
-        _camDistortion = Camera.GetComponent<BadTVEffect>();
-    }
+        public bool IsSprinting { get; private set; }
+        public bool IsDistorted { get; private set; }
 
-    private void Update()
-    {
-        Rotate();
+        private BadTVEffect _camDistortion;
 
-        if (GameController.Instance != null && GameController.Instance.Pause)
+        private void Awake()
         {
-            Time.timeScale = 0;
+            if (Instance != null && Instance != this)
+                Destroy(gameObject);
+            else Instance = this;
+
+
+            PlayerData = _data.dataObject;
+
+            _camDistortion = Camera.GetComponent<BadTVEffect>();
         }
-        else
+
+        private void Update()
         {
-            Time.timeScale = 1;
+            Rotate();
 
-            Interact();
-            Move();
-            InventoryManage();
-            PlayerAudio();
-            ManageStress();
-            ManageCameraDistortion();
-        }
-    }
-
-    private void ManageCameraDistortion()
-    {
-        if(IsOutside)
-        {
-            _camDistortion.fineDistort = Mathf.MoveTowards(_camDistortion.fineDistort, PlayerData.DefaultFineDistortion, 0.05f);
-            _camDistortion.thickDistort = Mathf.MoveTowards(_camDistortion.thickDistort, PlayerData.DefaultThickDistortion, 0.05f);
-        }
-    }
-
-    private void Rotate()
-    {
-        _rotator.Rotate(PlayerData, _input, FreezePlayerRotation);
-    }
-
-    private void Move()
-    {
-        if(!IsTeleporting)
-        {
-            if (FreezePlayerMovement == false)
+            if (GameController.Instance && GameController.Instance.Pause)
             {
-                _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
-                IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
+                Time.timeScale = 0;
             }
             else
             {
-                Character.Move(Vector3.zero);
+                Time.timeScale = 1;
+
+                Interact();
+                Move();
+                InventoryManage();
+                PlayerAudio();
+                ManageStress();
+                ManageCameraDistortion();
             }
         }
-    }
 
-    private void Interact()
-    {
-        _interactor.Interact(PlayerData, _input, Inspector);
-        Inspector.ManageInspection(PlayerData, _input);
-    }
+        private void ManageCameraDistortion()
+        {
+            if (IsOutside)
+            {
+                _camDistortion.fineDistort =
+                    Mathf.MoveTowards(_camDistortion.fineDistort, PlayerData.DefaultFineDistortion, 0.05f);
+                _camDistortion.thickDistort = Mathf.MoveTowards(_camDistortion.thickDistort,
+                    PlayerData.DefaultThickDistortion, 0.05f);
+            }
+        }
 
-    private void InventoryManage()
-    {
-        Inventory.Manage();
-    }
+        private void Rotate()
+        {
+            _rotator.Rotate(PlayerData, _input, FreezePlayerRotation);
+        }
 
-    private void PlayerAudio()
-    {
-        _audio.PlayerAudioControl(PlayerData, _input);
-    }
+        private void Move()
+        {
+            if (!IsTeleporting)
+            {
+                if (FreezePlayerMovement == false)
+                {
+                    _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
+                    IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
+                }
+                else
+                {
+                    Character.Move(Vector3.zero);
+                }
+            }
+        }
 
-    private void ManageStress()
-    {
-        PlayerStress.ManageStress(PlayerData);
-    }
+        private void Interact()
+        {
+            _interactor.Interact(PlayerData, _input, Inspector);
+            Inspector.ManageInspection(PlayerData, _input);
+        }
 
-    public void ActivateDepthOfField(bool enable, float currentValue = -1)
-    {
-        _postProcessVolume.gameObject.SetActive(enable);
+        private void InventoryManage()
+        {
+            Inventory.Manage();
+        }
 
-        if (currentValue == -1) _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = PlayerData.defaultDepthOfField;
-        else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;
+        private void PlayerAudio()
+        {
+            _audio.PlayerAudioControl(PlayerData, _input);
+        }
+
+        private void ManageStress()
+        {
+            PlayerStress.ManageStress(PlayerData);
+        }
+
+        public void ActivateDepthOfField(bool enable, float currentValue = -1)
+        {
+            _postProcessVolume.gameObject.SetActive(enable);
+
+            if (currentValue == -1)
+                _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value =
+                    PlayerData.defaultDepthOfField;
+            else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;
+        }
     }
 }

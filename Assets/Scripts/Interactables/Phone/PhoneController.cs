@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Player;
 
 public class PhoneController : MonoBehaviour, IBehaviour
 {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Player;
 
 public class Behaviour_AddStress : MonoBehaviour, IBehaviour
 {

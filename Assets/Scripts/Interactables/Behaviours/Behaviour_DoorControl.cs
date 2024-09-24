@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using SnowHorse.Utils;
+using Player;
 
 public enum DoorState { Locked, Closed, Open };
 public class Behaviour_DoorControl : MonoBehaviour, IBehaviour

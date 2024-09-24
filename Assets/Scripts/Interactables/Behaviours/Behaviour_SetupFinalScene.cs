@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Player;
 using UnityEngine;
 
 public class Behaviour_SetupFinalScene : MonoBehaviour, IBehaviour

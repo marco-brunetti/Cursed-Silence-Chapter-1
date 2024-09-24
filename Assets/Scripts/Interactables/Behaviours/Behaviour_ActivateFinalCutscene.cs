@@ -2,7 +2,7 @@ using SnowHorse.Utils;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using Player;
 
 public class Behaviour_ActivateFinalCutscene : MonoBehaviour, IBehaviour
 {
