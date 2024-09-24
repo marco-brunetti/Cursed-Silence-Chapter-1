@@ -43,11 +43,8 @@ public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
                 {
                     PlayerInventory inventory = PlayerController.Instance.Inventory;
 
-                    if (_key != null && inventory.Contains(_key))
+                    if (_key && inventory.Contains(_key, removeItem:true, destroyItem:true))
                     {
-                        inventory.Remove(_key);
-                        Destroy(_key);
-
                         _audioSource.PlayOneShot(_isUnlockedClip, _volume * GameController.Instance.GlobalVolume); //Unlock sound
 
                         CurrentDoorState = DoorState.Closed;
@@ -153,7 +150,7 @@ public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
     {
         if (CurrentDoorState == DoorState.Locked)
         {
-            if (PlayerController.Instance.Inventory.Contains(_key))
+            if (PlayerController.Instance.Inventory.Contains(_key, removeItem: false, destroyItem:false))
             {
                 _lights.SetActive(true);
                 _renderer.material = _emmisiveMat;

@@ -42,10 +42,8 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
 
             for(int i = 0; i < _requiredObjects.Count; i++)
             {
-               if(playerController.Inventory.Contains(_requiredObjects[i]))
+               if(playerController.Inventory.Contains(_requiredObjects[i], removeItem:true, destroyItem:true))
                {
-                    playerController.Inventory.Remove(_requiredObjects[i]);
-
                     PlayerData playerData = PlayerController.Instance.PlayerData;
                     playerController.InspectablesSource.pitch = 0.9f;
                     playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
@@ -55,7 +53,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
 
                     if (i < _activateObjects.Count)
                     {
-                        if (_activateObjects[i] != null)
+                        if (_activateObjects[i])
                         {
                             _activateObjects[i].SetActive(true);
                             _activateObjects.Remove(_activateObjects[i]);
@@ -64,13 +62,13 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
 
                     if (i < _deactivateObjects.Count)
                     {
-                        if (_deactivateObjects[i] != null)
+                        if (_deactivateObjects[i])
                         {
                             _deactivateObjects[i].SetActive(false);
                             _deactivateObjects.Remove(_deactivateObjects[i]);
                         }
                     }
-                }
+               }
             }
         }
 
@@ -80,7 +78,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
             {
                 for(int i = 0; i < _activateObjects.Count; i++)
                 {
-                    if (_activateObjects[i] != null) _activateObjects[i].SetActive(true);
+                    if (_activateObjects[i]) _activateObjects[i].SetActive(true);
                 }
             }
 
@@ -88,7 +86,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
             {
                 for(int i = 0; i < _deactivateObjects.Count; i++)
                 {
-                    if (_deactivateObjects[i] != null) _deactivateObjects[i].SetActive(false);
+                    if (_deactivateObjects[i]) _deactivateObjects[i].SetActive(false);
                 }
             }
 

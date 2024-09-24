@@ -15,10 +15,8 @@ public class Behaviour_ChristmasTree : MonoBehaviour, IBehaviour
         var playerController = PlayerController.Instance;
         PlayerData playerData = PlayerController.Instance.PlayerData;
 
-        if(playerController.Inventory.Contains(_requiredGift))
+        if(playerController.Inventory.Contains(_requiredGift, removeItem: true, destroyItem: true))
         {
-            playerController.Inventory.Remove(_requiredGift);
-
             playerController.InspectablesSource.pitch = 0.9f;
             playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 

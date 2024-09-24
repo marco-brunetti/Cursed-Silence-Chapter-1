@@ -49,10 +49,8 @@ public class Behaviour_Oven : MonoBehaviour, IBehaviour
     {
         PlayerInventory inventory = PlayerController.Instance.Inventory;
 
-        if (inventory.Contains(_requiredIngredients))
+        if (inventory.Contains(_requiredIngredients, removeItem:true, destroyItem:false))
         {
-            inventory.Remove(_requiredIngredients, false);
-
             _requiredIngredients.transform.SetParent(_ingredientsHolder);
             _previousPosition = _requiredIngredients.transform.position;
             _previousRotation = _requiredIngredients.transform.rotation;

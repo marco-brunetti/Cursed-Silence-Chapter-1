@@ -4,9 +4,6 @@ using UnityEngine;
 public class Behaviour_AddToInventory : MonoBehaviour, IBehaviour
 {
     [SerializeField] public Transform GameObjectToAdd;
-    [field:SerializeField] public Vector3 CustomPosition {  get; private set; }
-    [field: SerializeField] public Vector3 CustomRotation { get; private set; }
-    [field: SerializeField] public Vector3 CustomScale { get; private set; }
 
     private bool _addedToInventory;
     public void Behaviour(bool isInteracting, bool isInspecting)
@@ -15,7 +12,7 @@ public class Behaviour_AddToInventory : MonoBehaviour, IBehaviour
         {
             GetInventoryObject();
 
-            PlayerController.Instance.Inventory.Add(GameObjectToAdd, CustomPosition, CustomRotation, CustomScale);
+            PlayerController.Instance.Inventory.Add(GameObjectToAdd);
             _addedToInventory = true;
         }
     }

@@ -13,26 +13,26 @@ public class Behaviour_RequireObject : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(PlayerController.Instance.Inventory.Contains(_requiredObject))
+        if(PlayerController.Instance.Inventory.Contains(_requiredObject, removeItem: true, destroyItem: false))
         {
             if (_onInteraction && isInteracting)
             {
-                ManageSucessBehaviours(isInteracting, false);
+                ManageSuccessBehaviours(isInteracting, false);
             }
             if (_onInspection && isInspecting)
             {
-                ManageSucessBehaviours(false, isInspecting);
+                ManageSuccessBehaviours(false, isInspecting);
             }
         }
         else if(!_requiredObject)
         {
             if (_onInteraction && isInteracting)
             {
-                ManageSucessBehaviours(isInteracting, false);
+                ManageSuccessBehaviours(isInteracting, false);
             }
             if (_onInspection && isInspecting)
             {
-                ManageSucessBehaviours(false, isInspecting);
+                ManageSuccessBehaviours(false, isInspecting);
             }
         }
         else
@@ -48,7 +48,7 @@ public class Behaviour_RequireObject : MonoBehaviour, IBehaviour
         }
     }
 
-    private void ManageSucessBehaviours(bool isInteracting, bool isInspecting)
+    private void ManageSuccessBehaviours(bool isInteracting, bool isInspecting)
     {
         if (_successBehaviours.Count > 0)
         {

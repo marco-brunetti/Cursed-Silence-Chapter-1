@@ -37,7 +37,7 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 	{
 		if(isInteracting && _controller.BlackboardItems.Contains(gameObject))
 		{
-			var item = PlayerController.Instance.Inventory.Contains<BlackboardItem>();
+			var item = PlayerController.Instance.Inventory.Contains<BlackboardItem>(removeItem:false, destroyItem:false);
 			
 			if (item)
 			{

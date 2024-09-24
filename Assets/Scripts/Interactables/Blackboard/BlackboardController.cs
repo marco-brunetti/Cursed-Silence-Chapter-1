@@ -54,10 +54,9 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	{
 		if (isInteracting && _currentState == BlackboardState.None)
 		{
-			var item = _playerController.Inventory.Contains<BlackboardItem>();
+			var item = _playerController.Inventory.Contains<BlackboardItem>(removeItem:true, destroyItem:false);
 			if(!item) return;
-			
-			_playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
+
 			BlackboardItems.Add(item.gameObject);
 			SetPos(item);
 			HoldItem(item, isFirstPlacement: true);

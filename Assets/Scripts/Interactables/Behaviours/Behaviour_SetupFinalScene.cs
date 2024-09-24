@@ -90,7 +90,7 @@ public class Behaviour_SetupFinalScene : MonoBehaviour, IBehaviour
         PlayerController.Instance.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
         _subtitles[subtitleIndex].GetComponent<IBehaviour>().Behaviour(true, false);
-        inventory.Remove(food);
+        //inventory.Remove(food);
 
         if(food == _santaFood)
         {
