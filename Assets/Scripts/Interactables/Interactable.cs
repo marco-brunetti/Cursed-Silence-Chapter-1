@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Interactables.Behaviours;
+using Player;
 
-namespace Player
-{
-    public class Interactable : MonoBehaviour
+public class Interactable : MonoBehaviour
 {
     public Vector3 InspectableInitialRotation;
     public Vector3 InspectablePosition;
@@ -123,5 +123,4 @@ namespace Player
         bool[] rotateXY = new bool[] { RotateX, RotateY };
         return rotateXY;
     }
-}
 }
