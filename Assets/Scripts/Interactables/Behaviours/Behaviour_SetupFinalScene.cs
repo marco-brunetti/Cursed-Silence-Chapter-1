@@ -36,49 +36,49 @@ public class Behaviour_SetupFinalScene : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        PlayerInventory inventory = PlayerController.Instance.Inventory;
-        GameObject currentInteractable = PlayerController.Instance.InteractableInSight.gameObject;
-
-        if(inventory.SelectedItem() == null)
-        {
-            RunGenericBehaviours(currentInteractable);
-        }
-        else if (inventory.SelectedItem() != null)
-        {
-            if(inventory.SelectedItem() != _santaFood && inventory.SelectedItem() != _guardianFood)
-            {
-                RunGenericBehaviours(currentInteractable);
-            }
-
-            if (_santaFood != null && inventory.SelectedItem() == _santaFood)
-            {
-                if(currentInteractable == _santa)
-                {
-                    ConsumeFood(_santaFood, 0, inventory);
-                }
-                else if(currentInteractable == _guardian)
-                {
-                    _subtitles[1].GetComponent<IBehaviour>().Behaviour(true, false);
-                }
-            }
-
-            if (_guardianFood != null && inventory.SelectedItem() == _guardianFood)
-            {
-                if(currentInteractable == _guardian)
-                {
-                    ConsumeFood(_guardianFood, 2, inventory);
-                }
-                else if(currentInteractable == _santa)
-                {
-                    _subtitles[3].GetComponent<IBehaviour>().Behaviour(true, false);
-                }
-            }
-        }
-
-        if (_santaFood == null && _guardianFood == null)
-        {
-            FinalSetup();
-        }
+        // PlayerInventory inventory = PlayerController.Instance.Inventory;
+        // GameObject currentInteractable = PlayerController.Instance.InteractableInSight.gameObject;
+        //
+        // if(inventory.SelectedItem() == null)
+        // {
+        //     RunGenericBehaviours(currentInteractable);
+        // }
+        // else if (inventory.SelectedItem() != null)
+        // {
+        //     if(inventory.SelectedItem() != _santaFood && inventory.SelectedItem() != _guardianFood)
+        //     {
+        //         RunGenericBehaviours(currentInteractable);
+        //     }
+        //
+        //     if (_santaFood != null && inventory.SelectedItem() == _santaFood)
+        //     {
+        //         if(currentInteractable == _santa)
+        //         {
+        //             ConsumeFood(_santaFood, 0, inventory);
+        //         }
+        //         else if(currentInteractable == _guardian)
+        //         {
+        //             _subtitles[1].GetComponent<IBehaviour>().Behaviour(true, false);
+        //         }
+        //     }
+        //
+        //     if (_guardianFood != null && inventory.SelectedItem() == _guardianFood)
+        //     {
+        //         if(currentInteractable == _guardian)
+        //         {
+        //             ConsumeFood(_guardianFood, 2, inventory);
+        //         }
+        //         else if(currentInteractable == _santa)
+        //         {
+        //             _subtitles[3].GetComponent<IBehaviour>().Behaviour(true, false);
+        //         }
+        //     }
+        // }
+        //
+        // if (_santaFood == null && _guardianFood == null)
+        // {
+        //     FinalSetup();
+        // }
     }
 
     private void ConsumeFood(GameObject food, int subtitleIndex, PlayerInventory inventory)

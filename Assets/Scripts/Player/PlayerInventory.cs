@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Player
 {
     public class PlayerInventory : MonoBehaviour
     {
-        private GameObject _selectedItem;
+        //private GameObject _selectedItem;
         private List<GameObject> _inventory;
         private PlayerData _playerData;
 
-        private int _selectedItemIndex;
+        //private int _selectedItemIndex;
 
         private void Start()
         {
@@ -19,56 +20,56 @@ namespace Player
 
         public void Manage()
         {
-            if (Input.mouseScrollDelta.y != 0)
-            {
-                ItemSelect();
-            }
-
-            //Prevents inventory errors
-            if (_selectedItemIndex > _inventory.Count)
-            {
-                _selectedItemIndex = 0;
-                _selectedItem = _inventory[0];
-            }
-            else if (_selectedItem != _inventory[_selectedItemIndex])
-            {
-                _selectedItem = _inventory[_selectedItemIndex];
-            }
+            // if (Input.mouseScrollDelta.y != 0)
+            // {
+            //     ItemSelect();
+            // }
+            //
+            // //Prevents inventory errors
+            // if (_selectedItemIndex > _inventory.Count)
+            // {
+            //     _selectedItemIndex = 0;
+            //     _selectedItem = _inventory[0];
+            // }
+            // else if (_selectedItem != _inventory[_selectedItemIndex])
+            // {
+            //     _selectedItem = _inventory[_selectedItemIndex];
+            // }
         }
 
-        private void ItemSelect()
-        {
-            int inventoryCapacity = _inventory.Count - 1;
-
-            if (inventoryCapacity > 0)
-            {
-                if (Input.mouseScrollDelta.y > 0)
-                {
-                    _selectedItemIndex = (_selectedItemIndex < inventoryCapacity) ? ++_selectedItemIndex : 0;
-                }
-                else if (Input.mouseScrollDelta.y < 0)
-                {
-                    _selectedItemIndex = (_selectedItemIndex > 0) ? --_selectedItemIndex : inventoryCapacity;
-                }
-            }
-
-            _selectedItem = _inventory[_selectedItemIndex];
-
-            for (int i = 0; i < _inventory.Count; i++)
-            {
-                if (_inventory[i])
-                {
-                    if (_inventory[i] == _selectedItem)
-                    {
-                        _selectedItem.SetActive(true);
-                    }
-                    else
-                    {
-                        _inventory[i].SetActive(false);
-                    }
-                }
-            }
-        }
+        // private void ItemSelect()
+        // {
+        //     int inventoryCapacity = _inventory.Count - 1;
+        //
+        //     if (inventoryCapacity > 0)
+        //     {
+        //         if (Input.mouseScrollDelta.y > 0)
+        //         {
+        //             _selectedItemIndex = (_selectedItemIndex < inventoryCapacity) ? ++_selectedItemIndex : 0;
+        //         }
+        //         else if (Input.mouseScrollDelta.y < 0)
+        //         {
+        //             _selectedItemIndex = (_selectedItemIndex > 0) ? --_selectedItemIndex : inventoryCapacity;
+        //         }
+        //     }
+        //
+        //     _selectedItem = _inventory[_selectedItemIndex];
+        //
+        //     for (int i = 0; i < _inventory.Count; i++)
+        //     {
+        //         if (_inventory[i])
+        //         {
+        //             if (_inventory[i] == _selectedItem)
+        //             {
+        //                 _selectedItem.SetActive(true);
+        //             }
+        //             else
+        //             {
+        //                 _inventory[i].SetActive(false);
+        //             }
+        //         }
+        //     }
+        // }
 
         public void Add(Transform interactable, Vector3 positionInInventory, Vector3 rotationInInventory,
             Vector3 scaleInInventory)
@@ -129,13 +130,13 @@ namespace Player
         {
             ChangeItemLayer(interactable.gameObject, "Default");
 
-            if (deactivateObject)
-            {
-                _inventory[_selectedItemIndex].SetActive(false);
-            }
+            // if (deactivateObject)
+            // {
+            //     _inventory[_selectedItemIndex].SetActive(false);
+            // }
 
             _inventory.Remove(interactable);
-            _selectedItemIndex = 0;
+            //_selectedItemIndex = 0;
             //_selectedItemIndex = _inventory.Count - 1;
             //if(_selectedItemIndex > 0) _inventory[_inventory.Count - 1].SetActive(true);
         }
@@ -156,9 +157,23 @@ namespace Player
             }
         }
 
-        public GameObject SelectedItem()
+        // public GameObject SelectedItem()
+        // {
+        //     return _selectedItem;
+        // }
+
+        public bool Contains(GameObject item)
         {
-            return _selectedItem;
+            if(!item) return false;
+            return _inventory.Exists(x => x == item);
+        }
+
+        public T Contains<T>() where T : Component
+        {
+            T component = null;
+            _inventory.FirstOrDefault(x=>x.TryGetComponent(out component));
+
+            return component;
         }
     }
 }

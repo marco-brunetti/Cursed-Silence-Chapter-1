@@ -15,7 +15,7 @@ public class Behaviour_ChristmasTree : MonoBehaviour, IBehaviour
         var playerController = PlayerController.Instance;
         PlayerData playerData = PlayerController.Instance.PlayerData;
 
-        if(playerController.Inventory.SelectedItem() != null && playerController.Inventory.SelectedItem() == _requiredGift)
+        if(playerController.Inventory.Contains(_requiredGift))
         {
             playerController.Inventory.Remove(_requiredGift);
 

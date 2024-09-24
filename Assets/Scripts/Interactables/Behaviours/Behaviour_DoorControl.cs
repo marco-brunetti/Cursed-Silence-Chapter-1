@@ -43,7 +43,7 @@ public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
                 {
                     PlayerInventory inventory = PlayerController.Instance.Inventory;
 
-                    if (_key != null && inventory.SelectedItem() == _key)
+                    if (_key != null && inventory.Contains(_key))
                     {
                         inventory.Remove(_key);
                         Destroy(_key);
@@ -153,9 +153,7 @@ public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
     {
         if (CurrentDoorState == DoorState.Locked)
         {
-            GameObject playerSelectedItem = PlayerController.Instance.Inventory.SelectedItem();
-
-            if (playerSelectedItem != null && playerSelectedItem == _key)
+            if (PlayerController.Instance.Inventory.Contains(_key))
             {
                 _lights.SetActive(true);
                 _renderer.material = _emmisiveMat;

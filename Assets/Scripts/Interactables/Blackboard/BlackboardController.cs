@@ -54,15 +54,13 @@ public class BlackboardController : MonoBehaviour, IBehaviour
 	{
 		if (isInteracting && _currentState == BlackboardState.None)
 		{
-			var currentItem = _playerController.Inventory.SelectedItem();
-
-			if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
-			{
-				_playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
-				BlackboardItems.Add(item.gameObject);
-				SetPos(item);
-				HoldItem(item, isFirstPlacement: true);
-			}
+			var item = _playerController.Inventory.Contains<BlackboardItem>();
+			if(!item) return;
+			
+			_playerController.Inventory.Remove(item.gameObject, deactivateObject: false);
+			BlackboardItems.Add(item.gameObject);
+			SetPos(item);
+			HoldItem(item, isFirstPlacement: true);
 		}
 	}
 

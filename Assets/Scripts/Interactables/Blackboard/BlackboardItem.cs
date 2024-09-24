@@ -37,8 +37,9 @@ public class BlackboardItem : MonoBehaviour, IBehaviour
 	{
 		if(isInteracting && _controller.BlackboardItems.Contains(gameObject))
 		{
-			var currentItem = PlayerController.Instance.Inventory.SelectedItem();
-			if (currentItem && currentItem.TryGetComponent(out BlackboardItem item))
+			var item = PlayerController.Instance.Inventory.Contains<BlackboardItem>();
+			
+			if (item)
 			{
 				Debug.Log("Put subtitle for placing somewhere else");
 			}

@@ -49,7 +49,7 @@ public class Behaviour_Oven : MonoBehaviour, IBehaviour
     {
         PlayerInventory inventory = PlayerController.Instance.Inventory;
 
-        if (inventory.SelectedItem() != null && inventory.SelectedItem() == _requiredIngredients)
+        if (inventory.Contains(_requiredIngredients))
         {
             inventory.Remove(_requiredIngredients, false);
 

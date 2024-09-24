@@ -13,7 +13,7 @@ public class Behaviour_RequireObject : MonoBehaviour, IBehaviour
 
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        if(_requiredObject != null && _requiredObject == PlayerController.Instance.Inventory.SelectedItem())
+        if(PlayerController.Instance.Inventory.Contains(_requiredObject))
         {
             if (_onInteraction && isInteracting)
             {
@@ -24,7 +24,7 @@ public class Behaviour_RequireObject : MonoBehaviour, IBehaviour
                 ManageSucessBehaviours(false, isInspecting);
             }
         }
-        else if(_requiredObject == null)
+        else if(!_requiredObject)
         {
             if (_onInteraction && isInteracting)
             {

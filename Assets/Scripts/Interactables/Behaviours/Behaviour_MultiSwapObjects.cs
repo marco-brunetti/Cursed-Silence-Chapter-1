@@ -42,7 +42,7 @@ public class Behaviour_MultiSwapObjects : MonoBehaviour, IBehaviour
 
             for(int i = 0; i < _requiredObjects.Count; i++)
             {
-               if(playerController.Inventory.SelectedItem() != null && playerController.Inventory.SelectedItem() == _requiredObjects[i])
+               if(playerController.Inventory.Contains(_requiredObjects[i]))
                {
                     playerController.Inventory.Remove(_requiredObjects[i]);
 
