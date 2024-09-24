@@ -12,10 +12,10 @@ namespace Interactables.Behaviours
     {
         [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
 
-        public BlackboardItem CurrentItem { get; private set; }
         public EventHandler<BlackboardEventArgs> SetColliderEnabled;
         public static BlackboardController Instance;
 
+        private BlackboardItem currentItem;
         private int _showRotateIconCount = 3;
         private int _defaultRendererOrder;
         private Collider _collider;
@@ -56,7 +56,7 @@ namespace Interactables.Behaviours
         {
             if (isInteracting && _currentState == BlackboardState.None)
             {
-                var item = _playerController.Inventory.Contains<BlackboardItem>(removeItem: true, destroyItem: false);
+                var item = _playerController.Inventory.Find<BlackboardItem>(removeItem: true, destroyItem: false);
                 if (!item) return;
 
                 BlackboardItems.Add(item.gameObject);
@@ -80,9 +80,9 @@ namespace Interactables.Behaviours
 
                 if (hit.collider == _collider)
                 {
-                    if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = CurrentItem.transform.position - hit.point;
-                    CurrentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset,
-                        Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[CurrentItem.Orientation]));
+                    if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
+                    currentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset,
+                        Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[currentItem.Orientation]));
                 }
                 else
                 {
@@ -167,9 +167,9 @@ namespace Interactables.Behaviours
             else
             {
                 _currentState = BlackboardState.Looking;
-                CurrentItem = selectedItem;
-                _uiOrientation = CurrentItem.Orientation;
-                UIManager.Instance.ShowBlackboardImage(sprite: CurrentItem.Sprite,
+                currentItem = selectedItem;
+                _uiOrientation = currentItem.Orientation;
+                UIManager.Instance.ShowBlackboardImage(sprite: currentItem.Sprite,
                     zAngle: _orientationAngles[_uiOrientation]);
 
                 if (_showRotateIconCount > 0)
@@ -191,14 +191,14 @@ namespace Interactables.Behaviours
             }
             else
             {
-                CurrentItem.SpriteRenderer.sortingOrder = _defaultRendererOrder;
+                currentItem.SpriteRenderer.sortingOrder = _defaultRendererOrder;
                 _itemMoveOffset = Vector3.zero;
             }
 
             SetColliderEnabled?.Invoke(this, new() { ColliderEnabled = !isHolding });
 
             _playerController.FreezePlayerMovement = isHolding;
-            CurrentItem = item;
+            currentItem = item;
             _currentState = isHolding ? BlackboardState.Moving : BlackboardState.None;
         }
 
@@ -207,7 +207,7 @@ namespace Interactables.Behaviours
             _playerController.FreezePlayerMovement = isLooking;
             _playerController.FreezePlayerRotation = isLooking;
             _playerController.ActivateDepthOfField(isLooking);
-            CurrentItem.EnableComponents(!isLooking);
+            currentItem.EnableComponents(!isLooking);
         }
 
         private void RotateItem()
@@ -219,10 +219,10 @@ namespace Interactables.Behaviours
 
         private void ApplyRotation()
         {
-            var itemRotation = CurrentItem.transform.eulerAngles;
+            var itemRotation = currentItem.transform.eulerAngles;
             itemRotation.z = _orientationAngles[_uiOrientation];
-            CurrentItem.transform.eulerAngles = itemRotation;
-            CurrentItem.Orientation = _uiOrientation;
+            currentItem.transform.eulerAngles = itemRotation;
+            currentItem.Orientation = _uiOrientation;
 
             ResetBlackboard();
         }
@@ -231,7 +231,7 @@ namespace Interactables.Behaviours
         {
             UIManager.Instance.ShowBlackboardImage(false);
             SetupComponentsForLook(false);
-            CurrentItem = null;
+            currentItem = null;
             _currentState = BlackboardState.None;
         }
 
@@ -246,7 +246,7 @@ namespace Interactables.Behaviours
             if (!validSnap) return;
 
             var isOnBlackboard = BlackboardItems.Contains(otherSnap.BlackboardItem.gameObject);
-            var validItem = thisSnap.BlackboardItem == CurrentItem &&
+            var validItem = thisSnap.BlackboardItem == currentItem &&
                             thisSnap.BlackboardItem.Orientation == otherSnap.BlackboardItem.Orientation;
 
             if (validItem && isOnBlackboard)

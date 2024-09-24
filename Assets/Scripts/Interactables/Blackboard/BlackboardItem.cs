@@ -39,7 +39,7 @@ namespace Interactables.Behaviours
         {
             if (isInteracting && _controller.BlackboardItems.Contains(gameObject))
             {
-                var item = PlayerController.Instance.Inventory.Contains<BlackboardItem>(removeItem: false,
+                var item = PlayerController.Instance.Inventory.Find<BlackboardItem>(removeItem: false,
                     destroyItem: false);
 
                 if (item)

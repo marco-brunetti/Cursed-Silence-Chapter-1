@@ -44,7 +44,8 @@ namespace Player
             return isInInventory;
         }
 
-        public T Contains<T>(bool removeItem, bool destroyItem) where T : Component
+        // ReSharper disable Unity.PerformanceAnalysis
+        public T Find<T>(bool removeItem, bool destroyItem) where T : Component
         {
             T component = null;
             _inventory.FirstOrDefault(x=>x.TryGetComponent(out component));
