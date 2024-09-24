@@ -1,20 +1,21 @@
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_AddStress : MonoBehaviour, IBehaviour
+    public class BehaviourAddStress : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private bool _onInteraction;
-        [SerializeField] private bool _onInspection;
+        [FormerlySerializedAs("_onInteraction")] [SerializeField] private bool onInteraction;
+        [FormerlySerializedAs("_onInspection")] [SerializeField] private bool onInspection;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if (_onInteraction && isInteracting)
+            if (onInteraction && isInteracting)
             {
                 AddStress();
             }
-            else if (_onInspection && isInspecting)
+            else if (onInspection && isInspecting)
             {
                 AddStress();
             }
@@ -26,12 +27,12 @@ namespace Interactables.Behaviours
 
         public bool IsInspectable()
         {
-            return _onInspection;
+            return onInspection;
         }
 
         public bool IsInteractable()
         {
-            return _onInteraction;
+            return onInteraction;
         }
 
         private void AddStress()

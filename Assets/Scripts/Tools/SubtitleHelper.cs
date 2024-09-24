@@ -10,7 +10,7 @@ public class SubtitleHelper : MonoBehaviour
 
     [SerializeField] private string[] currentSubtitles;
 
-    private Behaviour_DisplaySubtitles _subtitleTrigger;
+    private BehaviourDisplaySubtitles _subtitleTrigger;
     private SubtitleTextList _subtitleTextList;
     private TextAsset _subtitleAsset;
 
@@ -18,7 +18,7 @@ public class SubtitleHelper : MonoBehaviour
     {
         if(_subtitleTrigger == null)
         {
-            _subtitleTrigger = gameObject.GetComponent<Behaviour_DisplaySubtitles>();
+            _subtitleTrigger = gameObject.GetComponent<BehaviourDisplaySubtitles>();
         }
 
         if (_subtitleTrigger != null && _subtitleTrigger.SubtitleIndex.Length > 0)

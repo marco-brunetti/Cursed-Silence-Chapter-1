@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_DeactivateColliders : MonoBehaviour, IBehaviour
+    public class BehaviourDeactivateColliders : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private Collider[] _colliders;
-        [SerializeField] private float _delay;
+        [FormerlySerializedAs("_colliders")] [SerializeField] private Collider[] colliders;
+        [FormerlySerializedAs("_delay")] [SerializeField] private float delay;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
@@ -25,11 +26,11 @@ namespace Interactables.Behaviours
 
         private IEnumerator Deactivate()
         {
-            yield return new WaitForSeconds(_delay);
+            yield return new WaitForSeconds(delay);
 
-            for(int i = 0; i < _colliders.Length; i++)
+            for(int i = 0; i < colliders.Length; i++)
             {
-                _colliders[i].enabled = false;
+                colliders[i].enabled = false;
             }
         }
     }

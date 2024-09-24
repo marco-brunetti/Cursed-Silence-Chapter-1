@@ -1,22 +1,23 @@
 using SnowHorse.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_Radio : MonoBehaviour
+    public class Radio : MonoBehaviour
     {
-        [SerializeField] private AudioSource _radioSource;
-        [SerializeField] private float _volume;
+        [FormerlySerializedAs("_radioSource")] [SerializeField] private AudioSource radioSource;
+        [FormerlySerializedAs("_volume")] [SerializeField] private float volume;
 
-        [SerializeField] private float _transitionToPauseDuration = 1f;
-        [SerializeField] private float _transitionToGameDuration = 0.5f;
+        [FormerlySerializedAs("_transitionToPauseDuration")] [SerializeField] private float transitionToPauseDuration = 1f;
+        [FormerlySerializedAs("_transitionToGameDuration")] [SerializeField] private float transitionToGameDuration = 0.5f;
 
         private float _currentTime;
         bool _isReadyForStateChange;
 
         private void Start()
         {
-            _radioSource.volume = _volume * GameController.Instance.GlobalVolume;
+            radioSource.volume = volume * GameController.Instance.GlobalVolume;
         }
 
         void Update()
@@ -27,9 +28,9 @@ namespace Interactables.Behaviours
 
                 if(GameController.Instance.Pause)
                 {
-                    _radioSource.volume = _volume * GameController.Instance.GlobalVolume;
+                    radioSource.volume = volume * GameController.Instance.GlobalVolume;
 
-                    if(_radioSource.spatialBlend <= 0)
+                    if(radioSource.spatialBlend <= 0)
                     {
                         percentage = 0;
                         _currentTime = 0;
@@ -44,13 +45,13 @@ namespace Interactables.Behaviours
                             _isReadyForStateChange = true;
                         }
 
-                        percentage = Interpolation.Linear(_transitionToPauseDuration, ref _currentTime, true);
-                        _radioSource.spatialBlend = 1 - percentage;
+                        percentage = Interpolation.Linear(transitionToPauseDuration, ref _currentTime, true);
+                        radioSource.spatialBlend = 1 - percentage;
                     }
                 }
                 else
                 {
-                    if(_radioSource.spatialBlend >= 1)
+                    if(radioSource.spatialBlend >= 1)
                     {
                         percentage = 0;
                         _currentTime = 0;
@@ -65,8 +66,8 @@ namespace Interactables.Behaviours
                             _isReadyForStateChange = true;
                         }
 
-                        percentage = Interpolation.Linear(_transitionToGameDuration, ref _currentTime, false);
-                        _radioSource.spatialBlend = percentage;
+                        percentage = Interpolation.Linear(transitionToGameDuration, ref _currentTime, false);
+                        radioSource.spatialBlend = percentage;
                     }
                 }    
             }

@@ -1,39 +1,48 @@
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_SetupFinalScene : MonoBehaviour, IBehaviour
+    public class SetupFinalScene : MonoBehaviour, IBehaviour
     {
+        [FormerlySerializedAs("_santaFood")]
         [Header("Food for characters")]
-        [SerializeField] private GameObject _santaFood;
-        [SerializeField] private GameObject _guardianFood;
+        [SerializeField] private GameObject santaFood;
+        [FormerlySerializedAs("_guardianFood")] [SerializeField] private GameObject guardianFood;
 
+        [FormerlySerializedAs("_santa")]
         [Header("Setup characters")]
-        [SerializeField] private GameObject _santa;
-        [SerializeField] private GameObject _guardian;
-        [SerializeField] private GameObject _emily;
+        [SerializeField] private GameObject santa;
+        [FormerlySerializedAs("_guardian")] [SerializeField] private GameObject guardian;
+        [FormerlySerializedAs("_emily")] [SerializeField] private GameObject emily;
 
+        [FormerlySerializedAs("_kitchenSwitch")]
         [Header("Setup lights")]
-        [SerializeField] private Behaviour_LightSwitch _kitchenSwitch;
-        [SerializeField] private Behaviour_LightSwitch _livingRoomLamp;
+        [SerializeField] private LightSwitch kitchenSwitch;
+        [FormerlySerializedAs("_livingRoomLamp")] [SerializeField] private LightSwitch livingRoomLamp;
 
+        [FormerlySerializedAs("_deactivateColliders")]
         [Header("Deactivate interactables")]
-        [SerializeField] private Collider[] _deactivateColliders;
+        [SerializeField] private Collider[] deactivateColliders;
 
+        [FormerlySerializedAs("_lightExplodeClip")]
         [Header("Setup sounds")]
-        [SerializeField] private AudioClip _lightExplodeClip;
-        [SerializeField] private AudioSource _lightAudioSource;
+        [SerializeField] private AudioClip lightExplodeClip;
+        [FormerlySerializedAs("_lightAudioSource")] [SerializeField] private AudioSource lightAudioSource;
 
+        [FormerlySerializedAs("_tv")]
         [Header("Setup TV")]
-        [SerializeField] private Behaviour_TV _tv;
+        [SerializeField] private TV tv;
 
+        [FormerlySerializedAs("_santaBehaviours")]
         [Header("Generic Behaviours")]
-        [SerializeField] private GameObject[] _santaBehaviours;
-        [SerializeField] private GameObject[] _guardianBehaviours;
+        [SerializeField] private GameObject[] santaBehaviours;
+        [FormerlySerializedAs("_guardianBehaviours")] [SerializeField] private GameObject[] guardianBehaviours;
 
+        [FormerlySerializedAs("_subtitles")]
         [Header("Subtitles (order: 079, 077, 080, 078)")]
-        [SerializeField] private GameObject[] _subtitles;
+        [SerializeField] private GameObject[] subtitles;
 
 
         public void Behaviour(bool isInteracting, bool isInspecting)
@@ -91,33 +100,33 @@ namespace Interactables.Behaviours
             PlayerController.Instance.InspectablesSource.pitch = 0.9f;
             PlayerController.Instance.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
-            _subtitles[subtitleIndex].GetComponent<IBehaviour>().Behaviour(true, false);
+            subtitles[subtitleIndex].GetComponent<IBehaviour>().Behaviour(true, false);
             //inventory.Remove(food);
 
-            if(food == _santaFood)
+            if(food == santaFood)
             {
-                _santaFood = null;
+                santaFood = null;
             }
-            else if(food == _guardianFood)
+            else if(food == guardianFood)
             {
-                _guardianFood = null;
+                guardianFood = null;
             }
         }
 
         private void RunGenericBehaviours(GameObject currentInteractable)
         {
-            if(currentInteractable == _santa)
+            if(currentInteractable == santa)
             {
-                for (int i = 0; i < _santaBehaviours.Length; i++)
+                for (int i = 0; i < santaBehaviours.Length; i++)
                 {
-                    _santaBehaviours[i].GetComponent<IBehaviour>().Behaviour(true, false);
+                    santaBehaviours[i].GetComponent<IBehaviour>().Behaviour(true, false);
                 }
             }
-            else if(currentInteractable == _guardian)
+            else if(currentInteractable == guardian)
             {
-                for (int i = 0; i < _guardianBehaviours.Length; i++)
+                for (int i = 0; i < guardianBehaviours.Length; i++)
                 {
-                    _guardianBehaviours[i].GetComponent<IBehaviour>().Behaviour(true, false);
+                    guardianBehaviours[i].GetComponent<IBehaviour>().Behaviour(true, false);
                 }
             }
         }
@@ -125,24 +134,24 @@ namespace Interactables.Behaviours
         private void FinalSetup()
         {
             //set to the opposite of desired behaviour for now
-            _kitchenSwitch.isOn = true; 
-            _livingRoomLamp.isOn = false;
+            kitchenSwitch.isOn = true; 
+            livingRoomLamp.isOn = false;
 
-            _kitchenSwitch.Behaviour(false, false);
-            _livingRoomLamp.Behaviour(false, false);
+            kitchenSwitch.Behaviour(false, false);
+            livingRoomLamp.Behaviour(false, false);
 
-            _lightAudioSource.PlayOneShot(_lightExplodeClip, 0.5f * GameController.Instance.GlobalVolume);
+            lightAudioSource.PlayOneShot(lightExplodeClip, 0.5f * GameController.Instance.GlobalVolume);
 
-            _santa.gameObject.SetActive(false);
-            _guardian.gameObject.SetActive(false);
-            _emily.gameObject.SetActive(true);
-            _kitchenSwitch.gameObject.SetActive(false);
+            santa.gameObject.SetActive(false);
+            guardian.gameObject.SetActive(false);
+            emily.gameObject.SetActive(true);
+            kitchenSwitch.gameObject.SetActive(false);
 
-            _tv.VideoDuration = 1000;
+            tv.videoDuration = 1000;
 
-            for(int i = 0; i < _deactivateColliders.Length; i++)
+            for(int i = 0; i < deactivateColliders.Length; i++)
             {
-                _deactivateColliders[i].enabled = false;
+                deactivateColliders[i].enabled = false;
             }
         }
 

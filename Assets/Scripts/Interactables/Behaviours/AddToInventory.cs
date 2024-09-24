@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_AddToInventory : MonoBehaviour, IBehaviour
+    public class AddToInventory : MonoBehaviour, IBehaviour
     {
         [SerializeField] private InventoryItem inventoryItem;
 

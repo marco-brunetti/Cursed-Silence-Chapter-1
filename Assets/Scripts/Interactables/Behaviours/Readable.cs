@@ -1,12 +1,13 @@
 using SnowHorse.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_Readable : MonoBehaviour, IBehaviour
+    public class Readable : MonoBehaviour, IBehaviour
     {
-        [SerializeField, TextArea(20, 20)] private string _message;
-        [SerializeField, TextArea(20, 20)] private string _spanishMessage;
+        [FormerlySerializedAs("_message")] [SerializeField, TextArea(20, 20)] private string message;
+        [FormerlySerializedAs("_spanishMessage")] [SerializeField, TextArea(20, 20)] private string spanishMessage;
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
             UIReadable readable = UIManager.Instance.Readable;
@@ -18,15 +19,15 @@ namespace Interactables.Behaviours
 
                 if(gameController.SelectedLanguage == Language.English)
                 {
-                    message = _message;
+                    message = this.message;
                 }
                 else if(gameController.SelectedLanguage == Language.Spanish)
                 {
-                    message = _spanishMessage;
+                    message = spanishMessage;
                 }
                 else
                 {
-                    message = _message;
+                    message = this.message;
                 }
 
                 if(message == "" || message == null)

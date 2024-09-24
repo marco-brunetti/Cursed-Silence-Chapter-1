@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_Blackboard : MonoBehaviour, IBehaviour
+    public class BehaviourBlackboard : MonoBehaviour, IBehaviour
     {
         public void Behaviour(bool isInteracting, bool isInspecting)
         {

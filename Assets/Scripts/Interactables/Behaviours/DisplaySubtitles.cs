@@ -1,82 +1,84 @@
 using System.Collections;
 using SnowHorse.Utils;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
     [RequireComponent(typeof(SubtitleHelper))]
-    public class Behaviour_DisplaySubtitles : MonoBehaviour, IBehaviour
+    public class BehaviourDisplaySubtitles : MonoBehaviour, IBehaviour
     {
         [field: SerializeField] public int[] SubtitleIndex {  get; private set; }
 
-        [SerializeField] private float[] _subtitleDuration;
+        [FormerlySerializedAs("_subtitleDuration")] [SerializeField] private float[] subtitleDuration;
 
-        [SerializeField] private float _delay = 1f;
+        [FormerlySerializedAs("_delay")] [SerializeField] private float delay = 1f;
 
+        [FormerlySerializedAs("_triggerOnInteraction")]
         [Header("Trigger type")]
-        [SerializeField] private bool _triggerOnInteraction;
-        [SerializeField] private bool _triggerOnInspection;
-        [SerializeField] private bool _triggerOnReturn;
-        [SerializeField] private bool _deactivateAfterTrigger;
-        [SerializeField] private bool _randomize;
+        [SerializeField] private bool triggerOnInteraction;
+        [FormerlySerializedAs("_triggerOnInspection")] [SerializeField] private bool triggerOnInspection;
+        [FormerlySerializedAs("_triggerOnReturn")] [SerializeField] private bool triggerOnReturn;
+        [FormerlySerializedAs("_deactivateAfterTrigger")] [SerializeField] private bool deactivateAfterTrigger;
+        [FormerlySerializedAs("_randomize")] [SerializeField] private bool randomize;
 
 
-        private bool isActive = true;
+        private bool _isActive = true;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if(isActive)
+            if(_isActive)
             {
-                if (SubtitleIndex.Length != _subtitleDuration.Length)
+                if (SubtitleIndex.Length != subtitleDuration.Length)
                 {
                     WarningTool.Print("Check subtitle index and duration arrays!", gameObject);
                 }
-                else if (_triggerOnReturn == false && _triggerOnInspection == false && _triggerOnInteraction == false)
+                else if (triggerOnReturn == false && triggerOnInspection == false && triggerOnInteraction == false)
                 {
                     WarningTool.Print("Please set subtitle trigger type!", gameObject);
                 }
                 else
                 {
-                    if (_triggerOnInteraction == true && isInteracting == true)
+                    if (triggerOnInteraction == true && isInteracting == true)
                     {
                         StartCoroutine(Trigger());
                     }
-                    if (_triggerOnInspection == true && isInspecting == true)
+                    if (triggerOnInspection == true && isInspecting == true)
                     {
                         StartCoroutine(Trigger());
                     }
-                    if(_triggerOnReturn && !isInteracting && !isInspecting)
+                    if(triggerOnReturn && !isInteracting && !isInspecting)
                     {
                         StartCoroutine(Trigger());
                     }
                 }
             }
 
-            if(_deactivateAfterTrigger)
+            if(deactivateAfterTrigger)
             {
-                isActive = false;
+                _isActive = false;
             }
         }
 
         private IEnumerator Trigger()
         {
-            yield return new WaitForSecondsRealtime(_delay);
+            yield return new WaitForSecondsRealtime(delay);
 
             if(SubtitleIndex.Length == 1)
             {
-                UIManager.Instance.Subtitles.Display(SubtitleIndex[0], _subtitleDuration[0]);
-                if (_subtitleDuration[0] == 0)
+                UIManager.Instance.Subtitles.Display(SubtitleIndex[0], subtitleDuration[0]);
+                if (subtitleDuration[0] == 0)
                 {
                     WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
                 }
             }
             else
             {
-                if (_randomize == true)
+                if (randomize == true)
                 {
                     int i = Random.Range(0, SubtitleIndex.Length);
-                    UIManager.Instance.Subtitles.Display(SubtitleIndex[i], _subtitleDuration[i]);
-                    if (_subtitleDuration[i] == 0)
+                    UIManager.Instance.Subtitles.Display(SubtitleIndex[i], subtitleDuration[i]);
+                    if (subtitleDuration[i] == 0)
                     {
                         WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
                     }
@@ -87,13 +89,13 @@ namespace Interactables.Behaviours
                 {
                     for (int i = 0; i < SubtitleIndex.Length; i++)
                     {
-                        UIManager.Instance.Subtitles.Display(SubtitleIndex[i], _subtitleDuration[i]);
-                        if (_subtitleDuration[i] == 0)
+                        UIManager.Instance.Subtitles.Display(SubtitleIndex[i], subtitleDuration[i]);
+                        if (subtitleDuration[i] == 0)
                         {
                             WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
                         }
 
-                        yield return new WaitForSecondsRealtime(_subtitleDuration[i] + 0.5f);
+                        yield return new WaitForSecondsRealtime(subtitleDuration[i] + 0.5f);
                     }
                 }
             }
@@ -101,12 +103,12 @@ namespace Interactables.Behaviours
 
         public bool IsInteractable()
         {
-            return _triggerOnInteraction;
+            return triggerOnInteraction;
         }
 
         public bool IsInspectable()
         {
-            return _triggerOnInspection;
+            return triggerOnInspection;
         }
     }
 }

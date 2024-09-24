@@ -1,16 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_LevelLoader : MonoBehaviour, IBehaviour
+    public class LevelLoader : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private string _scene;
+        [FormerlySerializedAs("_scene")] [SerializeField] private string scene;
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            if(_scene != "")
+            if(scene != "")
             {
-                SceneManager.LoadScene(_scene);
+                SceneManager.LoadScene(scene);
             }
             else
             {

@@ -1,22 +1,23 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_TV : MonoBehaviour, IBehaviour
+    public class TV : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private GameObject _opaqueScreen;
-        [SerializeField] private GameObject _videoScreen;
-        [SerializeField] private AudioSource _tvSource;
-        [SerializeField] private float _volume = 0.5f;
-        public float VideoDuration = 10f;
+        [FormerlySerializedAs("_opaqueScreen")] [SerializeField] private GameObject opaqueScreen;
+        [FormerlySerializedAs("_videoScreen")] [SerializeField] private GameObject videoScreen;
+        [FormerlySerializedAs("_tvSource")] [SerializeField] private AudioSource tvSource;
+        [FormerlySerializedAs("_volume")] [SerializeField] private float volume = 0.5f;
+        [FormerlySerializedAs("VideoDuration")] public float videoDuration = 10f;
 
         private bool _isPlaying;
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
             if(!_isPlaying && isInteracting || !_isPlaying && isInspecting)
             {
-                _tvSource.volume = _volume * GameController.Instance.GlobalVolume;
+                tvSource.volume = volume * GameController.Instance.GlobalVolume;
                 StartCoroutine(ManangeVideoPlayback());
             }
         }
@@ -24,15 +25,15 @@ namespace Interactables.Behaviours
         private IEnumerator ManangeVideoPlayback()
         {
             TurnScreenOn(true);
-            yield return new WaitForSeconds(VideoDuration);
+            yield return new WaitForSeconds(videoDuration);
             TurnScreenOn(false);
         }
 
         private void TurnScreenOn(bool enable)
         {
             _isPlaying = enable;
-            _videoScreen.SetActive(enable);
-            _opaqueScreen.SetActive(!enable);
+            videoScreen.SetActive(enable);
+            opaqueScreen.SetActive(!enable);
         }
 
         public bool IsInteractable()

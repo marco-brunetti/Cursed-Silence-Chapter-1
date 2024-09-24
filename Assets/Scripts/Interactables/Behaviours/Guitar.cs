@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_Guitar : MonoBehaviour, IBehaviour
+    public class Guitar : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private AudioClip[] _guitarStrumClips;
-        [SerializeField] private AudioSource _guitarStrumSource;
-        [SerializeField] private float _volume;
+        [FormerlySerializedAs("_guitarStrumClips")] [SerializeField] private AudioClip[] guitarStrumClips;
+        [FormerlySerializedAs("_guitarStrumSource")] [SerializeField] private AudioSource guitarStrumSource;
+        [FormerlySerializedAs("_volume")] [SerializeField] private float volume;
         private int _currentStrumIndex;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
@@ -22,7 +23,7 @@ namespace Interactables.Behaviours
                     _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
                 }
 
-                _guitarStrumSource.PlayOneShot(_guitarStrumClips[_currentStrumIndex], _volume * GameController.Instance.GlobalVolume);
+                guitarStrumSource.PlayOneShot(guitarStrumClips[_currentStrumIndex], volume * GameController.Instance.GlobalVolume);
             }
         }
 
