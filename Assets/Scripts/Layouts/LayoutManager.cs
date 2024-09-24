@@ -30,19 +30,9 @@ namespace Layouts
 
             savedMap = JsonConvert.DeserializeObject<LayoutMap>(mapJson.ToString());
 
-            foreach (var prefab in layoutDataObject.LayoutPrefabs)
+            foreach (var prefab in layoutDataObject.LayoutPrefabs.Where(x => x != null && !prefabs.ContainsKey(x.Type)))
             {
-                if (prefab != null)
-                {
-                    if (prefabs.ContainsKey(prefab.Type))
-                    {
-                        Debug.Log($"Duplicated level type {prefab.Type} found!");
-                    }
-                    else
-                    {
-                        prefabs.Add(prefab.Type, prefab);
-                    }
-                }
+                prefabs.Add(prefab.Type, prefab);
             }
 
             if (GetLayout(LayoutType.MainLevelStyle0, out var layout))
@@ -51,9 +41,9 @@ namespace Layouts
                 mainLevel.gameObject.SetActive(false);
             }
 
-            foreach (var t in savedMap.Layouts.Where(t => t.enable))
+            foreach (var layoutData in savedMap.Layouts.Where(x => x.enable))
             {
-                loadedMap.Add(t);
+                loadedMap.Add(layoutData);
             }
 
             var currentMapLayout = loadedMap[currentIndex];
@@ -99,18 +89,13 @@ namespace Layouts
             layout = layoutPool.FirstOrDefault(x =>
                 x != null && x.Type == type && !x.gameObject.activeInHierarchy);
 
-            if (layout)
+            if (layout) return true;
+            
+            if (prefabs.TryGetValue(type, out var prefab))
             {
+                layout = Instantiate(prefab);
+                layoutPool.Add(layout);
                 return true;
-            }
-            else
-            {
-                if (prefabs.TryGetValue(type, out var prefab))
-                {
-                    layout = Instantiate(prefab);
-                    layoutPool.Add(layout);
-                    return true;
-                }
             }
 
             Debug.Log($"Level type {type} not found.");
@@ -143,9 +128,9 @@ namespace Layouts
 
         private void MarkForDeactivation()
         {
-            foreach (var layout in layoutPool)
+            foreach (var layout in layoutPool.Where(x=>x.MapIndex <= currentIndex))
             {
-                if (layout.MapIndex <= currentIndex) deactivateQueue.Enqueue(layout);
+                deactivateQueue.Enqueue(layout);
             }
         }
     }
