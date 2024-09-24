@@ -95,6 +95,8 @@ namespace Layouts
         TinyHouseVintageStyle2,
         PaintingRoomStyle1,
         PlayingRoomStyle1,
-        PlayingRoomStyle2
+        PlayingRoomStyle2,
+        
+        Void
     }
 }

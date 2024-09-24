@@ -32,7 +32,17 @@ namespace Layouts
 
             foreach (var prefab in layoutDataObject.LayoutPrefabs)
             {
-                if (prefab != null) prefabs.Add(prefab.Type, prefab);
+                if (prefab != null)
+                {
+                    if (prefabs.ContainsKey(prefab.Type))
+                    {
+                        Debug.Log($"Duplicated level type {prefab.Type} found!");
+                    }
+                    else
+                    {
+                        prefabs.Add(prefab.Type, prefab);
+                    }
+                }
             }
 
             if (GetLayout(LayoutType.MainLevelStyle0, out var layout))
