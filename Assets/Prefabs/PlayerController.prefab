@@ -1096,6 +1096,7 @@ GameObject:
   - component: {fileID: 6659511087997262902}
   - component: {fileID: 34076555676390110}
   - component: {fileID: 3655596412988067937}
+  - component: {fileID: 2956049300856575404}
   - component: {fileID: 1038909125960811817}
   - component: {fileID: 1644232368087117187}
   - component: {fileID: 6695157463493733011}
@@ -1136,7 +1137,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Inventory>k__BackingField: {fileID: 34076555676390110}
-  <Inspector>k__BackingField: {fileID: 3655596412988067937}
   <PlayerStress>k__BackingField: {fileID: 6695157463493733011}
   <Player>k__BackingField: {fileID: 1141731214546713978}
   _groundSpawnPoint: {fileID: 4008185129048192069}
@@ -1144,12 +1144,13 @@ MonoBehaviour:
   _movement: {fileID: 1038909125960811817}
   _rotator: {fileID: 1644232368087117187}
   _input: {fileID: 5596273842252285689}
+  _inspector: {fileID: 3655596412988067937}
   _interactor: {fileID: 6659511087997262902}
   _audio: {fileID: 5074701283949366545}
+  _combat: {fileID: 2956049300856575404}
   _postProcessVolume: {fileID: 0}
   CamHolder: {fileID: 4728253169067368150}
   Camera: {fileID: 15662930635663992}
-  AudioListener: {fileID: 1252878031791516110}
   VirtualCamera: {fileID: 4865997732011264784}
   InventoryCamera: {fileID: 5907084089834317734}
   InventoryHolder: {fileID: 3980516188875806696}
@@ -1217,6 +1218,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd387f3a8c6d75242ad47bd343cb426f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2956049300856575404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4885722693976578010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab42f005d2c98194d95db99895c3ae28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1038909125960811817

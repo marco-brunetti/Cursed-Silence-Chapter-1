@@ -5,14 +5,11 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace Player
 {
-    [RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
-    [RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
-    [RequireComponent(typeof(PlayerStressControl), typeof(PlayerAudio))]
     public class PlayerController : MonoBehaviour
     {
         public static PlayerController Instance { get; private set; }
         [field: SerializeField] public PlayerInventory Inventory { get; private set; }
-        [field: SerializeField] public PlayerInspect Inspector { get; private set; }
+
         [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
         [field: SerializeField] public GameObject Player { get; private set; }
 
@@ -21,8 +18,10 @@ namespace Player
         [SerializeField] private PlayerMovement _movement;
         [SerializeField] private PlayerRotate _rotator;
         [SerializeField] private PlayerInput _input;
+        [SerializeField] private PlayerInspect _inspector;
         [SerializeField] private PlayerInteract _interactor;
         [SerializeField] private PlayerAudio _audio;
+        [SerializeField] private PlayerCombat _combat;
         [SerializeField] private PostProcessVolume _postProcessVolume;
 
         [NonSerialized] public Interactable InteractableInSight;
@@ -45,6 +44,7 @@ namespace Player
 
         public bool IsSprinting { get; private set; }
         public bool IsDistorted { get; private set; }
+        public bool IsInspecting { get => _inspector.IsInspecting; }
 
         private BadTVEffect _camDistortion;
 
@@ -73,6 +73,7 @@ namespace Player
                 Time.timeScale = 1;
 
                 Interact();
+                ManageCombat();
                 Move();
                 PlayerAudio();
                 ManageStress();
@@ -114,8 +115,8 @@ namespace Player
 
         private void Interact()
         {
-            _interactor.Interact(PlayerData, _input, Inspector);
-            Inspector.ManageInspection(PlayerData, _input);
+            _interactor.Interact(PlayerData, _input, _inspector);
+            _inspector.ManageInspection(PlayerData, _input);
         }
 
         private void PlayerAudio()
@@ -126,6 +127,11 @@ namespace Player
         private void ManageStress()
         {
             PlayerStress.ManageStress(PlayerData);
+        }
+
+        private void ManageCombat()
+        {
+            _combat.Manage();
         }
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)

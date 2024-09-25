@@ -1,3 +1,4 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace Player
@@ -5,7 +6,6 @@ namespace Player
     public class PlayerInteract : MonoBehaviour
     {
         private PlayerController _playerController;
-        private Ray _interactRay;
 
         private void Start()
         {
@@ -14,20 +14,22 @@ namespace Player
 
         public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
         {
-            if (!GameController.Instance.IsInDream && (Input.GetMouseButtonDown(0) ||
-                                                       input.mouseMovementInput != Vector2.zero ||
-                                                       input.playerMovementInput != Vector2.zero))
+            if(_playerController.IsInspecting)
             {
-                _interactRay.origin = PlayerController.Instance.Camera.position;
-                _interactRay.direction = PlayerController.Instance.Camera.forward;
-
-                if (Physics.Raycast(_interactRay, out RaycastHit hit, playerData.InteractDistance,
-                        playerData.InteractLayer))
+                _playerController.InteractableInSight = null;
+            }
+            else if (!GameController.Instance.IsInDream && 
+            (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
+            {
+                Ray ray = new()
                 {
-                    if (!PlayerController.Instance.Inspector.IsInspecting && hit.collider)
-                    {
-                        ManageInteraction(hit.collider.gameObject, inspector);
-                    }
+                    origin = _playerController.Camera.position,
+                    direction = _playerController.Camera.forward
+                };
+
+                if (Physics.Raycast(ray, out RaycastHit hit, playerData.InteractDistance, playerData.InteractLayer) && hit.collider)
+                {
+                    ManageInteraction(hit.collider.gameObject, inspector);
                 }
                 else
                 {

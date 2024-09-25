@@ -9,7 +9,7 @@ public class UIPrompts : MonoBehaviour
         {
             Interactable interactable = PlayerController.Instance.InteractableInSight;
 
-            if(PlayerController.Instance.Inspector.IsInspecting)
+            if(PlayerController.Instance.IsInspecting)
             {
                 UIData.InteractPrompt.SetActive(false);
                 UIData.InspectPrompt.SetActive(false);

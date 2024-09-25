@@ -4,12 +4,12 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class BehaviourChangeLightState : MonoBehaviour, IBehaviour
+    public class ChangeLightState : MonoBehaviour, IBehaviour
     {
-        [FormerlySerializedAs("_turnOn")] [SerializeField] private bool turnOn;
-        [FormerlySerializedAs("_switches")] [SerializeField] private LightSwitch[] switches;
-        [FormerlySerializedAs("_onInteraction")] [SerializeField] private bool onInteraction;
-        [FormerlySerializedAs("_onInspection")] [SerializeField] private bool onInspection;
+        [SerializeField] private bool turnOn;
+        [SerializeField] private LightSwitch[] switches;
+        [SerializeField] private bool onInteraction;
+        [SerializeField] private bool onInspection;
 
 
         public void Behaviour(bool isInteracting, bool isInspecting)

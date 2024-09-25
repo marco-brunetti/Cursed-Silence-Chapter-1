@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
     {
         if(_pause == false)
         {
-            if (PlayerController.Instance != null && PlayerController.Instance.Inspector.IsInspecting)
+            if (PlayerController.Instance != null && PlayerController.Instance.IsInspecting)
             {
                 UIData.CenterPoint.SetActive(false);
             }

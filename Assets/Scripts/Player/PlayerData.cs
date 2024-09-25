@@ -38,6 +38,8 @@ public class PlayerData : ScriptableObject
     public float MaxStressLevel = 2;
     public float StressDisipateSpeed = 0.1f;
 
+    [Header("Player Combat")] public int DamageAmount = 10;
+
     [Header("Interactables")] public float InteractDistance = 2f;
     public LayerMask InteractLayer;
     public AudioClip InspectablePickupClip;
