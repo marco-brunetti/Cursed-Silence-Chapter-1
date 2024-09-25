@@ -39,6 +39,7 @@ public class PlayerData : ScriptableObject
     public float StressDisipateSpeed = 0.1f;
 
     [Header("Player Combat")] public int DamageAmount = 10;
+    public float AttackDistance = 1.5f;
 
     [Header("Interactables")] public float InteractDistance = 2f;
     public LayerMask InteractLayer;

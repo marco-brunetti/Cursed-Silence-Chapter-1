@@ -1,4 +1,5 @@
 using UnityEngine;
+using Enemies;
 
 namespace Player
 {
@@ -19,12 +20,14 @@ namespace Player
             if (Input.GetMouseButtonDown(0) && !_controller.InteractableInSight)
             {
                 Attack();
+                Cover();
             }
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private void Attack()
         {
-            Debug.Log("Player Attacking");
+            
 
             //Add player animation
 
@@ -34,10 +37,27 @@ namespace Player
                 direction = _controller.Camera.forward
             };
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _data.InteractDistance, _data.InteractLayer) && hit.collider.TryGetComponent(out EnemyController enemy))
+            if (Physics.Raycast(ray, out RaycastHit hit, _data.AttackDistance, _data.InteractLayer) && hit.collider.TryGetComponent(out EnemyController enemy))
             {
                 enemy.DealDamage(_data.DamageAmount);
             }
+            else
+            {
+                Debug.Log("Player attack nothing");
+            }
         }
+
+        private void Cover()
+        {
+            
+        }
+    }
+
+    public enum PlayerCombatState
+    {
+        Idle,
+        Attack,
+        Block,
+        Stunned
     }
 }
