@@ -10,7 +10,7 @@ public class PlayerDetector : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            Controller.PlayerDetected();
+            Controller.PlayerDetected(detector: this);
         }
     }
 }
