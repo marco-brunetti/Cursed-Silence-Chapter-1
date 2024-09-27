@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Player;
 using SnowHorse.Utils;
+using UnityEngine.Serialization;
 
 namespace Enemies
 {
@@ -10,20 +12,22 @@ namespace Enemies
         private static readonly int AnimatorDie = Animator.StringToHash("die");
         private static readonly int AnimatorIdle = Animator.StringToHash("idle");
         private static readonly int AnimatorAttack1 = Animator.StringToHash("attack_1");
+        private static readonly int AnimatorWalkForward1 = Animator.StringToHash("walk_forward_1");
         private static readonly int AnimatorReactFront = Animator.StringToHash("react_front");
         [SerializeField] private EnemyData data;
         [SerializeField] private new Collider collider;
         [SerializeField] private Animator animator;
-        [SerializeField] private PlayerDetector rightHandPlayerDetector;
-        [SerializeField] private PlayerDetector leftHandPlayerDetector;
-        [SerializeField] private PlayerDetector generalPlayerDetector;
+        [SerializeField] private Detector rightHandPlayerDetector;
+        [SerializeField] private Detector leftHandPlayerDetector; 
+        [SerializeField] private Detector innerPlayerDetector;
+        [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
         private int currentHealth;
         private bool isEngaging;
         private bool canRecieveDamage;
-        private EnemyState currentState = EnemyState.Dead;
+        private EnemyState currentState = EnemyState.Idle;
         private Transform player;
         private Vector3 targetLookPosition;
         private float currentLerpTime;
@@ -41,9 +45,19 @@ namespace Enemies
         {
             currentHealth = data.Health;
 
-            rightHandPlayerDetector.Controller = this;
-            leftHandPlayerDetector.Controller = this;
-            generalPlayerDetector.Controller = this;
+            rightHandPlayerDetector.DetectTag("Player");
+            leftHandPlayerDetector.DetectTag("Player");
+            innerPlayerDetector.DetectTag("Player");
+            outerPlayerDetector.DetectTag("Player");
+
+            Detector.ColliderEntered += PlayerDetected;
+            Detector.ColliderExited += PlayerExitedDetector;
+        }
+
+        private void OnDisable()
+        {
+            Detector.ColliderEntered -= PlayerDetected;
+            Detector.ColliderExited -= PlayerExitedDetector;
         }
 
         private void Start()
@@ -59,28 +73,45 @@ namespace Enemies
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
 
-                if (currentHealth <= 0)
+                if (currentHealth <= 0) currentState = EnemyState.Dead;
+                else animator.SetBool(AnimatorReactFront, true);
+            }
+        }
+
+        private void PlayerDetected(object detector, Collider other)
+        {
+            var triggeredDetector = detector as Detector;
+            if (currentState != EnemyState.Dead)
+            {
+                if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
                 {
-                    currentState = EnemyState.Dead;
+                    //Deal damage to player
                 }
-                else
+                else if (triggeredDetector == innerPlayerDetector)
                 {
-                    animator.SetBool(AnimatorReactFront, true);
+                    currentState = EnemyState.Attack;
+                }
+                else if (triggeredDetector == outerPlayerDetector)
+                {
+                    currentState = EnemyState.Walk;
                 }
             }
         }
 
-        public void PlayerDetected(PlayerDetector detector)
+        private void PlayerExitedDetector(object detector, Collider other)
         {
-            if (detector == rightHandPlayerDetector || detector == leftHandPlayerDetector)
+            var triggeredDetector = detector as Detector;
+            if (currentState != EnemyState.Dead)
             {
-                
+                if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
+                {
+                    //Deal damage to player
+                }
+                else if (triggeredDetector == innerPlayerDetector)
+                {
+                    currentState = EnemyState.Walk;
+                }
             }
-            else if (detector == generalPlayerDetector)
-            {
-                if(currentState != EnemyState.Dead) currentState = EnemyState.Attack;
-            }
-            Debug.Log($"Player detected");
         }
 
         private void Update()
@@ -96,15 +127,17 @@ namespace Enemies
                 case EnemyState.Attack:
                     Attack();
                     break;
+                case EnemyState.Walk:
+                    Walk();
+                    break;
             }
-            
-            
         }
 
         private void Die()
         {
             collider.enabled = false;
-            generalPlayerDetector.gameObject.SetActive(false);
+            innerPlayerDetector.gameObject.SetActive(false);
+            outerPlayerDetector.gameObject.SetActive(false);
             leftHandPlayerDetector.gameObject.SetActive(false);
             rightHandPlayerDetector.gameObject.SetActive(false);
             animator.SetBool(AnimatorDie, true);
@@ -135,8 +168,16 @@ namespace Enemies
         {
             LookAtPlayer();
             collider.enabled = true;
-            /*animator.SetBool(AnimatorDie, false);
-            animator.SetBool(AnimatorIdle, true);*/
+            animator.SetBool(AnimatorIdle, true);
+        }
+        
+        private void Walk()
+        {
+            LookAtPlayer();
+            collider.enabled = true;
+            animator.SetBool(AnimatorIdle, false);
+            animator.SetBool(AnimatorAttack1, false);
+            animator.SetBool(AnimatorWalkForward1, true);
         }
 
         private void Attack()
@@ -156,7 +197,6 @@ namespace Enemies
             else
             {
                 var lerpDuration = (1 / (targetLookPosition - player.position).magnitude) * 50f;
-                
                 var percent = Interpolation.Smoother(lerpDuration, ref currentLerpTime);
                 targetLookPosition = Vector3.Lerp(targetLookPosition, player.position, percent);
             }
@@ -164,13 +204,13 @@ namespace Enemies
             transform.LookAt(targetLookPosition);
             var rotationDamping = -30;
             transform.eulerAngles = new Vector3(0,transform.eulerAngles.y + rotationDamping,0); 
-
         }
     }
 
     public enum EnemyState
     {
         Idle,
+        Walk,
         Attack,
         Escape,
         Block,
