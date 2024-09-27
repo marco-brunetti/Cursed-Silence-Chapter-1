@@ -37,23 +37,15 @@ namespace Enemies
 
         public void Set(int hash, bool enable)
         {
-            /*if (enable)
+            if (animator.GetBool(hash) == enable) return;
+            
+            if (enable)
             {
                 var anim = dict[hash];
                 var index = random.Next(anim.Value.Count());
                 aoc[anim.Key] = anim.Value[index];
-
-            }*/
-
-            var anim = dict[hash];
-            var index = random.Next(anim.Value.Count());
-            aoc[anim.Key] = anim.Value[index];
-
-            aoc = new AnimatorOverrideController(controller);
-            animator.runtimeAnimatorController = aoc;
-
-            Debug.Log($"animation key {anim.Key} value {anim.Value[index]}");
-
+            }
+            
             animator.SetBool(hash, enable);
         }
     }

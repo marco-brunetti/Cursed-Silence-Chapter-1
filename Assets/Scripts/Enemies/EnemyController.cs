@@ -181,13 +181,13 @@ namespace Enemies
 
         private void Attack()
         {
-            LookAtPlayer();
+            LookAtPlayer(0);
             collider.enabled = true;
             animation.Set(AnimatorAttack1, true);
             animation.Set(AnimatorIdle, false);
         }
 
-        private void LookAtPlayer()
+        private void LookAtPlayer(float correctionAngle = 0)
         {
             if ((targetLookPosition - player.position).magnitude < 0.01f)
             {
@@ -201,8 +201,7 @@ namespace Enemies
             }
 
             transform.LookAt(targetLookPosition);
-            var rotationDamping = -30;
-            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + rotationDamping, 0);
+            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + correctionAngle, 0);
         }
     }
 
