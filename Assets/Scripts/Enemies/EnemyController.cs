@@ -1,24 +1,18 @@
-using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Player;
 using SnowHorse.Utils;
-using UnityEngine.Serialization;
 
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
     {
-        private static readonly int AnimatorDie = Animator.StringToHash("die");
-        private static readonly int AnimatorIdle = Animator.StringToHash("idle");
-        private static readonly int AnimatorAttack1 = Animator.StringToHash("attack_1");
-        private static readonly int AnimatorWalkForward1 = Animator.StringToHash("walk_forward_1");
-        private static readonly int AnimatorReactFront = Animator.StringToHash("react_front");
+        [SerializeField] private new EnemyAnimation animation;
         [SerializeField] private EnemyData data;
         [SerializeField] private new Collider collider;
-        [SerializeField] private Animator animator;
+
         [SerializeField] private Detector rightHandPlayerDetector;
-        [SerializeField] private Detector leftHandPlayerDetector; 
+        [SerializeField] private Detector leftHandPlayerDetector;
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private Renderer[] renderers;
@@ -36,10 +30,15 @@ namespace Enemies
         #region AnimationEvents
         public void CanRecieveDamage() => canRecieveDamage = true;
         public void CantRecieveDamage() => canRecieveDamage = false;
-        
+
         #endregion
 
-        public void DeactivateReactAnimation() => animator.SetBool(AnimatorReactFront, false);
+        private static readonly int AnimatorDie = Animator.StringToHash("death");
+        private static readonly int AnimatorIdle = Animator.StringToHash("idle");
+        private static readonly int AnimatorAttack1 = Animator.StringToHash("attack");
+        private static readonly int AnimatorWalkForward1 = Animator.StringToHash("walk_forward");
+        private static readonly int AnimatorReactFront = Animator.StringToHash("react_front");
+
 
         private void OnEnable()
         {
@@ -74,7 +73,7 @@ namespace Enemies
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
 
                 if (currentHealth <= 0) currentState = EnemyState.Dead;
-                else animator.SetBool(AnimatorReactFront, true);
+                else animation.Set(AnimatorReactFront, true);
             }
         }
 
@@ -140,52 +139,52 @@ namespace Enemies
             outerPlayerDetector.gameObject.SetActive(false);
             leftHandPlayerDetector.gameObject.SetActive(false);
             rightHandPlayerDetector.gameObject.SetActive(false);
-            animator.SetBool(AnimatorDie, true);
-            animator.SetBool(AnimatorIdle, false);
-            
+            animation.Set(AnimatorDie, true);
+            animation.Set(AnimatorIdle, false);
+
             foreach (var r in renderers)
             {
                 var c = r.material.color;
 
                 if (c.a > 0)
                 {
-                    var disappearSpeed = 0f;
+                    float disappearSpeed;
                     if (r is ParticleSystemRenderer) disappearSpeed = 0.1f;
                     else disappearSpeed = 0.01f;
-                    
+
                     var alpha = c.a - disappearSpeed * Time.deltaTime;
                     alpha = Mathf.Clamp(alpha, 0, 1);
                     r.material.color = new Color(c.r, c.g, c.b, alpha);
                 }
-                
-                if(c.a <= 0 && !invisibleRenderers.Contains(r)) invisibleRenderers.Add(r);
+
+                if (c.a <= 0 && !invisibleRenderers.Contains(r)) invisibleRenderers.Add(r);
             }
-            
-            if(invisibleRenderers.Count == renderers.Length) Destroy(gameObject);
+
+            if (invisibleRenderers.Count == renderers.Length) Destroy(gameObject);
         }
 
         private void Idle()
         {
             LookAtPlayer();
             collider.enabled = true;
-            animator.SetBool(AnimatorIdle, true);
+            animation.Set(AnimatorIdle, true);
         }
-        
+
         private void Walk()
         {
             LookAtPlayer();
             collider.enabled = true;
-            animator.SetBool(AnimatorIdle, false);
-            animator.SetBool(AnimatorAttack1, false);
-            animator.SetBool(AnimatorWalkForward1, true);
+            animation.Set(AnimatorIdle, false);
+            animation.Set(AnimatorAttack1, false);
+            animation.Set(AnimatorWalkForward1, true);
         }
 
         private void Attack()
         {
             LookAtPlayer();
             collider.enabled = true;
-            animator.SetBool(AnimatorAttack1, true);
-            animator.SetBool(AnimatorIdle, false);
+            animation.Set(AnimatorAttack1, true);
+            animation.Set(AnimatorIdle, false);
         }
 
         private void LookAtPlayer()
@@ -203,7 +202,7 @@ namespace Enemies
 
             transform.LookAt(targetLookPosition);
             var rotationDamping = -30;
-            transform.eulerAngles = new Vector3(0,transform.eulerAngles.y + rotationDamping,0); 
+            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + rotationDamping, 0);
         }
     }
 
