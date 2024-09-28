@@ -35,12 +35,14 @@ namespace Enemies
         private static readonly string AnimatorDieForward = "death_forward";
         private static readonly string AnimatorIdle = "idle";
         private static readonly string AnimatorAttack = "attack";
+        private static readonly string HeavyAttack = "heavy_attack";
         private static readonly string AnimatorWalkForward = "walk_forward";
         private static readonly string AnimatorReactFront = "react_front";
+
         public void CanRecieveDamage() => canRecieveDamage = true;
         public void CantRecieveDamage() => canRecieveDamage = false;
         public void DeactivateReactAnimation() => animation.Set(AnimatorReactFront, false);
-        public void ChangeCurrentAttackClip() => animation.ChangeCurrentClip(AnimatorAttack);
+        public void ChangeCurrentAttackClip() => animation.ChangeNextStateClip(AnimatorAttack, HeavyAttack);
         #endregion
 
 
@@ -68,7 +70,7 @@ namespace Enemies
         {
             player = PlayerController.Instance.Player.transform;
 
-            string[] animationKeys = { AnimatorDieForward, AnimatorIdle, AnimatorAttack, AnimatorWalkForward, AnimatorReactFront };
+            string[] animationKeys = { AnimatorDieForward, AnimatorIdle, AnimatorAttack, HeavyAttack, AnimatorWalkForward, AnimatorReactFront };
             animation = new(animationKeys, animator, animatorController: animatorController, animationClips);
         }
 

@@ -10,6 +10,7 @@ public class AnimationManager : MonoBehaviour
     private Dictionary<string, KeyValuePair<int, List<AnimationClip>>> dict = new();
     private System.Random random;
     private AnimatorOverrideController aoc;
+    public string CurrentKey { get; private set; }
 
     public AnimationManager(string[] animationKeys, Animator animator, AnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
     {
@@ -37,21 +38,33 @@ public class AnimationManager : MonoBehaviour
     {
         var hash = Animator.StringToHash(key);
         if (animator.GetBool(hash) == enable) return;
+        animator.SetBool(hash, enable);
+        if (enable) ChangeClip(key);
+    }
 
+    public void ChangeClip(string key)
+    {
         if (!dict.ContainsKey(key))
         {
             Debug.Log($"Animation key {key} not found.");
             return;
         }
 
-        if (enable) ChangeCurrentClip(key);
-        animator.SetBool(hash, enable);
-    }
-
-    public void ChangeCurrentClip(string key)
-    {
         var anim = dict[key];
         var index = random.Next(anim.Value.Count());
         aoc[key] = anim.Value[index];
+        CurrentKey = key;
+    }
+
+    public void ChangeNextStateClip(string key1, string key2)
+    {
+        if(CurrentKey == key1)
+        {
+            ChangeClip(key2);
+        }
+        else if(CurrentKey == key2)
+        {
+            ChangeClip(key1);
+        }
     }
 }
