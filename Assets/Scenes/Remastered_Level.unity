@@ -38,6 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 303145326}
+  m_IndirectSpecularColor: {r: 0.0001280699, g: 0.00011771533, b: 0.00011164733, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2889,7 +2890,6 @@ Terrain:
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
-  m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
@@ -9588,9 +9588,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3413a70c86e20541b57923cef660b44, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1492344753}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c3413a70c86e20541b57923cef660b44, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1492344754}
     - targetCorrespondingSourceObject: {fileID: 9037727976738196030, guid: c3413a70c86e20541b57923cef660b44, type: 3}
       insertIndex: -1
       addedObject: {fileID: 933613096}
@@ -9670,7 +9667,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 644293750ae4d724f97ac8a778b9e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animation: {fileID: 1492344754}
+  animationClips:
+  - {fileID: 7400000, guid: 27ead518d2b73684cb4cf58ef8d626b8, type: 2}
+  - {fileID: 7400000, guid: 85fb021cce1aace459e2afdcf4be02e3, type: 2}
+  - {fileID: 7400000, guid: 1c24f471bbf175a40badd89b0433911c, type: 2}
+  - {fileID: 7400000, guid: 55338a37a6d4f4344a7b862046263930, type: 2}
+  - {fileID: 7400000, guid: 76c7b4bc78bc5934faaf7051d173ea2d, type: 2}
+  - {fileID: 7400000, guid: d395a48316330014e99ecbd235f08009, type: 2}
+  - {fileID: 7400000, guid: 8f243951dfead6a4ca6edbcfd468152e, type: 2}
+  - {fileID: 7400000, guid: f84cfa72c55a9c040b6f36a9af40b47d, type: 2}
+  - {fileID: 7400000, guid: 58e473aaf18efc2419ef4bd9472f9787, type: 2}
+  - {fileID: 7400000, guid: 799a6d84434fb56449d5ebf10f273ae3, type: 2}
+  - {fileID: 7400000, guid: 3fba4aaaf713cd3409139338fcebedf1, type: 2}
+  - {fileID: 7400000, guid: 532b729284f2ed44fa4f61bd93e8d62d, type: 2}
+  - {fileID: 7400000, guid: e1460677428d9794bafaf5d7c441baa9, type: 2}
+  - {fileID: 7400000, guid: 3730e5b55d6092a4f815e6476ae8897a, type: 2}
+  - {fileID: 7400000, guid: 2cfb321a93ca42844853194ed6a37ec3, type: 2}
+  animator: {fileID: 1492344751}
+  animatorController: {fileID: 9100000, guid: 6cf31f6395247bb45b472fc47f1fccea, type: 2}
   data: {fileID: 11400000, guid: 11f06388ff5daae4e9c3a6cfb4ae755e, type: 2}
   collider: {fileID: 1492344752}
   rightHandPlayerDetector: {fileID: 783680644}
@@ -9685,35 +9699,6 @@ MonoBehaviour:
   - {fileID: 1981501743}
   - {fileID: 1874752223}
   particleRenderers: []
---- !u!114 &1492344754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 179494301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41891f7e4624942489b52fe8cbdebd43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 1492344751}
-  controller: {fileID: 9100000, guid: 6cf31f6395247bb45b472fc47f1fccea, type: 2}
-  deathAnimations:
-  - {fileID: 7400000, guid: 8f243951dfead6a4ca6edbcfd468152e, type: 2}
-  - {fileID: 7400000, guid: f84cfa72c55a9c040b6f36a9af40b47d, type: 2}
-  idleAnimations:
-  - {fileID: 7400000, guid: 58e473aaf18efc2419ef4bd9472f9787, type: 2}
-  attackAnimations:
-  - {fileID: 7400000, guid: 27ead518d2b73684cb4cf58ef8d626b8, type: 2}
-  - {fileID: 7400000, guid: 85fb021cce1aace459e2afdcf4be02e3, type: 2}
-  - {fileID: 7400000, guid: 1c24f471bbf175a40badd89b0433911c, type: 2}
-  - {fileID: 7400000, guid: 55338a37a6d4f4344a7b862046263930, type: 2}
-  - {fileID: 7400000, guid: 76c7b4bc78bc5934faaf7051d173ea2d, type: 2}
-  walkForwardAnimations:
-  - {fileID: 7400000, guid: 2cfb321a93ca42844853194ed6a37ec3, type: 2}
-  reactFrontAnimations:
-  - {fileID: 7400000, guid: 799a6d84434fb56449d5ebf10f273ae3, type: 2}
 --- !u!1 &1504191134
 GameObject:
   m_ObjectHideFlags: 0

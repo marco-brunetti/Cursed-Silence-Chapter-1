@@ -2,12 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 using Player;
 using SnowHorse.Utils;
+using UnityEditor.Animations;
 
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
     {
-        [SerializeField] private new EnemyAnimation animation;
+        [SerializeField] private AnimationClip[] animationClips;
+        [SerializeField] private Animator animator;
+        [SerializeField] private AnimatorController animatorController;
         [SerializeField] private EnemyData data;
         [SerializeField] private new Collider collider;
 
@@ -27,17 +30,19 @@ namespace Enemies
         private float currentLerpTime;
         private List<Renderer> invisibleRenderers = new();
 
-        #region AnimationEvents
+        #region Animation
+        private new AnimationManager animation;
+        private static readonly string AnimatorDieForward = "death_forward";
+        private static readonly string AnimatorIdle = "idle";
+        private static readonly string AnimatorAttack = "attack";
+        private static readonly string AnimatorWalkForward = "walk_forward";
+        private static readonly string AnimatorReactFront = "react_front";
         public void CanRecieveDamage() => canRecieveDamage = true;
         public void CantRecieveDamage() => canRecieveDamage = false;
-
+        public void DeactivateReactAnimation() => animation.Set(AnimatorReactFront, false);
+        public void ChangeCurrentAttackClip() => animation.ChangeCurrentClip(AnimatorAttack);
         #endregion
 
-        private static readonly int AnimatorDie = Animator.StringToHash("death");
-        private static readonly int AnimatorIdle = Animator.StringToHash("idle");
-        private static readonly int AnimatorAttack1 = Animator.StringToHash("attack");
-        private static readonly int AnimatorWalkForward1 = Animator.StringToHash("walk_forward");
-        private static readonly int AnimatorReactFront = Animator.StringToHash("react_front");
 
 
         private void OnEnable()
@@ -62,6 +67,9 @@ namespace Enemies
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
+
+            string[] animationKeys = { AnimatorDieForward, AnimatorIdle, AnimatorAttack, AnimatorWalkForward, AnimatorReactFront };
+            animation = new(animationKeys, animator, animatorController: animatorController, animationClips);
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -139,7 +147,7 @@ namespace Enemies
             outerPlayerDetector.gameObject.SetActive(false);
             leftHandPlayerDetector.gameObject.SetActive(false);
             rightHandPlayerDetector.gameObject.SetActive(false);
-            animation.Set(AnimatorDie, true);
+            animation.Set(AnimatorDieForward, true);
             animation.Set(AnimatorIdle, false);
 
             foreach (var r in renderers)
@@ -175,15 +183,15 @@ namespace Enemies
             LookAtPlayer();
             collider.enabled = true;
             animation.Set(AnimatorIdle, false);
-            animation.Set(AnimatorAttack1, false);
-            animation.Set(AnimatorWalkForward1, true);
+            animation.Set(AnimatorAttack, false);
+            animation.Set(AnimatorWalkForward, true);
         }
 
         private void Attack()
         {
             LookAtPlayer(0);
             collider.enabled = true;
-            animation.Set(AnimatorAttack1, true);
+            animation.Set(AnimatorAttack, true);
             animation.Set(AnimatorIdle, false);
         }
 
