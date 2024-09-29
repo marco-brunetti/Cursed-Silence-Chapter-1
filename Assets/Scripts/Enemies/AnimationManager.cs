@@ -23,18 +23,34 @@ public class AnimationManager : MonoBehaviour
 
         foreach (var key in animationKeys)
         {
-            if (!Array.Exists(animatorController.animationClips, x => x.name == key)) 
+            if (!Array.Exists(animatorController.animationClips, x => x.name == key)) //The animation already in the controller must be equals the key
             {
                 Debug.Log($"Warning: Animator controller does not contain state: {key}");
                 continue;        
             }
 
-            List<AnimationClip> animations = clips.Where(x => x.name.Contains(key)).ToList();
+            var nameFilter = key.Length + 3; //Makes sure only this key is present and not another with the same word included
+            List<AnimationClip> animations = clips.Where(x => x.name.Contains(key) && x.name.Length <= nameFilter).ToList();
             if (animations.Count > 0) dict.Add(key, new(Animator.StringToHash(key), animations));
         }
     }
 
-    public void Set(string key, bool enable)
+    public void EnableKey(string key, bool deactivateOtherKeys = false)
+    {
+        if(deactivateOtherKeys)
+        {
+            foreach(var kvp in dict)
+            {
+                if (kvp.Key != key) Set(key, false);
+            }
+        }
+
+        Set(key, true);
+    }
+
+    public void DisableKey(string key) => Set(key, false);
+
+    private void Set(string key, bool enable)
     {
         var hash = Animator.StringToHash(key);
         if (animator.GetBool(hash) == enable) return;

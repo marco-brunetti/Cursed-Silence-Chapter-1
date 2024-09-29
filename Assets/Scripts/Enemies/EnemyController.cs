@@ -2,17 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using Player;
 using SnowHorse.Utils;
-using UnityEditor.Animations;
 
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
-    {
-        [SerializeField] private AnimationClip[] animationClips;
-        [SerializeField] private Animator animator;
-        [SerializeField] private AnimatorController animatorController;
+    { 
         [SerializeField] private EnemyData data;
         [SerializeField] private new Collider collider;
+        [SerializeField] private new EnemyAnimation animation;
 
         [SerializeField] private Detector rightHandPlayerDetector;
         [SerializeField] private Detector leftHandPlayerDetector;
@@ -24,40 +21,25 @@ namespace Enemies
         private int currentHealth;
         private bool isEngaging;
         private bool canRecieveDamage;
-        private EnemyState currentState = EnemyState.Idle;
+        public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
         private Transform player;
         private Vector3 targetLookPosition;
         private float currentLerpTime;
         private List<Renderer> invisibleRenderers = new();
 
-        #region Animation
-        private new AnimationManager animation;
-        private static readonly string AnimatorDieForward = "death_forward";
-        private static readonly string AnimatorIdle = "idle";
-        private static readonly string AnimatorAttack = "attack";
-        private static readonly string HeavyAttack = "heavy_attack";
-        private static readonly string AnimatorWalkForward = "walk_forward";
-        private static readonly string AnimatorReactFront = "react_front";
-
-        public void CanRecieveDamage() => canRecieveDamage = true;
-        public void CantRecieveDamage() => canRecieveDamage = false;
-        public void DeactivateReactAnimation() => animation.Set(AnimatorReactFront, false);
-        public void ChangeCurrentAttackClip() => animation.ChangeNextStateClip(AnimatorAttack, HeavyAttack);
-        #endregion
 
 
+        public void CanRecieveDamage(bool enable)
+        {
+            if(true) //Check condition later
+            {
+                canRecieveDamage = enable;
+            }
+        }
 
         private void OnEnable()
         {
             currentHealth = data.Health;
-
-            rightHandPlayerDetector.DetectTag("Player");
-            leftHandPlayerDetector.DetectTag("Player");
-            innerPlayerDetector.DetectTag("Player");
-            outerPlayerDetector.DetectTag("Player");
-
-            Detector.ColliderEntered += PlayerDetected;
-            Detector.ColliderExited += PlayerExitedDetector;
         }
 
         private void OnDisable()
@@ -66,31 +48,39 @@ namespace Enemies
             Detector.ColliderExited -= PlayerExitedDetector;
         }
 
+        private void Awake()
+        {
+            rightHandPlayerDetector.DetectTag("Player");
+            leftHandPlayerDetector.DetectTag("Player");
+            innerPlayerDetector.DetectTag("Player");
+            outerPlayerDetector.DetectTag("Player");
+            Detector.ColliderEntered += PlayerDetected;
+            Detector.ColliderExited += PlayerExitedDetector;
+            animation.Init(controller: this, enemyData: data);
+        }
+
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
-
-            string[] animationKeys = { AnimatorDieForward, AnimatorIdle, AnimatorAttack, HeavyAttack, AnimatorWalkForward, AnimatorReactFront };
-            animation = new(animationKeys, animator, animatorController: animatorController, animationClips);
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
         {
-            if (canRecieveDamage)
+            if (canRecieveDamage && CurrentState != EnemyState.Dead)
             {
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
 
-                if (currentHealth <= 0) currentState = EnemyState.Dead;
-                else animation.Set(AnimatorReactFront, true);
+                if (currentHealth <= 0) CurrentState = EnemyState.Dead;
+                else animation.React();
             }
         }
 
         private void PlayerDetected(object detector, Collider other)
         {
             var triggeredDetector = detector as Detector;
-            if (currentState != EnemyState.Dead)
+            if (CurrentState != EnemyState.Dead)
             {
                 if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
                 {
@@ -98,11 +88,11 @@ namespace Enemies
                 }
                 else if (triggeredDetector == innerPlayerDetector)
                 {
-                    currentState = EnemyState.Attack;
+                    CurrentState = EnemyState.Attack;
                 }
                 else if (triggeredDetector == outerPlayerDetector)
                 {
-                    currentState = EnemyState.Walk;
+                    CurrentState = EnemyState.Walk;
                 }
             }
         }
@@ -110,7 +100,7 @@ namespace Enemies
         private void PlayerExitedDetector(object detector, Collider other)
         {
             var triggeredDetector = detector as Detector;
-            if (currentState != EnemyState.Dead)
+            if (CurrentState != EnemyState.Dead)
             {
                 if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
                 {
@@ -118,14 +108,14 @@ namespace Enemies
                 }
                 else if (triggeredDetector == innerPlayerDetector)
                 {
-                    currentState = EnemyState.Walk;
+                    CurrentState = EnemyState.Walk;
                 }
             }
         }
 
         private void Update()
         {
-            switch (currentState)
+            switch (CurrentState)
             {
                 case EnemyState.Idle:
                     Idle();
@@ -136,6 +126,13 @@ namespace Enemies
                 case EnemyState.Attack:
                     Attack();
                     break;
+            }
+        }
+
+        private void LateUpdate()
+        {
+            switch (CurrentState)
+            {
                 case EnemyState.Walk:
                     Walk();
                     break;
@@ -149,8 +146,7 @@ namespace Enemies
             outerPlayerDetector.gameObject.SetActive(false);
             leftHandPlayerDetector.gameObject.SetActive(false);
             rightHandPlayerDetector.gameObject.SetActive(false);
-            animation.Set(AnimatorDieForward, true);
-            animation.Set(AnimatorIdle, false);
+            animation.Die();
 
             foreach (var r in renderers)
             {
@@ -177,24 +173,22 @@ namespace Enemies
         {
             LookAtPlayer();
             collider.enabled = true;
-            animation.Set(AnimatorIdle, true);
+            animation.Idle();
         }
 
         private void Walk()
         {
             LookAtPlayer();
+            //MoveTowardsPlayer();
             collider.enabled = true;
-            animation.Set(AnimatorIdle, false);
-            animation.Set(AnimatorAttack, false);
-            animation.Set(AnimatorWalkForward, true);
+            animation.Walk();
         }
 
         private void Attack()
         {
             LookAtPlayer(0);
             collider.enabled = true;
-            animation.Set(AnimatorAttack, true);
-            animation.Set(AnimatorIdle, false);
+            animation.Attack();
         }
 
         private void LookAtPlayer(float correctionAngle = 0)
@@ -212,6 +206,13 @@ namespace Enemies
 
             transform.LookAt(targetLookPosition);
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + correctionAngle, 0);
+        }
+
+        private void MoveTowardsPlayer()
+        {
+            var speed = 5;
+            var targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }
     }
 
