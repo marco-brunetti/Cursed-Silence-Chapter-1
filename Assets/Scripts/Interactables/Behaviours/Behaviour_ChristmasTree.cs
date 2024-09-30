@@ -13,15 +13,15 @@ public class Behaviour_ChristmasTree : MonoBehaviour, IBehaviour
     [SerializeField] private GameObject _emilyGiftBox;
     public void Behaviour(bool isInteracting, bool isInspecting)
     {
-        PlayerInventory inventory = PlayerController.Instance.Inventory;
+        var playerController = PlayerController.Instance;
         PlayerData playerData = PlayerController.Instance.PlayerData;
 
-        if(inventory.SelectedItem() != null && inventory.SelectedItem() == _requiredGift)
+        if(playerController.Inventory.SelectedItem() != null && playerController.Inventory.SelectedItem() == _requiredGift)
         {
-            inventory.Remove(_requiredGift);
+            playerController.Inventory.Remove(_requiredGift);
 
-            playerData.InspectablesSource.pitch = 0.9f;
-            playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+            playerController.InspectablesSource.pitch = 0.9f;
+            playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
             _requiredGift = null;
 

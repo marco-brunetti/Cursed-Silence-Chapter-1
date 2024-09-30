@@ -11,9 +11,11 @@ public class PlayerInspect : MonoBehaviour
     private float _resetInspectorTimer = 0.7f;
     private float _rotationSpeed = 0.2f;
     private float _timer;
+    private float _currentDepthOfField;
 
     private bool _initialSetup;
     private bool _returnItemToPreviousPosition;
+    private bool _activateDepthOfField;
     private bool[] _rotateXY;
 
     private Transform _interactable;
@@ -24,6 +26,7 @@ public class PlayerInspect : MonoBehaviour
     private Vector3 _currentVelocity;
 
     private Vector3 _targetRotation;
+    private Vector3 _targetPosition;
     public void ManageInspection(PlayerData playerData, IPlayerInput playerInput)
     {
         if (_interactable != null)
@@ -31,6 +34,9 @@ public class PlayerInspect : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 _returnItemToPreviousPosition = true;
+                _activateDepthOfField = false;
+                PlayerController.Instance.ActivateDepthOfField(false);
+                _currentDepthOfField = 0;
                 IsInspecting = false;
             }
 
@@ -69,11 +75,12 @@ public class PlayerInspect : MonoBehaviour
         PlayerController playerController = PlayerController.Instance;
         PlayerData playerData = playerController.PlayerData;
 
-        playerData.InspectablesSource.pitch = 1;
-        playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+        playerController.InspectablesSource.pitch = 1;
+        playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
         playerController.FreezePlayerMovement = true;
         playerController.FreezePlayerRotation = true;
+        //playerController.ActivateDepthOfField(true);
         IsInspecting = true;
     }
 
@@ -83,6 +90,7 @@ public class PlayerInspect : MonoBehaviour
         {
             _interactableComponent.Interact(PlayerController.Instance, true, false);
             _returnItemToPreviousPosition = false;
+            //PlayerController.Instance.ActivateDepthOfField(true);
             IsInspecting = false;
         }
 
@@ -91,15 +99,29 @@ public class PlayerInspect : MonoBehaviour
         {
             if (!_initialSetup)
             {
-                _interactable.parent = playerData.InspectorParent;
+                _interactable.parent = PlayerController.Instance.InspectorParent;
                 _targetRotation = _interactableComponent.InspectableInitialRotation;
+                _targetPosition = _interactableComponent.InspectablePosition;
+                StartCoroutine(DepthOfFieldWaitTime());
                 _initialSetup = true;
             }
 
-            _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, Vector3.zero, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
+            _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, _targetPosition, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
 
             SetRotation(playerInput);
+
+            if(_activateDepthOfField && _currentDepthOfField < playerData.defaultDepthOfField - 0.1f)
+            {
+                _currentDepthOfField = Mathf.MoveTowards(_currentDepthOfField, playerData.defaultDepthOfField, 5f);
+                PlayerController.Instance.ActivateDepthOfField(true, currentValue: _currentDepthOfField);
+            }
         }
+    }
+
+    private IEnumerator DepthOfFieldWaitTime()
+    {
+        yield return new WaitForSecondsRealtime(0.1f);
+        _activateDepthOfField = true;
     }
 
     private void SetRotation(IPlayerInput playerInput)
@@ -132,14 +154,14 @@ public class PlayerInspect : MonoBehaviour
 
                 if(_timer == _resetInspectorTimer)
                 {
-                    playerData.InspectablesSource.pitch = 0.9f;
-                    playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+                    playerController.InspectablesSource.pitch = 0.9f;
+                    playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
                 }
 
                 Vector3 targetPosition = _previousPositionAndRotation[0];
                 Quaternion targetRotation = Quaternion.Euler(_previousPositionAndRotation[1]);
 
-                if (_interactable.parent != playerData.InventoryHolder)
+                if (_interactable.parent != PlayerController.Instance.InventoryHolder)
                 {
                     _interactable.parent = _previousParent;
                     _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, targetPosition, ref _currentVelocity, 0.1f, _goToInspectorSpeed);
@@ -157,7 +179,7 @@ public class PlayerInspect : MonoBehaviour
             }
             else
             {
-                if (_interactable.parent != playerData.InventoryHolder)
+                if (_interactable.parent != PlayerController.Instance.InventoryHolder)
                 {
                     _interactable.parent = _previousParent;
                 }
@@ -173,7 +195,7 @@ public class PlayerInspect : MonoBehaviour
     //Forces previous reset of inspectable if needed
     private void ResetInspectable(Vector3 targetPosition, Quaternion targetRotation)
     {
-        if (_interactable.parent != PlayerController.Instance.PlayerData.InventoryHolder)
+        if (_interactable.parent != PlayerController.Instance.InventoryHolder)
         {
             _interactable.parent = _previousParent;
             _interactable.localPosition = targetPosition;

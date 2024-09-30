@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,11 +8,17 @@ public enum Language { English, Spanish };
 
 public class GameController : MonoBehaviour
 {
-    public bool Pause {  get; private set; }
+    public bool Pause { get; private set; }
+
+    [NonSerialized] public bool ShowCursor;
+    [NonSerialized] public bool IsInDream;
+    [SerializeField] private Texture2D _cursor;
 
     [SerializeField] public float GlobalVolume = 1;
 
     [SerializeField] public float MouseSensibilityMultiplier = 1;
+
+    [field: SerializeField] public AudioSource GeneralAudioSource { get; private set; }
 
     public Language SelectedLanguage;
 
@@ -28,6 +35,10 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private AudioSource _menuMusicSource;
     [SerializeField] private float _menuMusicVolume;
+    [SerializeField] private AudioSource _windAudioSource; 
+    [SerializeField] private float _windVolume = 0.1f;
+    [SerializeField] private AudioSource _ambienceAudioSource;
+    [SerializeField] private float _ambienceVolume = 0.3f;
 
     private bool _playMenuMusic = true;
     private GameObject _playerCamera;
@@ -39,29 +50,45 @@ public class GameController : MonoBehaviour
             Destroy(this);
         else Instance = this;
 
-        ChangeLanguage();
-        FramelockChange();
-        VSyncToggle();
-        ChangeMouseSensitivity();
+        //ChangeLanguage();
+        //FramelockChange();
+        //VSyncToggle();
+        //ChangeMouseSensitivity();
+
+
     }
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Cursor.SetCursor(_cursor, new Vector2(_cursor.width / 2, _cursor.height / 2), CursorMode.Auto);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-
-    void Update()
+    private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
+        if (ShowCursor)
         {
-            _playerCamera = PlayerController.Instance.PlayerData.Camera.gameObject;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        
+
+        /*if(Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name == "Level_House")
+        {
+            _playerCamera = PlayerController.Instance.Camera.gameObject;
             Pause = !Pause;
             PauseControl();
         }
 
-        MenuMusic();
+        MenuMusic();*/
     }
 
     private void MenuMusic()
@@ -73,6 +100,20 @@ public class GameController : MonoBehaviour
                 _menuMusicSource.volume = _menuMusicVolume * GlobalVolume;
                 _menuMusicSource.Play();
             }
+        }
+    }
+
+    public void ActivateAmbienceSounds(bool activate)
+    {
+        if (activate)
+        {
+            _windAudioSource.volume = Mathf.MoveTowards(_windAudioSource.volume, _windVolume, 0.05f);
+            _ambienceAudioSource.volume = Mathf.MoveTowards(_ambienceAudioSource.volume, _ambienceVolume, 0.05f);
+        }
+        else
+        {
+            _windAudioSource.volume = Mathf.MoveTowards(_windAudioSource.volume, 0, 0.05f);
+            _ambienceAudioSource.volume = Mathf.MoveTowards(_ambienceAudioSource.volume, 0, 0.05f);
         }
     }
 

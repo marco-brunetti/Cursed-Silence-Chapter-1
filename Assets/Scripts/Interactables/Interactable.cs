@@ -4,6 +4,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public Vector3 InspectableInitialRotation;
+    public Vector3 InspectablePosition;
     public bool RotateX;
     public bool RotateY;
     public bool FreezePlayerRotation;
@@ -18,9 +19,10 @@ public class Interactable : MonoBehaviour
 
     private void Awake()
     {
-        Interact(null, true, true);
+        SetupInteractable();
     }
-    public void Interact(PlayerController playerController, bool isInteracting, bool isInspecting)
+
+    private void SetupInteractable()
     {
         var behavioursInObject = gameObject.GetComponents<IBehaviour>();
 
@@ -39,7 +41,7 @@ public class Interactable : MonoBehaviour
         {
             var behaviour = child.GetComponent<IBehaviour>();
 
-            if(behaviour != null)
+            if (behaviour != null)
             {
                 if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
                 if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
@@ -50,7 +52,10 @@ public class Interactable : MonoBehaviour
 
         if (InteractionBehaviours.Count == 0) InspectableOnly = true;
         if (!InspectableOnly && InspectionBehaviours.Count == 0) NonInspectable = true;
+    }
 
+    public void Interact(PlayerController playerController, bool isInteracting, bool isInspecting)
+    {
         if (!InspectableOnly && isInteracting)
         {
             ManageInteractionBehaviours(isInteracting);

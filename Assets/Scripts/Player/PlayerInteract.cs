@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInteract : MonoBehaviour
@@ -12,10 +13,10 @@ public class PlayerInteract : MonoBehaviour
 
     public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
     {
-        if (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero)
+        if (!GameController.Instance.IsInDream && (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
         {
-            _interactRay.origin = playerData.Camera.position;
-            _interactRay.direction = playerData.Camera.forward;
+            _interactRay.origin = PlayerController.Instance.Camera.position;
+            _interactRay.direction = PlayerController.Instance.Camera.forward;
 
             RaycastHit hit;
 

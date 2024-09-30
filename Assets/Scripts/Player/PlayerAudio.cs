@@ -19,6 +19,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
         PlayerFootsteps(playerData, playerInput);
         PlayerHeartbeat(playerData);
         PlayerBreath(playerData);
+        AmbienceSound();
     }
 
 
@@ -31,21 +32,24 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
             {
                 int i = 0;
 
-                if (SceneManager.GetActiveScene().name == "Level_Dream")
-                {
-                    do {  i = Random.Range(0, playerData.ConcreteFootstepClips.Length); }
-                    while (i == currentFootstepIndex);
-
-                    i = Random.Range(0, playerData.ConcreteFootstepClips.Length);
-                    _footstepsSource.PlayOneShot(playerData.ConcreteFootstepClips[i], playerData.ConcreteFootstepClipsVolume * GameController.Instance.GlobalVolume);
-                    currentFootstepIndex = i;
-                }
-                else
+                if(PlayerController.Instance.IsOutside)
                 {
                     do { i = Random.Range(0, playerData.GrassFootstepClips.Length); }
                     while (i == currentFootstepIndex);
 
-                    _footstepsSource.PlayOneShot(playerData.GrassFootstepClips[i], playerData.GrassFootstepClipsVolume * GameController.Instance.GlobalVolume);
+                    var volume = playerInput.playerRunInput ? playerData.GrassFootstepClipsVolume : playerData.GrassFootstepClipsVolume * 0.4f;
+
+                    _footstepsSource.PlayOneShot(playerData.GrassFootstepClips[i], volume * GameController.Instance.GlobalVolume);
+                    currentFootstepIndex = i;
+                }
+                else
+                {
+                    do { i = Random.Range(0, playerData.WoodFootstepClips.Length); }
+                    while (i == currentFootstepIndex);
+
+                    var volume = playerInput.playerRunInput ? playerData.WoodFootstepClipsVolume : playerData.WoodFootstepClipsVolume * 0.4f;
+
+                    _footstepsSource.PlayOneShot(playerData.WoodFootstepClips[i], volume * GameController.Instance.GlobalVolume);
                     currentFootstepIndex = i;
                 }
 
@@ -110,5 +114,11 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
 
             _breathingTimer -= Time.deltaTime;
         }
+    }
+
+    private void AmbienceSound()
+    {
+        if (PlayerController.Instance.IsOutside) GameController.Instance.ActivateAmbienceSounds(true);
+        else GameController.Instance.ActivateAmbienceSounds(false);
     }
 }

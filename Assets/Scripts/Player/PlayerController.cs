@@ -1,30 +1,51 @@
+using Cinemachine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 [RequireComponent(typeof(PlayerMovement), typeof(PlayerRotate), typeof(PlayerInput))]
-[RequireComponent (typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
+[RequireComponent(typeof(PlayerInteract), typeof(PlayerInspect), typeof(PlayerInventory))]
 [RequireComponent(typeof(PlayerStressControl), typeof(PlayerAudio))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
-    [field: SerializeField] public PlayerData PlayerData { get; private set; }
     [field: SerializeField] public PlayerInventory Inventory { get; private set; }
     [field: SerializeField] public PlayerInspect Inspector { get; private set; }
     [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
+    [field: SerializeField] public GameObject Player { get; private set; }
 
+    [SerializeField] private Transform _groundSpawnPoint;
+    [SerializeField] private PlayerDataScript _data;
     [SerializeField] private PlayerMovement _movement;
     [SerializeField] private PlayerRotate _rotator;
     [SerializeField] private PlayerInput _input;
     [SerializeField] private PlayerInteract _interactor;
     [SerializeField] private PlayerAudio _audio;
+    [SerializeField] private PostProcessVolume _postProcessVolume;
 
     [NonSerialized] public Interactable InteractableInSight;
     [NonSerialized] public bool FreezePlayerMovement;
     [NonSerialized] public bool FreezePlayerRotation;
+    [NonSerialized] public bool IsOutside;
+    [NonSerialized] public bool IsTeleporting;
 
+    [Header("Player Components")]
+    public GameObject CamHolder;
+    public Transform Camera;
+    public CinemachineVirtualCamera VirtualCamera;
+    public GameObject InventoryCamera;
+    public Transform InventoryHolder;
+    public Transform InspectorParent;
+
+
+    public AudioSource InspectablesSource;
+    public CharacterController Character;
+    public PlayerData PlayerData { get; private set; }
+
+    public bool IsSprinting { get; private set; }
+    public bool IsDistorted { get; private set; }
+
+    private BadTVEffect _camDistortion;
 
     private void Awake()
     {
@@ -32,9 +53,10 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         else Instance = this;
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
 
+        PlayerData = _data.dataObject;
+
+        _camDistortion = Camera.GetComponent<BadTVEffect>();
     }
 
     private void Update()
@@ -48,11 +70,22 @@ public class PlayerController : MonoBehaviour
         else
         {
             Time.timeScale = 1;
-            Move();
+
             Interact();
+            Move();
             InventoryManage();
             PlayerAudio();
             ManageStress();
+            ManageCameraDistortion();
+        }
+    }
+
+    private void ManageCameraDistortion()
+    {
+        if(IsOutside)
+        {
+            _camDistortion.fineDistort = Mathf.MoveTowards(_camDistortion.fineDistort, PlayerData.DefaultFineDistortion, 0.05f);
+            _camDistortion.thickDistort = Mathf.MoveTowards(_camDistortion.thickDistort, PlayerData.DefaultThickDistortion, 0.05f);
         }
     }
 
@@ -63,13 +96,17 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (FreezePlayerMovement == false)
+        if(!IsTeleporting)
         {
-            _movement.PlayerMove(PlayerData, _input);
-        }
-        else
-        {
-            PlayerData.Character.Move(Vector3.zero);
+            if (FreezePlayerMovement == false)
+            {
+                _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
+                IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
+            }
+            else
+            {
+                Character.Move(Vector3.zero);
+            }
         }
     }
 
@@ -92,5 +129,13 @@ public class PlayerController : MonoBehaviour
     private void ManageStress()
     {
         PlayerStress.ManageStress(PlayerData);
+    }
+
+    public void ActivateDepthOfField(bool enable, float currentValue = -1)
+    {
+        _postProcessVolume.gameObject.SetActive(enable);
+
+        if (currentValue == -1) _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = PlayerData.defaultDepthOfField;
+        else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;
     }
 }

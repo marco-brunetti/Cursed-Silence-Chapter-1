@@ -14,7 +14,7 @@ public class PlayerRotate : MonoBehaviour, IPlayerRotate
 
     public void Rotate(PlayerData playerData, PlayerInput input, bool freezeRotation)
     {
-        if (_cinemachinePOV == null) _cinemachinePOV = playerData.VirtualCamera.GetCinemachineComponent<CinemachinePOV>();
+        if (_cinemachinePOV == null) _cinemachinePOV = PlayerController.Instance.VirtualCamera.GetCinemachineComponent<CinemachinePOV>();
 
         if(input.mouseMovementInput.magnitude > 0 && !freezeRotation && (GameController.Instance == null || !GameController.Instance.Pause))
         {

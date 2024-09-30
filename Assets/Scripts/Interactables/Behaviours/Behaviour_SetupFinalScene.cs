@@ -85,10 +85,11 @@ public class Behaviour_SetupFinalScene : MonoBehaviour, IBehaviour
 
     private void ConsumeFood(GameObject food, int subtitleIndex, PlayerInventory inventory)
     {
+
         PlayerData playerData = PlayerController.Instance.PlayerData;
 
-        playerData.InspectablesSource.pitch = 0.9f;
-        playerData.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+        PlayerController.Instance.InspectablesSource.pitch = 0.9f;
+        PlayerController.Instance.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
         _subtitles[subtitleIndex].GetComponent<IBehaviour>().Behaviour(true, false);
         inventory.Remove(food);
