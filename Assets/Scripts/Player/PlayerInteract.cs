@@ -1,65 +1,72 @@
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class PlayerInteract : MonoBehaviour
+namespace Player
 {
-    private PlayerController _playerController;
-    private Ray _interactRay;
-
-    private void Start()
+    public class PlayerInteract : MonoBehaviour
     {
-        _playerController = PlayerController.Instance;
-    }
+        private PlayerController _playerController;
 
-    public Vector3 Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
-    {
-        if (!GameController.Instance.IsInDream && (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
+        private void Start()
         {
-            _interactRay.origin = PlayerController.Instance.Camera.position;
-            _interactRay.direction = PlayerController.Instance.Camera.forward;
+            _playerController = PlayerController.Instance;
+        }
 
-            RaycastHit hit;
-
-            if (Physics.Raycast(_interactRay, out hit, playerData.InteractDistance, playerData.InteractLayer))
-            {
-                if (!PlayerController.Instance.Inspector.IsInspecting && hit.collider != null)
-                {
-                    ManageInteraction(hit.collider.gameObject, inspector);
-                }
-
-				return hit.point;
-            }
-            else
+        public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
+        {
+            if(_playerController.IsInspecting)
             {
                 _playerController.InteractableInSight = null;
             }
-        }
-
-		return Vector3.zero;
-    }
-
-    private void ManageInteraction(GameObject interactableObject, PlayerInspect inspector)
-    {
-        if (interactableObject.TryGetComponent(out Interactable interactable))
-        {
-            _playerController.InteractableInSight = interactable;
-
-            if (Input.GetMouseButtonDown(0))
+            else if (!GameController.Instance.IsInDream && 
+            (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
             {
-                if (interactable.NonInspectable)
+                Ray ray = new()
                 {
-                    interactable.Interact(_playerController, true, false);
-                    _playerController.InteractableInSight = null;
+                    origin = _playerController.Camera.position,
+                    direction = _playerController.Camera.forward
+                };
+
+                if (Physics.Raycast(ray, out RaycastHit hit, playerData.InteractDistance, playerData.InteractLayer) && hit.collider)
+                {
+                    ManageInteraction(hit.collider.gameObject, inspector);
                 }
                 else
                 {
-                    interactable.Interact(_playerController, false, true);
-                    inspector.StartInspection(interactableObject.transform);
+                    _playerController.InteractableInSight = null;
                 }
             }
         }
-        else if (inspector.IsInspecting == false)
+
+        private void ManageInteraction(GameObject interactableObject, PlayerInspect inspector)
         {
-            _playerController.InteractableInSight = null;
+            if (interactableObject.TryGetComponent(out Interactable interactable))
+            {
+                _playerController.InteractableInSight = interactable;
+                
+                if (interactable.RequiredInventoryItems.Count > 0)
+                {
+                    //Show inventory required object in UI
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (interactable.NonInspectable)
+                    {
+                        interactable.Interact(_playerController, true, false);
+                        _playerController.InteractableInSight = null;
+                    }
+                    else
+                    {
+                        interactable.Interact(_playerController, false, true);
+                        inspector.StartInspection(interactableObject.transform);
+                    }
+                }
+            }
+            else if (inspector.IsInspecting == false)
+            {
+                _playerController.InteractableInSight = null;
+            }
         }
     }
 }
