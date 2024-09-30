@@ -18,7 +18,7 @@ namespace Enemies
 
         private int currentHealth;
         private bool isEngaging;
-        private bool canRecieveDamage;
+        private bool canRecieveDamage = true;
         public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
         private Transform player;
         private Vector3 targetLookPosition;
@@ -27,7 +27,7 @@ namespace Enemies
 
         public void CanRecieveDamage(bool enable)
         {
-            if(true) //Check condition later
+            if (true) //Check condition later
             {
                 canRecieveDamage = enable;
             }
@@ -50,12 +50,12 @@ namespace Enemies
             outerPlayerDetector.DetectTag("Player");
             Detector.ColliderEntered += PlayerDetected;
             Detector.ColliderExited += PlayerExitedDetector;
-            animation.Init(controller: this, enemyData: data);
         }
 
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
+            animation.Init(controller: this, enemyData: data, player);
             targetLookPosition = player.position;
         }
 
@@ -118,6 +118,8 @@ namespace Enemies
                     Walk();
                     break;
             }
+
+            if (CurrentState != EnemyState.Walk) animation.WalkSpeed = 0;
         }
 
         private void Die()
@@ -159,7 +161,6 @@ namespace Enemies
         {
             animation.Walk();
             LookAtPlayer();
-            MoveTowardsPlayer();
             collider.enabled = true;
         }
 
@@ -187,13 +188,7 @@ namespace Enemies
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + correctionAngle, 0);
         }
 
-        //TODO: See how to syncronize walking speed
-        private void MoveTowardsPlayer()
-        {
-            var speed = 1.75f;
-            var targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-        }
+
     }
 
     public enum EnemyState

@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Enemies
@@ -9,6 +12,7 @@ namespace Enemies
 
         private EnemyController controller;
         private EnemyData data;
+        private Transform player;
 
         private new AnimationManager animation;
 
@@ -21,12 +25,16 @@ namespace Enemies
 
         private bool canChangeAttackAnimation = true;
 
-        public void Init(EnemyController controller, EnemyData enemyData)
+        [NonSerialized] public float WalkSpeed;
+        private float reactMoveSpeed;
+
+        public void Init(EnemyController controller, EnemyData enemyData, Transform player)
         {
             this.controller = controller;
             data = enemyData;
+            this.player = player;
 
-            KeyValuePair<string, int>[] animationKeys = 
+            KeyValuePair<string, int>[] animationKeys =
             {
                 AnimDieForward,
                 AnimIdle,
@@ -39,15 +47,19 @@ namespace Enemies
             animation = new(animationKeys, animator, animatorController: data.AnimatorController, data.AnimationClips);
         }
 
-        public void Idle() => animation.EnableKey(AnimIdle, deactivateOtherKeys: true);
-        public void Walk() => animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
-        public void Die() => animation.EnableKey(AnimDieForward, deactivateOtherKeys: true);
-        public void React() => animation.EnableKey(AnimReactFront, deactivateOtherKeys: true);
+        #region Animation Events
         public void CanRecieveDamage() => controller.CanRecieveDamage(true);
         public void CantRecieveDamage() => controller.CanRecieveDamage(false);
-        public void DeactivateReactAnimation() => animation.DisableKey(AnimReactFront);
         public void ChangeCurrentAttackClip() => canChangeAttackAnimation = true;
+        public void WalkStarted(float walkSpeed) => WalkSpeed = walkSpeed;
+        public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
+        public void ReactStopAnimation() => animation.DisableKey(AnimReactFront);
+        public void ReactStopMovement() => reactMoveSpeed = 0;
+        #endregion
 
+        public void Idle() => animation.EnableKey(AnimIdle, deactivateOtherKeys: true);
+        public void Die() => animation.EnableKey(AnimDieForward, deactivateOtherKeys: true);
+        public void React() => animation.EnableKey(AnimReactFront, deactivateOtherKeys: true);
 
         public void Attack()
         {
@@ -63,6 +75,27 @@ namespace Enemies
                 else animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
                 canChangeAttackAnimation = false;
             }
+        }
+
+        public void Walk()
+        {
+            animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
+            MoveTowards(player.position, WalkSpeed);
+        }
+
+        private IEnumerator ReactMoveTimer()
+        {
+            while (reactMoveSpeed > 0)
+            {
+                controller.transform.position -= transform.forward * reactMoveSpeed * Time.deltaTime;
+                yield return null;
+            }
+        }
+            
+        private void MoveTowards(Vector3 target, float speed)
+        {
+            var targetPosition = new Vector3(target.x, controller.transform.position.y, target.z);
+            controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, speed * Time.deltaTime);
         }
     }
 }
