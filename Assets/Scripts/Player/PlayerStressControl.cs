@@ -1,52 +1,56 @@
 using UnityEngine;
 
-public class PlayerStressControl : MonoBehaviour
+namespace Player
 {
-    private bool _addStress;
-
-    private float _maxStressLevel;
-    private float _minStressLevel;
-    private float _currentStressLevel;
-    private float _targetStressLevel;
-    private float _stressDisipateSpeed;
-
-    private void Start()
+    public class PlayerStressControl : MonoBehaviour
     {
-        PlayerData playerData = PlayerController.Instance.PlayerData;
-        _maxStressLevel = playerData.MaxStressLevel;
-        _minStressLevel = playerData.MinStressLevel;
-        _stressDisipateSpeed = playerData.StressDisipateSpeed;
-        _currentStressLevel = _minStressLevel;
-    }
+        private bool _addStress;
 
-    public void ManageStress(PlayerData playerData)
-    {
-        if (_addStress && _currentStressLevel >= _maxStressLevel - 0.05f)
+        private float _maxStressLevel;
+        private float _minStressLevel;
+        private float _currentStressLevel;
+        private float _targetStressLevel;
+        private float _stressDisipateSpeed;
+
+        private void Start()
         {
-            _targetStressLevel = _minStressLevel;
-            _addStress = false;
+            PlayerData playerData = PlayerController.Instance.PlayerData;
+            _maxStressLevel = playerData.MaxStressLevel;
+            _minStressLevel = playerData.MinStressLevel;
+            _stressDisipateSpeed = playerData.StressDisipateSpeed;
+            _currentStressLevel = _minStressLevel;
         }
 
-        if (_currentStressLevel < _targetStressLevel)
+        public void ManageStress(PlayerData playerData)
         {
-            _currentStressLevel = Mathf.Lerp(_currentStressLevel, _targetStressLevel, Time.deltaTime * 5);
-        } 
-        else 
-        {
-            _currentStressLevel = Mathf.Lerp(_currentStressLevel, _targetStressLevel, _stressDisipateSpeed * Time.deltaTime);
+            if (_addStress && _currentStressLevel >= _maxStressLevel - 0.05f)
+            {
+                _targetStressLevel = _minStressLevel;
+                _addStress = false;
+            }
+
+            if (_currentStressLevel < _targetStressLevel)
+            {
+                _currentStressLevel = Mathf.Lerp(_currentStressLevel, _targetStressLevel, Time.deltaTime * 5);
+            }
+            else
+            {
+                _currentStressLevel = Mathf.Lerp(_currentStressLevel, _targetStressLevel,
+                    _stressDisipateSpeed * Time.deltaTime);
+            }
+
+            _currentStressLevel = Mathf.Clamp(_currentStressLevel, _minStressLevel, _maxStressLevel);
         }
 
-        _currentStressLevel = Mathf.Clamp(_currentStressLevel, _minStressLevel, _maxStressLevel);
-    }
+        public void AddStress()
+        {
+            _targetStressLevel = _maxStressLevel;
+            _addStress = true;
+        }
 
-    public void AddStress()
-    {
-        _targetStressLevel = _maxStressLevel;
-        _addStress = true;
-    }
-
-    public float StressLevel()
-    {
-        return _currentStressLevel;
+        public float StressLevel()
+        {
+            return _currentStressLevel;
+        }
     }
 }

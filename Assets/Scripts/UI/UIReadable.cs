@@ -16,7 +16,7 @@ public class UIReadable : MonoBehaviour
         if(message == null)
         {
             _uiData.ReadableUI.SetActive(false);
-            _uiData.ReturnPrompt.SetActive(false); //move this to prompts controller
+            _uiData.ReturnPrompt.SetActive(false); //move this to prompts Controller
         }
         else
         {
