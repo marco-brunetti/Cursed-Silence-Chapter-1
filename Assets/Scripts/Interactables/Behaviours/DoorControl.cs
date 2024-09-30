@@ -6,7 +6,6 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public enum DoorState { Locked, Closed, Open };
     public class DoorControl : MonoBehaviour, IBehaviour
     {
         [FormerlySerializedAs("_key")] [SerializeField] private InventoryItem key;
