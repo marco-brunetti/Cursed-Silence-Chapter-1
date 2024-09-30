@@ -41,22 +41,17 @@ public class AnimationManager : MonoBehaviour
     public void EnableKey(KeyValuePair<string, int> animKey, bool deactivateOtherKeys = false)
     {
         if (animator.GetBool(animKey.Value) == true) return;
-
         if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != animKey.Value) animator.SetBool(hash, false); });
-        Set(animKey, true);
+        ChangeClip(animKey);
     }
 
     public void DisableKey(KeyValuePair<string, int> animKey)
     {
-        if (animator.GetBool(animKey.Value) == false) return;
-
-        Set(animKey, false);
-    }
-
-    private void Set(KeyValuePair<string, int> animKey, bool enable)
-    {
-        animator.SetBool(animKey.Value, enable);
-        if (enable) ChangeClip(animKey);
+        if (animator.GetBool(animKey.Value) == true)
+        {
+            animator.SetBool(animKey.Value, false);
+            CurrentKey = 0;
+        }
     }
 
     public void ChangeClip(KeyValuePair<string, int> animKey)
@@ -70,12 +65,7 @@ public class AnimationManager : MonoBehaviour
         var anim = dict[animKey.Value];
         var index = random.Next(anim.Count());
         aoc[animKey.Key] = anim[index];
+        animator.SetBool(animKey.Value, true);
         CurrentKey = animKey.Value;
-    }
-
-    public void ChangeNextStateClip(KeyValuePair<string, int> animKey1, KeyValuePair<string, int> animKey2)
-    {
-        //if(CurrentKey == animKey1.Value) EnableKey(animKey2, deactivateOtherKeys: true);
-        //else if(CurrentKey == animKey2.Value) EnableKey(animKey1, deactivateOtherKeys: true);
     }
 }

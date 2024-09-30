@@ -7,18 +7,17 @@ namespace Enemies
     {
         [SerializeField] private Animator animator;
 
-
         private EnemyController controller;
         private EnemyData data;
 
         private new AnimationManager animation;
 
-        private static readonly KeyValuePair<string, int> AnimDieForward = new("death_forward", Animator.StringToHash("death_forward"));
-        private static readonly KeyValuePair<string, int> AnimIdle = new("idle", Animator.StringToHash("idle"));
-        private static readonly KeyValuePair<string, int> AnimAttack = new("attack", Animator.StringToHash("attack"));
-        private static readonly KeyValuePair<string, int> AnimHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
-        private static readonly KeyValuePair<string, int> AnimWalkForward = new("walk_forward", Animator.StringToHash("walk_forward"));
-        private static readonly KeyValuePair<string, int> AnimReactFront = new("react_front", Animator.StringToHash("react_front"));
+        private readonly KeyValuePair<string, int> AnimDieForward = new("death_forward", Animator.StringToHash("death_forward"));
+        private readonly KeyValuePair<string, int> AnimIdle = new("idle", Animator.StringToHash("idle"));
+        private readonly KeyValuePair<string, int> AnimAttack = new("attack", Animator.StringToHash("attack"));
+        private readonly KeyValuePair<string, int> AnimHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
+        private readonly KeyValuePair<string, int> AnimWalkForward = new("walk_forward", Animator.StringToHash("walk_forward"));
+        private readonly KeyValuePair<string, int> AnimReactFront = new("react_front", Animator.StringToHash("react_front"));
 
         private bool canChangeAttackAnimation = true;
 
@@ -52,9 +51,13 @@ namespace Enemies
 
         public void Attack()
         {
-            var changedState = (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value);
+            if (animation.CurrentKey == AnimReactFront.Value) return;
 
-            if (canChangeAttackAnimation || changedState)
+            if(animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
+            {
+                animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+            }
+            else if (canChangeAttackAnimation)
             {
                 if (animation.CurrentKey == AnimAttack.Value) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
                 else animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
