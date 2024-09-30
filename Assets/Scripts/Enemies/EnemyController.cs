@@ -27,8 +27,6 @@ namespace Enemies
         private float currentLerpTime;
         private List<Renderer> invisibleRenderers = new();
 
-
-
         public void CanRecieveDamage(bool enable)
         {
             if(true) //Check condition later
@@ -62,12 +60,13 @@ namespace Enemies
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
+            targetLookPosition = player.position;
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
         {
-            if (canRecieveDamage && CurrentState != EnemyState.Dead)
+            if (CurrentState != EnemyState.Dead && canRecieveDamage)
             {
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
@@ -79,9 +78,9 @@ namespace Enemies
 
         private void PlayerDetected(object detector, Collider other)
         {
-            var triggeredDetector = detector as Detector;
             if (CurrentState != EnemyState.Dead)
             {
+                var triggeredDetector = detector as Detector;
                 if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
                 {
                     //Deal damage to player
@@ -99,9 +98,10 @@ namespace Enemies
 
         private void PlayerExitedDetector(object detector, Collider other)
         {
-            var triggeredDetector = detector as Detector;
             if (CurrentState != EnemyState.Dead)
             {
+                var triggeredDetector = detector as Detector;
+
                 if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
                 {
                     //Deal damage to player
@@ -126,13 +126,6 @@ namespace Enemies
                 case EnemyState.Attack:
                     Attack();
                     break;
-            }
-        }
-
-        private void LateUpdate()
-        {
-            switch (CurrentState)
-            {
                 case EnemyState.Walk:
                     Walk();
                     break;
@@ -178,15 +171,15 @@ namespace Enemies
 
         private void Walk()
         {
-            LookAtPlayer();
-            //MoveTowardsPlayer();
-            collider.enabled = true;
             animation.Walk();
+            LookAtPlayer();
+            MoveTowardsPlayer();
+            collider.enabled = true;
         }
 
         private void Attack()
         {
-            LookAtPlayer(0);
+            LookAtPlayer();
             collider.enabled = true;
             animation.Attack();
         }
@@ -210,7 +203,7 @@ namespace Enemies
 
         private void MoveTowardsPlayer()
         {
-            var speed = 5;
+            var speed = 3;
             var targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }

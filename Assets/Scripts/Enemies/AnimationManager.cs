@@ -7,12 +7,13 @@ using UnityEditor.Animations;
 public class AnimationManager : MonoBehaviour
 {
     private Animator animator;
-    private Dictionary<string, KeyValuePair<int, List<AnimationClip>>> dict = new();
+    private Dictionary<int, List<AnimationClip>> dict = new();
     private System.Random random;
     private AnimatorOverrideController aoc;
-    public string CurrentKey { get; private set; }
+    private AnimationClip[] originalControllerClips;
+    public int CurrentKey { get; private set; }
 
-    public AnimationManager(string[] animationKeys, Animator animator, AnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
+    public AnimationManager(KeyValuePair<string, int>[] animationKeys, Animator animator, AnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
     {
         this.animator = animator;
         random = new System.Random(Guid.NewGuid().GetHashCode());
@@ -20,67 +21,61 @@ public class AnimationManager : MonoBehaviour
         animator.runtimeAnimatorController = aoc;
 
         if(clips == null) clips = Resources.LoadAll<AnimationClip>(animationPath);
+        originalControllerClips = animatorController.animationClips;
 
-        foreach (var key in animationKeys)
+        foreach (var animKey in animationKeys)
         {
-            if (!Array.Exists(animatorController.animationClips, x => x.name == key)) //The animation already in the controller must be equals the key
+            //The animation already in the controller must be equals the key
+            if (!Array.Exists(originalControllerClips, x => x.name == animKey.Key)) 
             {
-                Debug.Log($"Warning: Animator controller does not contain state: {key}");
+                Debug.Log($"Warning: Animator controller does not contain state: {animKey.Key}");
                 continue;        
             }
 
-            var nameFilter = key.Length + 3; //Makes sure only this key is present and not another with the same word included
-            List<AnimationClip> animations = clips.Where(x => x.name.Contains(key) && x.name.Length <= nameFilter).ToList();
-            if (animations.Count > 0) dict.Add(key, new(Animator.StringToHash(key), animations));
+            var nameFilter = animKey.Key.Length + 3; //Makes sure only this key is present and not another with the same word included
+            List<AnimationClip> animations = clips.Where(x => x.name.Contains(animKey.Key) && x.name.Length <= nameFilter).ToList();
+            if (animations.Count > 0) dict.Add(animKey.Value, animations);
         }
     }
 
-    public void EnableKey(string key, bool deactivateOtherKeys = false)
+    public void EnableKey(KeyValuePair<string, int> animKey, bool deactivateOtherKeys = false)
     {
-        if(deactivateOtherKeys)
-        {
-            foreach(var kvp in dict)
-            {
-                if (kvp.Key != key) Set(key, false);
-            }
-        }
+        if (animator.GetBool(animKey.Value) == true) return;
 
-        Set(key, true);
+        if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != animKey.Value) animator.SetBool(hash, false); });
+        Set(animKey, true);
     }
 
-    public void DisableKey(string key) => Set(key, false);
-
-    private void Set(string key, bool enable)
+    public void DisableKey(KeyValuePair<string, int> animKey)
     {
-        var hash = Animator.StringToHash(key);
-        if (animator.GetBool(hash) == enable) return;
-        animator.SetBool(hash, enable);
-        if (enable) ChangeClip(key);
+        if (animator.GetBool(animKey.Value) == false) return;
+
+        Set(animKey, false);
     }
 
-    public void ChangeClip(string key)
+    private void Set(KeyValuePair<string, int> animKey, bool enable)
     {
-        if (!dict.ContainsKey(key))
+        animator.SetBool(animKey.Value, enable);
+        if (enable) ChangeClip(animKey);
+    }
+
+    public void ChangeClip(KeyValuePair<string, int> animKey)
+    {
+        if (!dict.ContainsKey(animKey.Value))
         {
-            Debug.Log($"Animation key {key} not found.");
+            Debug.Log($"Animation key {animKey} not found.");
             return;
         }
 
-        var anim = dict[key];
-        var index = random.Next(anim.Value.Count());
-        aoc[key] = anim.Value[index];
-        CurrentKey = key;
+        var anim = dict[animKey.Value];
+        var index = random.Next(anim.Count());
+        aoc[animKey.Key] = anim[index];
+        CurrentKey = animKey.Value;
     }
 
-    public void ChangeNextStateClip(string key1, string key2)
+    public void ChangeNextStateClip(KeyValuePair<string, int> animKey1, KeyValuePair<string, int> animKey2)
     {
-        if(CurrentKey == key1)
-        {
-            ChangeClip(key2);
-        }
-        else if(CurrentKey == key2)
-        {
-            ChangeClip(key1);
-        }
+        //if(CurrentKey == animKey1.Value) EnableKey(animKey2, deactivateOtherKeys: true);
+        //else if(CurrentKey == animKey2.Value) EnableKey(animKey1, deactivateOtherKeys: true);
     }
 }
