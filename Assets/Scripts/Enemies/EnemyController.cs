@@ -11,8 +11,6 @@ namespace Enemies
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
 
-        [SerializeField] private Detector rightHandPlayerDetector;
-        [SerializeField] private Detector leftHandPlayerDetector;
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private Renderer[] renderers;
@@ -48,8 +46,6 @@ namespace Enemies
 
         private void Awake()
         {
-            rightHandPlayerDetector.DetectTag("Player");
-            leftHandPlayerDetector.DetectTag("Player");
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
             Detector.ColliderEntered += PlayerDetected;
@@ -81,11 +77,7 @@ namespace Enemies
             if (CurrentState != EnemyState.Dead)
             {
                 var triggeredDetector = detector as Detector;
-                if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
-                {
-                    //Deal damage to player
-                }
-                else if (triggeredDetector == innerPlayerDetector)
+                if (triggeredDetector == innerPlayerDetector)
                 {
                     CurrentState = EnemyState.Attack;
                 }
@@ -102,11 +94,7 @@ namespace Enemies
             {
                 var triggeredDetector = detector as Detector;
 
-                if (triggeredDetector == rightHandPlayerDetector || triggeredDetector == leftHandPlayerDetector)
-                {
-                    //Deal damage to player
-                }
-                else if (triggeredDetector == innerPlayerDetector)
+                if (triggeredDetector == innerPlayerDetector)
                 {
                     CurrentState = EnemyState.Walk;
                 }
@@ -137,8 +125,6 @@ namespace Enemies
             collider.enabled = false;
             innerPlayerDetector.gameObject.SetActive(false);
             outerPlayerDetector.gameObject.SetActive(false);
-            leftHandPlayerDetector.gameObject.SetActive(false);
-            rightHandPlayerDetector.gameObject.SetActive(false);
             animation.Die();
 
             foreach (var r in renderers)
@@ -201,9 +187,10 @@ namespace Enemies
             transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + correctionAngle, 0);
         }
 
+        //TODO: See how to syncronize walking speed
         private void MoveTowardsPlayer()
         {
-            var speed = 3;
+            var speed = 1.75f;
             var targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }
