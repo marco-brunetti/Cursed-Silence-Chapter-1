@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
     public Transform InventoryHolder;
     public Transform InspectorParent;
 
-
+	public Vector3 InteractHitPoint;
     public AudioSource InspectablesSource;
     public CharacterController Character;
     public PlayerData PlayerData { get; private set; }
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
 
     private void Interact()
     {
-        _interactor.Interact(PlayerData, _input, Inspector);
+        InteractHitPoint = _interactor.Interact(PlayerData, _input, Inspector);
         Inspector.ManageInspection(PlayerData, _input);
     }
 

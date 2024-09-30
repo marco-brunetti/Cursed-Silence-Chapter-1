@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInteract : MonoBehaviour
@@ -11,7 +10,7 @@ public class PlayerInteract : MonoBehaviour
         _playerController = PlayerController.Instance;
     }
 
-    public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
+    public Vector3 Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
     {
         if (!GameController.Instance.IsInDream && (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
         {
@@ -26,12 +25,16 @@ public class PlayerInteract : MonoBehaviour
                 {
                     ManageInteraction(hit.collider.gameObject, inspector);
                 }
+
+				return hit.point;
             }
             else
             {
                 _playerController.InteractableInSight = null;
             }
-        }   
+        }
+
+		return Vector3.zero;
     }
 
     private void ManageInteraction(GameObject interactableObject, PlayerInspect inspector)
