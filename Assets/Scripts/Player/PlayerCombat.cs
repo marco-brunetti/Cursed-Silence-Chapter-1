@@ -1,5 +1,6 @@
 using UnityEngine;
 using Enemies;
+using SnowHorse.Utils;
 
 namespace Player
 {
@@ -27,24 +28,15 @@ namespace Player
         // ReSharper disable Unity.PerformanceAnalysis
         private void Attack()
         {
-            
-
             //Add player animation
 
-            Ray ray = new()
-            {
-                origin = _controller.Camera.position,
-                direction = _controller.Camera.forward
-            };
+            var enemy = Raycaster.Cast<EnemyController>(new() { origin = _controller.Camera.position, direction = _controller.Camera.forward },
+                                                        out Vector3 hitPoint,
+                                                        maxDistance: _data.AttackDistance,
+                                                        layerMask: _data.InteractLayer);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _data.AttackDistance, _data.InteractLayer) && hit.collider.TryGetComponent(out EnemyController enemy))
-            {
-                enemy.DealDamage(_data.DamageAmount);
-            }
-            else
-            {
-                Debug.Log("Player attack nothing");
-            }
+            if(enemy) enemy.DealDamage(_data.DamageAmount);
+            else Debug.Log("Player attack nothing");
         }
 
         private void Cover()
