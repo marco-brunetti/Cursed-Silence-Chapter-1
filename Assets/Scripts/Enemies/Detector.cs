@@ -5,6 +5,7 @@ public class Detector : MonoBehaviour
 {
     public static EventHandler<Collider> ColliderEntered;
     public static EventHandler<Collider> ColliderExited;
+    public static EventHandler<Collider> ColliderStaying;
 
     private string detectionTag;
 
@@ -26,6 +27,14 @@ public class Detector : MonoBehaviour
         if(other.CompareTag(detectionTag))
         {
             ColliderExited?.Invoke(this, other);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.CompareTag(detectionTag))
+        {
+            ColliderStaying?.Invoke(this, other);
         }
     }
 }

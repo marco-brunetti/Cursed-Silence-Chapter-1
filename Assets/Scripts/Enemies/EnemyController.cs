@@ -19,6 +19,7 @@ namespace Enemies
         private int currentHealth;
         private bool isEngaging;
         private bool canRecieveDamage;
+        private bool isReacting;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
@@ -30,8 +31,9 @@ namespace Enemies
         {
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
-            Detector.ColliderEntered += PlayerDetected;
+            Detector.ColliderEntered += PlayerEnteredDetector;
             Detector.ColliderExited += PlayerExitedDetector;
+            Detector.ColliderStaying += PlayerStayingInDetector;
             currentHealth = data.Health;
             
             collider.enabled = true;
@@ -48,8 +50,9 @@ namespace Enemies
 
         private void OnDisable()
         {
-            Detector.ColliderEntered -= PlayerDetected;
+            Detector.ColliderEntered -= PlayerEnteredDetector;
             Detector.ColliderExited -= PlayerExitedDetector;
+            Detector.ColliderStaying -= PlayerStayingInDetector;
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -59,48 +62,40 @@ namespace Enemies
             {
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
-
-                if (currentHealth <= 0) ChangeState(EnemyState.Dead);
-                else animation.React(); //TODO: Fix reaction when player inside inner detector
+                var nextState = currentHealth <= 0 ? EnemyState.Dead : EnemyState.React;
+                ChangeState(nextState);
             }
         }
 
         public void ReactStop()
         {
+            isReacting = false;
             var distance = Vector3.Distance(player.position, transform.position);
-            
-            if (Mathf.Abs(distance) <= innerPlayerDetector.transform.localScale.x / 2)
-            {
-                ChangeState(EnemyState.Attack);
-            }
-            else
+            if (Mathf.Abs(distance) > innerPlayerDetector.transform.localScale.x * 0.7f) //0.7 gives some room for error with player staying detector
             {
                 ChangeState(EnemyState.Walk);
             }
+            else
+            {
+                ChangeState(EnemyState.Attack);
+            }
         }
 
-        private void PlayerDetected(object detector, Collider other)
+        private void PlayerEnteredDetector(object detector, Collider other)
         {
-            if (currentState != EnemyState.Dead)
-            {
-                var triggeredDetector = detector as Detector;
-                if (triggeredDetector == innerPlayerDetector)
-                {
-                    ChangeState(EnemyState.Attack);
-                }
-                else if (triggeredDetector == outerPlayerDetector)
-                {
-                    ChangeState(EnemyState.Walk);
-                }
-            }
+            if (currentState != EnemyState.Dead && (Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Walk);
         }
 
         private void PlayerExitedDetector(object detector, Collider other)
         {
-            if (currentState != EnemyState.Dead)
+            if (currentState != EnemyState.Dead && (Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Idle);
+        }
+
+        private void PlayerStayingInDetector(object detector, Collider other)
+        {
+            if (!isReacting && (Detector)detector == innerPlayerDetector)
             {
-                if ((Detector)detector == innerPlayerDetector) ChangeState(EnemyState.Walk);
-                else if ((Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Idle);
+                ChangeState(EnemyState.Attack);
             }
         }
 
@@ -122,6 +117,9 @@ namespace Enemies
                 case EnemyState.Walk:
                     Walk();
                     break;
+                case EnemyState.React:
+                    React();
+                    break;
             }
 
             if (currentState != EnemyState.Walk) animation.WalkSpeed = 0;
@@ -140,6 +138,12 @@ namespace Enemies
         private void Attack()
         {
             animation.Attack();
+        }
+
+        private void React()
+        {
+            isReacting = true;
+            animation.React();
         }
 
         private void Die()
@@ -180,6 +184,7 @@ namespace Enemies
         Idle,
         Walk,
         Attack,
+        React,
         Escape,
         Block,
         Stunned,

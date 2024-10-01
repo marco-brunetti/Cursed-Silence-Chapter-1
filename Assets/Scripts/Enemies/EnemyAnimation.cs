@@ -96,8 +96,6 @@ namespace Enemies
             
         public void Attack()
         {
-            if (animation.CurrentKey == AnimReactFront.Value) return;
-
             if(animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
             {
                 animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
