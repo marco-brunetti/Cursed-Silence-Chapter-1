@@ -9,11 +9,16 @@ namespace Enemies
     [RequireComponent(typeof(Animator))]
     public class EnemyAnimation : MonoBehaviour
     {
+        private bool canChangeAttackAnimation = true;
+        private float reactMoveSpeed;
+        private float currentLerpTime;
+        private Vector3 targetLookPosition;
+        private Coroutine lookAtPlayer;
+        private Coroutine moveTowards;
         private Animator animator;
         private EnemyController controller;
         private EnemyData data;
         private Transform player;
-
         private new AnimationManager animation;
 
         private readonly KeyValuePair<string, int> AnimDieForward = new("death_forward", Animator.StringToHash("death_forward"));
@@ -23,14 +28,7 @@ namespace Enemies
         private readonly KeyValuePair<string, int> AnimWalkForward = new("walk_forward", Animator.StringToHash("walk_forward"));
         private readonly KeyValuePair<string, int> AnimReactFront = new("react_front", Animator.StringToHash("react_front"));
 
-        private bool canChangeAttackAnimation = true;
-
         [NonSerialized] public float WalkSpeed;
-        private float reactMoveSpeed;
-        private float currentLerpTime;
-        private Coroutine lookAtPlayer;
-        private Coroutine moveTowards;
-        private Vector3 targetLookPosition;
 
         public void Init(EnemyController controller, EnemyData enemyData, Transform player)
         {

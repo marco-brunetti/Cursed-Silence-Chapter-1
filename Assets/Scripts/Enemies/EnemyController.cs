@@ -17,15 +17,12 @@ namespace Enemies
 
         private int currentHealth;
         private bool isEngaging;
-        private bool canRecieveDamage = true;
-        public EnemyState CurrentState { get; private set; }
+        private bool canRecieveDamage;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
+        private EnemyState currentState;
 
-        public void CanRecieveDamage(bool enable)
-        {
-            canRecieveDamage = enable;
-        }
+        public void CanRecieveDamage(bool enable) => canRecieveDamage = enable;
 
         private void Start()
         {
@@ -57,7 +54,7 @@ namespace Enemies
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
         {
-            if (CurrentState != EnemyState.Dead && canRecieveDamage)
+            if (currentState != EnemyState.Dead && canRecieveDamage)
             {
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
@@ -69,7 +66,7 @@ namespace Enemies
 
         private void PlayerDetected(object detector, Collider other)
         {
-            if (CurrentState != EnemyState.Dead)
+            if (currentState != EnemyState.Dead)
             {
                 var triggeredDetector = detector as Detector;
                 if (triggeredDetector == innerPlayerDetector)
@@ -85,7 +82,7 @@ namespace Enemies
 
         private void PlayerExitedDetector(object detector, Collider other)
         {
-            if (CurrentState != EnemyState.Dead)
+            if (currentState != EnemyState.Dead)
             {
                 if ((Detector)detector == innerPlayerDetector) ChangeState(EnemyState.Walk);
                 else if ((Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Idle);
@@ -94,9 +91,9 @@ namespace Enemies
 
         private void ChangeState(EnemyState newState)
         {
-            CurrentState = newState;
+            currentState = newState;
 
-            switch (CurrentState)
+            switch (currentState)
             {
                 case EnemyState.Idle:
                     Idle();
@@ -112,7 +109,7 @@ namespace Enemies
                     break;
             }
 
-            if (CurrentState != EnemyState.Walk) animation.WalkSpeed = 0;
+            if (currentState != EnemyState.Walk) animation.WalkSpeed = 0;
         }
 
         private void Idle()
