@@ -24,15 +24,7 @@ namespace Enemies
 
         public void CanRecieveDamage(bool enable)
         {
-            if (true) //Check condition later
-            {
-                canRecieveDamage = enable;
-            }
-        }
-
-        private void Awake()
-        {
-
+            canRecieveDamage = enable;
         }
 
         private void Start()
