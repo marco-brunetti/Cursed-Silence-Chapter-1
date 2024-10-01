@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Player;
-using SnowHorse.Utils;
 
 namespace Enemies
 {
@@ -19,10 +18,8 @@ namespace Enemies
         private int currentHealth;
         private bool isEngaging;
         private bool canRecieveDamage = true;
-        public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
+        public EnemyState CurrentState { get; private set; }
         private Transform player;
-        private Vector3 targetLookPosition;
-        private float currentLerpTime;
         private List<Renderer> invisibleRenderers = new();
 
         public void CanRecieveDamage(bool enable)
@@ -31,17 +28,6 @@ namespace Enemies
             {
                 canRecieveDamage = enable;
             }
-        }
-
-        private void OnEnable()
-        {
-            currentHealth = data.Health;
-        }
-
-        private void OnDisable()
-        {
-            Detector.ColliderEntered -= PlayerDetected;
-            Detector.ColliderExited -= PlayerExitedDetector;
         }
 
         private void Awake()
@@ -56,7 +42,18 @@ namespace Enemies
         {
             player = PlayerController.Instance.Player.transform;
             animation.Init(controller: this, enemyData: data, player);
-            targetLookPosition = player.position;
+            ChangeState(EnemyState.Idle);
+        }
+
+        private void OnEnable()
+        {
+            currentHealth = data.Health;
+        }
+
+        private void OnDisable()
+        {
+            Detector.ColliderEntered -= PlayerDetected;
+            Detector.ColliderExited -= PlayerExitedDetector;
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -67,7 +64,7 @@ namespace Enemies
                 currentHealth -= damageAmount;
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
 
-                if (currentHealth <= 0) CurrentState = EnemyState.Dead;
+                if (currentHealth <= 0) ChangeState(EnemyState.Dead);
                 else animation.React();
             }
         }
@@ -79,11 +76,11 @@ namespace Enemies
                 var triggeredDetector = detector as Detector;
                 if (triggeredDetector == innerPlayerDetector)
                 {
-                    CurrentState = EnemyState.Attack;
+                    ChangeState(EnemyState.Attack);
                 }
                 else if (triggeredDetector == outerPlayerDetector)
                 {
-                    CurrentState = EnemyState.Walk;
+                    ChangeState(EnemyState.Walk);
                 }
             }
         }
@@ -92,17 +89,15 @@ namespace Enemies
         {
             if (CurrentState != EnemyState.Dead)
             {
-                var triggeredDetector = detector as Detector;
-
-                if (triggeredDetector == innerPlayerDetector)
-                {
-                    CurrentState = EnemyState.Walk;
-                }
+                if ((Detector)detector == innerPlayerDetector) ChangeState(EnemyState.Walk);
+                else if ((Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Idle);
             }
         }
 
-        private void Update()
+        private void ChangeState(EnemyState newState)
         {
+            CurrentState = newState;
+
             switch (CurrentState)
             {
                 case EnemyState.Idle:
@@ -122,13 +117,32 @@ namespace Enemies
             if (CurrentState != EnemyState.Walk) animation.WalkSpeed = 0;
         }
 
+        private void Idle()
+        {
+            animation.Idle();
+        }
+
+        private void Walk()
+        {
+            animation.Walk();
+        }
+
+        private void Attack()
+        {
+            animation.Attack();
+        }
+
         private void Die()
         {
             collider.enabled = false;
             innerPlayerDetector.gameObject.SetActive(false);
             outerPlayerDetector.gameObject.SetActive(false);
             animation.Die();
+            EnemyDisappear();
+        }
 
+        private void EnemyDisappear()
+        {
             foreach (var r in renderers)
             {
                 var c = r.material.color;
@@ -149,46 +163,6 @@ namespace Enemies
 
             if (invisibleRenderers.Count == renderers.Length) Destroy(gameObject);
         }
-
-        private void Idle()
-        {
-            LookAtPlayer();
-            collider.enabled = true;
-            animation.Idle();
-        }
-
-        private void Walk()
-        {
-            animation.Walk();
-            LookAtPlayer();
-            collider.enabled = true;
-        }
-
-        private void Attack()
-        {
-            LookAtPlayer();
-            collider.enabled = true;
-            animation.Attack();
-        }
-
-        private void LookAtPlayer(float correctionAngle = 0)
-        {
-            if ((targetLookPosition - player.position).magnitude < 0.01f)
-            {
-                currentLerpTime = 0;
-            }
-            else
-            {
-                var lerpDuration = (1 / (targetLookPosition - player.position).magnitude) * 50f;
-                var percent = Interpolation.Smoother(lerpDuration, ref currentLerpTime);
-                targetLookPosition = Vector3.Lerp(targetLookPosition, player.position, percent);
-            }
-
-            transform.LookAt(targetLookPosition);
-            transform.eulerAngles = new Vector3(0, transform.eulerAngles.y + correctionAngle, 0);
-        }
-
-
     }
 
     public enum EnemyState
