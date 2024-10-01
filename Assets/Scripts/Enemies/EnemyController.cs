@@ -32,10 +32,7 @@ namespace Enemies
 
         private void Awake()
         {
-            innerPlayerDetector.DetectTag("Player");
-            outerPlayerDetector.DetectTag("Player");
-            Detector.ColliderEntered += PlayerDetected;
-            Detector.ColliderExited += PlayerExitedDetector;
+
         }
 
         private void Start()
@@ -47,7 +44,16 @@ namespace Enemies
 
         private void OnEnable()
         {
+            innerPlayerDetector.DetectTag("Player");
+            outerPlayerDetector.DetectTag("Player");
+            Detector.ColliderEntered += PlayerDetected;
+            Detector.ColliderExited += PlayerExitedDetector;
             currentHealth = data.Health;
+            ChangeState(EnemyState.Idle);
+
+            collider.enabled = true;
+            innerPlayerDetector.gameObject.SetActive(true);
+            outerPlayerDetector.gameObject.SetActive(true);
         }
 
         private void OnDisable()
