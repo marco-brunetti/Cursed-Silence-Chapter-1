@@ -57,9 +57,11 @@ namespace Enemies
         public void ChangeCurrentAttackClip() => canChangeAttackAnimation = true;
 
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
-        public void ReactStopMovement() => reactMoveSpeed = 0;
-
-        public void ReactStopAnimation() => Walk();
+        public void ReactStop()
+        {
+            reactMoveSpeed = 0;
+            controller.ReactStop();
+        }
 
         public void WalkStarted(float walkSpeed)
         { 

@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -330,10 +329,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 300572003101741961, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6fe54da8927cd3c4fa0307b11700038d, type: 2}
     - target: {fileID: 2857212413535442305, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.4
@@ -374,22 +369,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3703731412557975778, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 24435f0794e1cc141b8ac6c8389b6ab3, type: 2}
     - target: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_Name
       value: enemy_emily
       objectReference: {fileID: 0}
-    - target: {fileID: 6779283700528413950, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: a7a2177552b3335429c8d7484b825dc4, type: 2}
-    - target: {fileID: 7166730298423265265, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 24435f0794e1cc141b8ac6c8389b6ab3, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -412,8 +395,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293da4e7c49eff54cbd7caef0c94174f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  castType: 1
-  debug: 0
 --- !u!1001 &1909810505
 PrefabInstance:
   m_ObjectHideFlags: 0

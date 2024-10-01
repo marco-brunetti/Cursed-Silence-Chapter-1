@@ -1,18 +1,18 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Player;
+using UnityEngine.Serialization;
 
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
     { 
         [SerializeField] private EnemyData data;
-        [SerializeField] private new Collider collider;
-        [SerializeField] private new EnemyAnimation animation;
-
-        [SerializeField] private Detector selfPlayerDetector;
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
+        [SerializeField] private new Collider collider;
+        [SerializeField] private new EnemyAnimation animation;
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
@@ -23,28 +23,27 @@ namespace Enemies
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
 
+
         public void CanRecieveDamage(bool enable) => canRecieveDamage = enable;
+
+        private void Awake()
+        {
+            innerPlayerDetector.DetectTag("Player");
+            outerPlayerDetector.DetectTag("Player");
+            Detector.ColliderEntered += PlayerDetected;
+            Detector.ColliderExited += PlayerExitedDetector;
+            currentHealth = data.Health;
+            
+            collider.enabled = true;
+            innerPlayerDetector.gameObject.SetActive(true);
+            outerPlayerDetector.gameObject.SetActive(true);
+        }
 
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
             animation.Init(controller: this, enemyData: data, player);
             ChangeState(EnemyState.Idle);
-        }
-
-        private void OnEnable()
-        {
-            selfPlayerDetector.DetectTag("Player");
-            innerPlayerDetector.DetectTag("Player");
-            outerPlayerDetector.DetectTag("Player");
-            Detector.ColliderEntered += PlayerDetected;
-            Detector.ColliderExited += PlayerExitedDetector;
-            currentHealth = data.Health;
-            ChangeState(EnemyState.Idle);
-
-            collider.enabled = true;
-            innerPlayerDetector.gameObject.SetActive(true);
-            outerPlayerDetector.gameObject.SetActive(true);
         }
 
         private void OnDisable()
@@ -66,6 +65,20 @@ namespace Enemies
             }
         }
 
+        public void ReactStop()
+        {
+            var distance = Vector3.Distance(player.position, transform.position);
+            
+            if (Mathf.Abs(distance) <= innerPlayerDetector.transform.localScale.x / 2)
+            {
+                ChangeState(EnemyState.Attack);
+            }
+            else
+            {
+                ChangeState(EnemyState.Walk);
+            }
+        }
+
         private void PlayerDetected(object detector, Collider other)
         {
             if (currentState != EnemyState.Dead)
@@ -78,10 +91,6 @@ namespace Enemies
                 else if (triggeredDetector == outerPlayerDetector)
                 {
                     ChangeState(EnemyState.Walk);
-                }
-                else if(triggeredDetector == selfPlayerDetector)
-                {
-                    ChangeState(EnemyState.Attack);
                 }
             }
         }
