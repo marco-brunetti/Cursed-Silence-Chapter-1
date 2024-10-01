@@ -10,6 +10,7 @@ namespace Enemies
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
 
+        [SerializeField] private Detector selfPlayerDetector;
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private Renderer[] renderers;
@@ -33,6 +34,7 @@ namespace Enemies
 
         private void OnEnable()
         {
+            selfPlayerDetector.DetectTag("Player");
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
             Detector.ColliderEntered += PlayerDetected;
@@ -60,7 +62,7 @@ namespace Enemies
                 Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
 
                 if (currentHealth <= 0) ChangeState(EnemyState.Dead);
-                else animation.React();
+                else animation.React(); //TODO: Fix reaction when player inside inner detector
             }
         }
 
@@ -76,6 +78,10 @@ namespace Enemies
                 else if (triggeredDetector == outerPlayerDetector)
                 {
                     ChangeState(EnemyState.Walk);
+                }
+                else if(triggeredDetector == selfPlayerDetector)
+                {
+                    ChangeState(EnemyState.Attack);
                 }
             }
         }

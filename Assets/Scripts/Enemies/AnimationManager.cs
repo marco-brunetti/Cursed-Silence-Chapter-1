@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 
 public class AnimationManager : MonoBehaviour
 {
@@ -13,7 +12,7 @@ public class AnimationManager : MonoBehaviour
     private AnimationClip[] originalControllerClips;
     public int CurrentKey { get; private set; }
 
-    public AnimationManager(KeyValuePair<string, int>[] animationKeys, Animator animator, AnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
+    public AnimationManager(KeyValuePair<string, int>[] animationKeys, Animator animator, RuntimeAnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
     {
         this.animator = animator;
         random = new System.Random(Guid.NewGuid().GetHashCode());
