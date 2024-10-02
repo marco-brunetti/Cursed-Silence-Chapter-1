@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,23 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &91547628 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-  m_PrefabInstance: {fileID: 1686292784}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &91547632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 91547628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c052d6823acd9a44384d1bb1d0c15fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &644516427
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,10 +329,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1853844388427566972, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2857212413535442305, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.4
@@ -395,21 +373,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy_emily
       objectReference: {fileID: 0}
-    - target: {fileID: 5009086615927069863, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8152720857693137428, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      propertyPath: playerTracker
-      value: 
-      objectReference: {fileID: 91547632}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 91547632}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
 --- !u!1001 &1909810505
 PrefabInstance:

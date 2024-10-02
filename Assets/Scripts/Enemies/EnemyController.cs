@@ -12,7 +12,6 @@ namespace Enemies
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
-        [SerializeField] private EnemyPlayerTracker playerTracker;
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
@@ -24,6 +23,7 @@ namespace Enemies
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
         private System.Random random;
+        private EnemyPlayerTracker playerTracker;
 
 
         public void CanRecieveDamage(bool enable) => canRecieveDamage = enable;
@@ -166,7 +166,7 @@ namespace Enemies
 
         private void OnPlayerTrackerUpdated(object sender, EnemyPlayerTrackerArgs e)
         {
-            if (!isReacting)
+            if (!isReacting && (EnemyPlayerTracker)sender == playerTracker)
             {
                 if (e.IsPlayerInInnerZone) ChangeState(EnemyState.Attack);
                 else if (e.IsPlayerInOuterZone) ChangeState(EnemyState.Walk);
@@ -177,7 +177,7 @@ namespace Enemies
         public void ReactStop()
         {
             isReacting = false;
-            OnPlayerTrackerUpdated(null, new(playerTracker.IsPlayerInInnerZone, playerTracker.IsPlayerInOuterZone, playerTracker.IsPlayerOutsideDetectors));
+            OnPlayerTrackerUpdated(playerTracker, new(playerTracker.IsPlayerInInnerZone, playerTracker.IsPlayerInOuterZone, playerTracker.IsPlayerOutsideDetectors));
         }
 
         private void AnimationInit()
@@ -188,19 +188,18 @@ namespace Enemies
 
         private void StartPlayerTracking()
         {
-            playerTracker.Init(innerPlayerDetector, outerPlayerDetector);
+            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector);
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
         }
 
         private void StopPlayerTracking()
         {
             EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
-            playerTracker.Terminate();
+            playerTracker.Dispose();
         }
 
         private void OnDisable()
         {
-            EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
             StopPlayerTracking();
         }
     }

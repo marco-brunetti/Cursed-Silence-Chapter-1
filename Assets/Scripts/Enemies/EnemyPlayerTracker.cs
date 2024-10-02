@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Enemies
 {
-    public class EnemyPlayerTracker : MonoBehaviour
+    public class EnemyPlayerTracker : IDisposable
     {
         public bool IsPlayerInInnerZone { get; private set; }
         public bool IsPlayerInOuterZone { get; private set; }
@@ -18,70 +15,65 @@ namespace Enemies
 
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public void Init(Detector innerDetector, Detector outerDetector)
+        public EnemyPlayerTracker(Detector innerDetector, Detector outerDetector)
         {
             innerPlayerDetector = innerDetector;
             outerPlayerDetector = outerDetector;
 
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
-            Detector.ColliderEntered += PlayerEnteredDetector;
-            Detector.ColliderExited += PlayerExitedDetector;
-            Detector.ColliderStaying += PlayerStayingInDetector;
+            Detector.TagEntered += PlayerEnteredDetector;
+            Detector.TagExited += PlayerExitedDetector;
+            Detector.TagStaying += PlayerStayingInDetector;
             innerPlayerDetector.gameObject.SetActive(true);
             outerPlayerDetector.gameObject.SetActive(true);
         }
-
-        public void Terminate()
-        {
-
-        }
-
+        
         private void CheckConditions(bool isPlayerInner, bool isPlayerOuter)
         {
+            if(isPlayerInner) Detector.TagStaying -= PlayerStayingInDetector;
+            
             if(isPlayerInner != this.isPlayerInner || isPlayerOuter != this.isPlayerOuter)
             {
                 IsPlayerInInnerZone = isPlayerInner;
                 IsPlayerInOuterZone = isPlayerOuter && !isPlayerInner;
                 IsPlayerOutsideDetectors = !isPlayerInner && !isPlayerOuter;
 
-                PlayerTrackerUpdated?.Invoke(null, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors));
+                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors));
             }
 
             this.isPlayerInner = isPlayerInner;
             this.isPlayerOuter = isPlayerOuter;
         }
 
-        public void PlayerEnteredDetector(object sender, Collider other)
+        public void PlayerEnteredDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-
             if(triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner:true, isPlayerOuter);
             else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: true);
         }
 
-        public void PlayerStayingInDetector(object sender, Collider other)
+        public void PlayerStayingInDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-
             if (triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner: true, isPlayerOuter);
             else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: true);
         }
 
-        public void PlayerExitedDetector(object sender, Collider other)
+        public void PlayerExitedDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-
             if (triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner: false, isPlayerOuter);
             else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: false);
         }
-
-
-        private void OnDisable()
+        
+        public void Dispose()
         {
-            Detector.ColliderEntered -= PlayerEnteredDetector;
-            Detector.ColliderExited -= PlayerExitedDetector;
-            Detector.ColliderStaying -= PlayerStayingInDetector;
+            innerPlayerDetector = null;
+            outerPlayerDetector = null;
+            Detector.TagEntered -= PlayerEnteredDetector;
+            Detector.TagExited -= PlayerExitedDetector;
+            Detector.TagStaying -= PlayerStayingInDetector;
         }
     }
 
@@ -98,5 +90,4 @@ namespace Enemies
             IsPlayerOutsideDetectors = isPlayerOutsideDetectors;
         }
     }
-
 }
