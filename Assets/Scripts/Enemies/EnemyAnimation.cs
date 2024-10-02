@@ -11,8 +11,8 @@ namespace Enemies
     {
         private bool canChangeAttackAnimation = true;
         private float reactMoveSpeed;
-        private float currentLerpTime;
-        private Vector3 targetLookPosition;
+        private float lookLerpTime;
+        private Vector3 lookPos;
         private Coroutine lookAtPlayer;
         private Coroutine moveTowards;
         private Animator animator;
@@ -37,7 +37,6 @@ namespace Enemies
             this.controller = controller;
             data = enemyData;
             this.player = player;
-            targetLookPosition = player.position;
 
             KeyValuePair<string, int>[] animationKeys =
             {
@@ -125,7 +124,7 @@ namespace Enemies
         public void Walk()
         {
             animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
-            LookAtPlayer(true, 25f);
+            LookAtPlayer(true, 50);
         }
  
         private void MoveTowardsPlayer(bool isMoving, float speed = 0)
@@ -159,30 +158,33 @@ namespace Enemies
 
         private IEnumerator LookingAtPlayer(float duration, float correctionAngle = 0)
         {
+            lookLerpTime = 0;
+            lookPos = controller.transform.position + controller.transform.forward;
+            
             while (true)
             {
-                if ((targetLookPosition - player.position).magnitude < 0.01f)
-                {
-                    currentLerpTime = 0;
-                }
-                else
-                {
-                    var lerpDuration = (1 / (targetLookPosition - player.position).magnitude) * duration;
-                    var percent = Interpolation.Smoother(lerpDuration, ref currentLerpTime);
-                    targetLookPosition = Vector3.Lerp(targetLookPosition, player.position, percent);
-                }
-
-                controller.transform.LookAt(targetLookPosition);
-                controller.transform.eulerAngles = new Vector3(0, controller.transform.eulerAngles.y + correctionAngle, 0);
+                var target = GetTargetDirOnYAxis(origin:controller.transform.position, target:player.position);
+                
+                if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
+                else lookPos = Vector3.Lerp(lookPos, target, Interpolation.Smooth(duration, ref lookLerpTime));
+                
+                controller.transform.LookAt(GetTargetDirOnYAxis(origin:controller.transform.position, target:lookPos));
                 yield return null;
             }
+        }
+
+        //Get direction with correct vector length
+        private Vector3 GetTargetDirOnYAxis(Vector3 origin, Vector3 target)
+        {
+            var dir = (new Vector3(target.x, origin.y , target.z) - origin).normalized;
+            return origin + dir;
         }
 
         private IEnumerator ReactMoveTimer()
         {
             while (reactMoveSpeed > 0)
             {
-                controller.transform.position -= transform.forward * reactMoveSpeed * Time.deltaTime;
+                controller.transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
                 yield return null;
             }
         }
