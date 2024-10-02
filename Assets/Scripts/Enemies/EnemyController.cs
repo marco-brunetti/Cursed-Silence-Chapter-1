@@ -12,6 +12,7 @@ namespace Enemies
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
+        [SerializeField] private EnemyPlayerTracker playerTracker;
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
@@ -29,32 +30,18 @@ namespace Enemies
 
         private void Awake()
         {
-            innerPlayerDetector.DetectTag("Player");
-            outerPlayerDetector.DetectTag("Player");
-            Detector.ColliderEntered += PlayerEnteredDetector;
-            Detector.ColliderExited += PlayerExitedDetector;
-            Detector.ColliderStaying += PlayerStayingInDetector;
             currentHealth = data.Health;
-            
             collider.enabled = true;
-            innerPlayerDetector.gameObject.SetActive(true);
-            outerPlayerDetector.gameObject.SetActive(true);
+            random = new System.Random(Guid.NewGuid().GetHashCode());
         }
 
         private void Start()
         {
-            random = new System.Random(Guid.NewGuid().GetHashCode());
             player = PlayerController.Instance.Player.transform;
-            animation.Init(controller: this, enemyData: data, player);
-            ChangeState(EnemyState.Idle);
+            AnimationInit();
+            StartPlayerTracking();
         }
 
-        private void OnDisable()
-        {
-            Detector.ColliderEntered -= PlayerEnteredDetector;
-            Detector.ColliderExited -= PlayerExitedDetector;
-            Detector.ColliderStaying -= PlayerStayingInDetector;
-        }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
@@ -86,37 +73,6 @@ namespace Enemies
                 }
                 
                 ChangeState(nextState);
-            }
-        }
-
-        public void ReactStop()
-        {
-            var distance = Vector3.Distance(player.position, transform.position);
-            if (Mathf.Abs(distance) > innerPlayerDetector.transform.localScale.x * 0.7f) //0.7 gives some room for error with player staying detector
-            {
-                ChangeState(EnemyState.Walk);
-            }
-            else
-            {
-                ChangeState(EnemyState.Attack);
-            }
-        }
-
-        private void PlayerEnteredDetector(object detector, Collider other)
-        {
-            if (currentState != EnemyState.Dead && (Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Walk);
-        }
-
-        private void PlayerExitedDetector(object detector, Collider other)
-        {
-            if (currentState != EnemyState.Dead && (Detector)detector == outerPlayerDetector) ChangeState(EnemyState.Idle);
-        }
-
-        private void PlayerStayingInDetector(object detector, Collider other)
-        {
-            if (!isReacting && (Detector)detector == innerPlayerDetector)
-            {
-                ChangeState(EnemyState.Attack);
             }
         }
 
@@ -179,9 +135,8 @@ namespace Enemies
 
         private void Die()
         {
+            StopPlayerTracking();
             collider.enabled = false;
-            innerPlayerDetector.gameObject.SetActive(false);
-            outerPlayerDetector.gameObject.SetActive(false);
             animation.Die();
             EnemyDisappear();
         }
@@ -207,6 +162,46 @@ namespace Enemies
             }
 
             if (invisibleRenderers.Count == renderers.Length) Destroy(gameObject);
+        }
+
+        private void OnPlayerTrackerUpdated(object sender, EnemyPlayerTrackerArgs e)
+        {
+            if (!isReacting)
+            {
+                if (e.IsPlayerInInnerZone) ChangeState(EnemyState.Attack);
+                else if (e.IsPlayerInOuterZone) ChangeState(EnemyState.Walk);
+                else if (e.IsPlayerOutsideDetectors) ChangeState(EnemyState.Idle);
+            }
+        }
+
+        public void ReactStop()
+        {
+            isReacting = false;
+            OnPlayerTrackerUpdated(null, new(playerTracker.IsPlayerInInnerZone, playerTracker.IsPlayerInOuterZone, playerTracker.IsPlayerOutsideDetectors));
+        }
+
+        private void AnimationInit()
+        {
+            animation.Init(controller: this, enemyData: data, player);
+            ChangeState(EnemyState.Idle);
+        }
+
+        private void StartPlayerTracking()
+        {
+            playerTracker.Init(innerPlayerDetector, outerPlayerDetector);
+            EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
+        }
+
+        private void StopPlayerTracking()
+        {
+            EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
+            playerTracker.Terminate();
+        }
+
+        private void OnDisable()
+        {
+            EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
+            StopPlayerTracking();
         }
     }
 
