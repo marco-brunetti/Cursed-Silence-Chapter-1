@@ -27,6 +27,7 @@ namespace Enemies
         private readonly KeyValuePair<string, int> AnimHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
         private readonly KeyValuePair<string, int> AnimWalkForward = new("walk_forward", Animator.StringToHash("walk_forward"));
         private readonly KeyValuePair<string, int> AnimReactFront = new("react_front", Animator.StringToHash("react_front"));
+        private readonly KeyValuePair<string, int> AnimBlock = new("block", Animator.StringToHash("block"));
 
         [NonSerialized] public float WalkSpeed;
 
@@ -45,7 +46,8 @@ namespace Enemies
                 AnimAttack,
                 AnimHeavyAttack,
                 AnimWalkForward,
-                AnimReactFront
+                AnimReactFront,
+                AnimBlock
             };
 
             animation = new(animationKeys, animator, animatorController: data.AnimatorController, data.AnimationClips);
@@ -62,6 +64,8 @@ namespace Enemies
             reactMoveSpeed = 0;
             controller.ReactStop();
         }
+        
+        public void BlockStop() => controller.BlockStop();
 
         public void WalkStarted(float walkSpeed)
         { 
@@ -91,6 +95,13 @@ namespace Enemies
         {
             animation.EnableKey(AnimReactFront, deactivateOtherKeys: true);
             LookAtPlayer(false);
+            MoveTowardsPlayer(false);
+        }
+        
+        public void Block()
+        {
+            animation.EnableKey(AnimBlock, deactivateOtherKeys: true);
+            LookAtPlayer(true);
             MoveTowardsPlayer(false);
         }
             

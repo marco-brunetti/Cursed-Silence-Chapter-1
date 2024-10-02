@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Player;
-using UnityEngine.Serialization;
 
 namespace Enemies
 {
@@ -20,9 +19,11 @@ namespace Enemies
         private bool isEngaging;
         private bool canRecieveDamage;
         private bool isReacting;
+        private bool isBlocking;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
+        private System.Random random;
 
 
         public void CanRecieveDamage(bool enable) => canRecieveDamage = enable;
@@ -43,6 +44,7 @@ namespace Enemies
 
         private void Start()
         {
+            random = new System.Random(Guid.NewGuid().GetHashCode());
             player = PlayerController.Instance.Player.transform;
             animation.Init(controller: this, enemyData: data, player);
             ChangeState(EnemyState.Idle);
@@ -58,11 +60,32 @@ namespace Enemies
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
         {
-            if (currentState != EnemyState.Dead && canRecieveDamage)
+            if (currentState != EnemyState.Dead && canRecieveDamage && !isReacting && !isBlocking)
             {
-                currentHealth -= damageAmount;
-                Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
-                var nextState = currentHealth <= 0 ? EnemyState.Dead : EnemyState.React;
+                EnemyState nextState;
+                if (currentState == EnemyState.Attack)
+                {
+                    //Test for blocking attack
+                    var i = random.Next(0,2);
+                    if (i == 0) nextState = EnemyState.React;
+                    else nextState = EnemyState.Block;
+                }
+                else
+                {
+                    nextState = EnemyState.React;
+                }
+
+                if (nextState == EnemyState.React)
+                {
+                    currentHealth -= damageAmount;
+                    Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
+                    if (currentHealth <= 0) nextState = EnemyState.Dead;
+                }
+                else
+                {
+                    Debug.Log($"Enemy blocked attack.");
+                }
+                
                 ChangeState(nextState);
             }
         }
@@ -79,6 +102,11 @@ namespace Enemies
             {
                 ChangeState(EnemyState.Attack);
             }
+        }
+
+        public void BlockStop()
+        {
+            isBlocking = false;
         }
 
         private void PlayerEnteredDetector(object detector, Collider other)
@@ -120,6 +148,9 @@ namespace Enemies
                 case EnemyState.React:
                     React();
                     break;
+                case EnemyState.Block:
+                    Block();
+                    break;
             }
 
             if (currentState != EnemyState.Walk) animation.WalkSpeed = 0;
@@ -144,6 +175,12 @@ namespace Enemies
         {
             isReacting = true;
             animation.React();
+        }
+
+        private void Block()
+        {
+            isBlocking = true;
+            animation.Block();
         }
 
         private void Die()
