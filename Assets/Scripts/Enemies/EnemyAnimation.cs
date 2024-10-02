@@ -65,7 +65,7 @@ namespace Enemies
             controller.ReactStop();
         }
         
-        public void BlockStop() => controller.BlockStop();
+        public void BlockStop() => controller.ReactStop();
 
         public void WalkStarted(float walkSpeed)
         { 

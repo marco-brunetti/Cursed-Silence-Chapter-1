@@ -19,7 +19,6 @@ namespace Enemies
         private bool isEngaging;
         private bool canRecieveDamage;
         private bool isReacting;
-        private bool isBlocking;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
@@ -60,7 +59,7 @@ namespace Enemies
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount)
         {
-            if (currentState != EnemyState.Dead && canRecieveDamage && !isReacting && !isBlocking)
+            if (currentState != EnemyState.Dead && canRecieveDamage && !isReacting)
             {
                 EnemyState nextState;
                 if (currentState == EnemyState.Attack)
@@ -92,7 +91,6 @@ namespace Enemies
 
         public void ReactStop()
         {
-            isReacting = false;
             var distance = Vector3.Distance(player.position, transform.position);
             if (Mathf.Abs(distance) > innerPlayerDetector.transform.localScale.x * 0.7f) //0.7 gives some room for error with player staying detector
             {
@@ -102,11 +100,6 @@ namespace Enemies
             {
                 ChangeState(EnemyState.Attack);
             }
-        }
-
-        public void BlockStop()
-        {
-            isBlocking = false;
         }
 
         private void PlayerEnteredDetector(object detector, Collider other)
@@ -129,6 +122,7 @@ namespace Enemies
 
         private void ChangeState(EnemyState newState)
         {
+            isReacting = false;
             currentState = newState;
 
             switch (currentState)
@@ -179,7 +173,7 @@ namespace Enemies
 
         private void Block()
         {
-            isBlocking = true;
+            isReacting = true;
             animation.Block();
         }
 
