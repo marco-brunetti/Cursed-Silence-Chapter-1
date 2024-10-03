@@ -145,7 +145,7 @@ namespace Enemies
             while(true)
             {
                 var targetPosition = new Vector3(player.position.x, controller.transform.position.y, player.position.z);
-                controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, speed * Time.deltaTime);
+                controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, 0 * Time.deltaTime);
                 yield return null;
             }
         }
@@ -166,18 +166,21 @@ namespace Enemies
                 var target = GetTargetDirOnYAxis(origin:controller.transform.position, target:player.position);
                 
                 if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
-                else lookPos = Vector3.Lerp(lookPos, target, Interpolation.Smooth(duration, ref lookLerpTime));
-                
-                controller.transform.LookAt(GetTargetDirOnYAxis(origin:controller.transform.position, target:lookPos));
+                else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
+
+                controller.transform.LookAt(GetTargetDirOnYAxis(origin: controller.transform.position, target: lookPos));
                 yield return null;
             }
         }
 
         //Get direction with correct vector length
-        private Vector3 GetTargetDirOnYAxis(Vector3 origin, Vector3 target)
+        private Vector3 GetTargetDirOnYAxis(Vector3 origin, Vector3 target, bool debug = false, Color? color = null)
         {
-            var dir = (new Vector3(target.x, origin.y , target.z) - origin).normalized;
-            return origin + dir;
+            var finalPos = origin + (new Vector3(target.x, origin.y, target.z) - origin).normalized;
+
+            if(debug && color != null) Debug.DrawLine(origin, finalPos, (Color)color);
+
+            return finalPos;
         }
 
         private IEnumerator ReactMoveTimer()
