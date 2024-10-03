@@ -145,7 +145,7 @@ namespace Enemies
             while(true)
             {
                 var targetPosition = new Vector3(player.position.x, controller.transform.position.y, player.position.z);
-                controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, 0 * Time.deltaTime);
+                controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, speed * Time.deltaTime);
                 yield return null;
             }
         }

@@ -12,7 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc88777887b93547afebfc12690e7e7, type: 3}
   m_Name: Enemy1Data
   m_EditorClassIdentifier: 
-  Health: 100
+  <Health>k__BackingField: 100
+  <Poise>k__BackingField: 50
+  <BlockProbability>k__BackingField: 0.25
+  <TakeDamageProbability>k__BackingField: 0.75
+  <LightAttack>k__BackingField: 10
+  <LightPoiseDecrement>k__BackingField: 5
+  <HeavyAttack>k__BackingField: 20
+  <HeavyPoiseDecrement>k__BackingField: 10
   <AnimationClips>k__BackingField:
   - {fileID: 7400000, guid: 76c7b4bc78bc5934faaf7051d173ea2d, type: 2}
   - {fileID: 7400000, guid: 85fb021cce1aace459e2afdcf4be02e3, type: 2}
