@@ -17,16 +17,17 @@ namespace Enemies
 
         private int currentHealth;
         private bool isEngaging;
-        private bool canRecieveDamage;
+        private bool isVulnerable;
         private bool isReacting;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
         private EnemyState currentState;
         private System.Random random;
         private EnemyPlayerTracker playerTracker;
+        private EnemyStats stats;
 
 
-        public void CanRecieveDamage(bool enable) => canRecieveDamage = enable;
+        public void IsVulnerable(bool enable) => isVulnerable = enable;
 
         private void Awake()
         {
@@ -40,39 +41,16 @@ namespace Enemies
             player = PlayerController.Instance.Player.transform;
             AnimationInit();
             StartPlayerTracking();
+            stats = new EnemyStats(data);
         }
 
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void DealDamage(int damageAmount)
+        public void DealDamage(int damageAmount, int poiseDecrement)
         {
-            if (currentState != EnemyState.Dead && canRecieveDamage && !isReacting)
+            if (currentState != EnemyState.Dead && isVulnerable && !isReacting)
             {
-                EnemyState nextState;
-                if (currentState == EnemyState.Attack)
-                {
-                    //Test for blocking attack
-                    var i = random.Next(0,2);
-                    if (i == 0) nextState = EnemyState.React;
-                    else nextState = EnemyState.Block;
-                }
-                else
-                {
-                    nextState = EnemyState.React;
-                }
-
-                if (nextState == EnemyState.React)
-                {
-                    currentHealth -= damageAmount;
-                    Debug.Log($"Dealing damage {damageAmount} remaining enemyhealth: {currentHealth}");
-                    if (currentHealth <= 0) nextState = EnemyState.Dead;
-                }
-                else
-                {
-                    Debug.Log($"Enemy blocked attack.");
-                }
-                
-                ChangeState(nextState);
+                ChangeState(stats.RecievedAttack(currentState, isVulnerable, damageAmount, poiseDecrement));
             }
         }
 

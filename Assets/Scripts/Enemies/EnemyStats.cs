@@ -29,20 +29,54 @@ namespace Enemies
             normalizedBlockProbability = (int)(data.BlockProbability * normalizeFactor * 100);
             normalizedTakeDamageProbability = (int)(data.TakeDamageProbability * normalizeFactor);
         }
-            
         
-        
-        public EnemyState RecievedAttack(EnemyState currentState)
+        public EnemyState RecievedAttack(EnemyState currentState, bool isVulnerable, int damage, int poiseDecrement)
         {
+            EnemyState newState = currentState;
+
             if (currentState == EnemyState.Attack)
             {
+                if(isVulnerable)
+                {
+                    currentHealth -= damage;
+                    newState = EnemyState.React; //Add big react
+                }
+                else
+                {
+                    currentPoise -= poiseDecrement;
 
+                    if(currentPoise <= 0)
+                    {
+                        currentHealth -= damage;
+                        newState = EnemyState.React;
+
+                        currentPoise = data.Poise;
+                    }
+                }
+            }
+            else if (currentState == EnemyState.Walk || currentState == EnemyState.Idle)
+            {
+                var i = random.Next(0, 100);
+                
+                if (i < normalizedBlockProbability) 
+                {
+                    newState = EnemyState.Block;
+                }
+                else
+                {
+                    currentHealth -= damage;
+                    newState = EnemyState.React;
+                }
             }
 
-
-            EnemyState newState = EnemyState.Attack;
+            if (currentHealth <= 0) newState = EnemyState.Dead;
 
             return newState;
+        }
+
+        public void ResetPoise()
+        {
+            currentPoise = data.Poise;
         }
     }
 }

@@ -53,8 +53,8 @@ namespace Enemies
         }
 
         #region Animation Events
-        public void CanRecieveDamage() => controller.CanRecieveDamage(true);
-        public void CantRecieveDamage() => controller.CanRecieveDamage(false);
+        public void CanRecieveDamage() => controller.IsVulnerable(true);
+        public void CantRecieveDamage() => controller.IsVulnerable(false);
         public void ChangeCurrentAttackClip() => canChangeAttackAnimation = true;
 
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
