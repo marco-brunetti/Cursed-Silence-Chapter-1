@@ -1,12 +1,10 @@
 using System;
+using System.Diagnostics;
 
 namespace Enemies
 {
     public class EnemyStats
     {
-        private int normalizedBlockProbability;
-        private int normalizedTakeDamageProbability;
-
         private int currentHealth;
         private int currentPoise;
         private EnemyData data;
@@ -18,59 +16,72 @@ namespace Enemies
             currentHealth = data.Health;
             currentPoise = data.Poise;
             random = new Random(Guid.NewGuid().GetHashCode());
-
-            NormalizeReactionProbability(data);
-
-        }
-
-        private void NormalizeReactionProbability(EnemyData data)
-        {
-            var normalizeFactor = 1 / (data.BlockProbability + data.TakeDamageProbability);
-            normalizedBlockProbability = (int)(data.BlockProbability * normalizeFactor * 100);
-            normalizedTakeDamageProbability = (int)(data.TakeDamageProbability * normalizeFactor);
         }
         
-        public EnemyState RecievedAttack(EnemyState currentState, bool isVulnerable, int damage, int poiseDecrement)
+        public EnemyState RecievedAttack(AttackedStateData stateData)
         {
-            EnemyState newState = currentState;
-
-            if (currentState == EnemyState.Attack)
+            EnemyState newState;
+            switch(stateData.CurrentState)
             {
-                if(isVulnerable)
-                {
-                    newState = TakeDamage(damage); //Add big react
-                }
-                else
-                {
-                    currentPoise -= poiseDecrement;
-
-                    if(currentPoise <= 0)
-                    {
-                        newState = TakeDamage(damage);
-                        currentPoise = data.Poise;
-                    }
-                }
+                case EnemyState.Attack:
+                    if(stateData.IsVulnerable) return BlockState(stateData); //TakeDamageState(stateData); //Add big react
+                    else return DecrementPoiseState(stateData);
+                case EnemyState.Walk:
+                case EnemyState.Idle:
+                    return BlockState(stateData);
+                default:
+                    return stateData.CurrentState;
             }
-            else if (currentState == EnemyState.Walk || currentState == EnemyState.Idle)
-            {
-                if (random.Next(0, 100) < normalizedBlockProbability) newState = EnemyState.Block;
-                else newState = TakeDamage(damage);
-            }
-
-            if (currentHealth <= 0) newState = EnemyState.Dead;
-
-            return newState;
         }
 
-        private EnemyState TakeDamage(int damage)
+        private EnemyState BlockState(AttackedStateData stateData)
         {
-            currentHealth -= damage;
+            int i = random.Next(0, 100);
+            if (i < data.BlockProbability) 
+            {
+                UnityEngine.Debug.Log($"Enemy blocked. Block probability: {data.BlockProbability}%. Random result: {i}");
+                return EnemyState.Block;
+            }
+            
+            UnityEngine.Debug.Log($"Enemy didn't block. Block probability: {data.BlockProbability}%. Random result: {i}");
+            return TakeDamageState(stateData);
+        }
+
+        private EnemyState DecrementPoiseState(AttackedStateData stateData)
+        {
+            currentPoise -= stateData.PoiseDecrement;
+            if(currentPoise <= 0)
+            {
+                currentPoise = data.Poise;
+                UnityEngine.Debug.Log($"Enemy poise reduced. Amount: {stateData.PoiseDecrement}. Current poise: {currentPoise}");
+                return TakeDamageState(stateData);
+            }
+
+            return stateData.CurrentState;
+        }
+
+        private EnemyState TakeDamageState(AttackedStateData stateData)
+        {
+            currentHealth -= stateData.Damage;
+            UnityEngine.Debug.Log($"Enemy took damage. Amount: {stateData.Damage}. Current health: {currentHealth}");
+            if (currentHealth <= 0) return EnemyState.Dead;
             return EnemyState.React;
         }
+    }
 
-        public void ResetPoise()
+    public class AttackedStateData
+    {
+        public readonly EnemyState CurrentState;
+        public readonly bool IsVulnerable;
+        public readonly int Damage;
+        public readonly int PoiseDecrement;
+
+        public AttackedStateData(EnemyState currentState, bool isVulnerable, int damage, int poiseDecrement)
         {
-            currentPoise = data.Poise;
+            CurrentState = currentState;
+            IsVulnerable = isVulnerable;
+            Damage = damage;
+            PoiseDecrement = poiseDecrement;
         }
     }
 }

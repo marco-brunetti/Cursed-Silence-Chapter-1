@@ -15,8 +15,6 @@ namespace Enemies
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
-        private int currentHealth;
-        private bool isEngaging;
         private bool isVulnerable;
         private bool isReacting;
         private Transform player;
@@ -31,7 +29,6 @@ namespace Enemies
 
         private void Awake()
         {
-            currentHealth = data.Health;
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
         }
@@ -50,7 +47,7 @@ namespace Enemies
         {
             if (currentState != EnemyState.Dead && isVulnerable && !isReacting)
             {
-                ChangeState(stats.RecievedAttack(currentState, isVulnerable, damageAmount, poiseDecrement));
+                ChangeState(stats.RecievedAttack(new(currentState, isVulnerable, damageAmount, poiseDecrement)));
             }
         }
 

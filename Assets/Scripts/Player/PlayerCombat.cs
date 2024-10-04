@@ -36,7 +36,7 @@ namespace Player
                                                         layerMask: _data.InteractLayer,
                                                         debugMode: true);
 
-            if(enemy) enemy.DealDamage(_data.DamageAmount);
+            if(enemy) enemy.DealDamage(_data.DamageAmount, 10);
             else Debug.Log("Player attack nothing");
         }
 
