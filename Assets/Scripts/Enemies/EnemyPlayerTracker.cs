@@ -66,6 +66,8 @@ namespace Enemies
                 visualConePlayerDetector.gameObject.SetActive(false);
                 innerPlayerDetector.gameObject.SetActive(true);
                 outerPlayerDetector.gameObject.SetActive(true);
+
+                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
             }
         }
 
@@ -98,12 +100,14 @@ namespace Enemies
         public bool IsPlayerInInnerZone { get; private set; }
         public bool IsPlayerInOuterZone { get; private set; }
         public bool IsPlayerOutsideDetectors { get; private set; }
+        public bool PlayerEnteredVisualCone { get; private set; }
 
-        public EnemyPlayerTrackerArgs(bool isPlayerInInnerZone, bool isPlayerInOuterZone, bool isPlayerOutsideDetectors)
+        public EnemyPlayerTrackerArgs(bool isPlayerInInnerZone, bool isPlayerInOuterZone, bool isPlayerOutsideDetectors, bool playerEnteredVisualCone = false)
         {
             IsPlayerInInnerZone = isPlayerInInnerZone;
             IsPlayerInOuterZone = isPlayerInOuterZone;
             IsPlayerOutsideDetectors = isPlayerOutsideDetectors;
+            PlayerEnteredVisualCone = playerEnteredVisualCone;
         }
     }
 }

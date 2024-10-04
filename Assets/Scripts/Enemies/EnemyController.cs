@@ -144,9 +144,16 @@ namespace Enemies
         {
             if (currentState != EnemyState.Dead && !isReacting && (EnemyPlayerTracker)sender == playerTracker)
             {
-                if (e.IsPlayerInInnerZone) ChangeState(EnemyState.Attack);
-                else if (e.IsPlayerInOuterZone) ChangeState(EnemyState.Walk);
-                else if (e.IsPlayerOutsideDetectors) ChangeState(EnemyState.Idle);
+                if(e.PlayerEnteredVisualCone) 
+                {
+                    if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
+                    else if(currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
+                    return;
+                }
+                
+                if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
+                else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
+                else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle) ChangeState(EnemyState.Idle);
             }
         }
 
@@ -189,6 +196,7 @@ namespace Enemies
         Escape,
         Block,
         Stunned,
-        Dead
+        Dead,
+        Scream
     }
 }
