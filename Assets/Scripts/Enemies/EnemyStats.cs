@@ -34,7 +34,12 @@ namespace Enemies
         
         public EnemyState RecievedAttack(EnemyState currentState)
         {
-            
+            if (currentState == EnemyState.Attack)
+            {
+
+            }
+
+
             EnemyState newState = EnemyState.Attack;
 
             return newState;
