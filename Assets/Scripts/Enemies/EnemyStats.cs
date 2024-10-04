@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Enemies
 {
@@ -10,6 +9,8 @@ namespace Enemies
         private EnemyData data;
         private Random random;
 
+        public EventHandler<UpdatedStatsEventArgs> StatsChanged;
+
         public EnemyStats(EnemyData data)
         {
             this.data = data;
@@ -17,14 +18,14 @@ namespace Enemies
             currentPoise = data.Poise;
             random = new Random(Guid.NewGuid().GetHashCode());
         }
-        
+
         public EnemyState RecievedAttack(AttackedStateData stateData)
         {
             EnemyState newState;
-            switch(stateData.CurrentState)
+            switch (stateData.CurrentState)
             {
                 case EnemyState.Attack:
-                    if(stateData.IsVulnerable) return BlockState(stateData); //TakeDamageState(stateData); //Add big react
+                    if (stateData.IsVulnerable) return BlockState(stateData); //TakeDamageState(stateData); //Add big react
                     else return DecrementPoiseState(stateData);
                 case EnemyState.Walk:
                 case EnemyState.Idle:
@@ -37,23 +38,23 @@ namespace Enemies
         private EnemyState BlockState(AttackedStateData stateData)
         {
             int i = random.Next(0, 100);
-            if (i < data.BlockProbability) 
+            if (i < data.BlockProbability)
             {
-                UnityEngine.Debug.Log($"Enemy blocked. Block probability: {data.BlockProbability}%. Random result: {i}");
+                StatsChanged?.Invoke(this, GetUpdatedStatsArgs("block", randomBlockResult: i));
                 return EnemyState.Block;
             }
-            
-            UnityEngine.Debug.Log($"Enemy didn't block. Block probability: {data.BlockProbability}%. Random result: {i}");
+
+            StatsChanged?.Invoke(this, GetUpdatedStatsArgs("block", randomBlockResult: i));
             return TakeDamageState(stateData);
         }
 
         private EnemyState DecrementPoiseState(AttackedStateData stateData)
         {
             currentPoise -= stateData.PoiseDecrement;
-            if(currentPoise <= 0)
+            if (currentPoise <= 0)
             {
                 currentPoise = data.Poise;
-                UnityEngine.Debug.Log($"Enemy poise reduced. Amount: {stateData.PoiseDecrement}. Current poise: {currentPoise}");
+                StatsChanged?.Invoke(this, GetUpdatedStatsArgs("poise_decrement", poiseDecrement: stateData.PoiseDecrement));
                 return TakeDamageState(stateData);
             }
 
@@ -63,9 +64,40 @@ namespace Enemies
         private EnemyState TakeDamageState(AttackedStateData stateData)
         {
             currentHealth -= stateData.Damage;
-            UnityEngine.Debug.Log($"Enemy took damage. Amount: {stateData.Damage}. Current health: {currentHealth}");
+            StatsChanged?.Invoke(this, GetUpdatedStatsArgs("damage", damage: stateData.Damage));
             if (currentHealth <= 0) return EnemyState.Dead;
             return EnemyState.React;
+        }
+
+        
+        private UpdatedStatsEventArgs GetUpdatedStatsArgs(string type, int damage = 0, int poiseDecrement = 0, int randomBlockResult = 0)
+        {
+            switch (type)
+            {
+                case "block":
+                    return new UpdatedStatsEventArgs()
+                    {
+                        Type = type,
+                        BlockProbability = data.BlockProbability,
+                        RandomBlockResult = randomBlockResult
+                    };
+                case "damage":
+                    return new UpdatedStatsEventArgs()
+                    {
+                        Type = type,
+                        CurrentHealth = currentHealth,
+                        HealthDecrement = damage
+                    };
+                case "poise_decrement":
+                    return new UpdatedStatsEventArgs()
+                    {
+                        Type = type,
+                        CurrentPoise = currentPoise,
+                        PoiseDecrement = poiseDecrement
+                    };
+                default:
+                    return null;
+            }
         }
     }
 
@@ -84,4 +116,16 @@ namespace Enemies
             PoiseDecrement = poiseDecrement;
         }
     }
+
+}
+
+public class UpdatedStatsEventArgs : EventArgs
+{
+    public string Type;
+    public int CurrentHealth;
+    public int CurrentPoise;
+    public int HealthDecrement;
+    public int PoiseDecrement;
+    public int BlockProbability;
+    public int RandomBlockResult;
 }
