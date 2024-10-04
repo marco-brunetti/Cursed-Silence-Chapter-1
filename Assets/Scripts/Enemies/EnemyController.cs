@@ -10,6 +10,7 @@ namespace Enemies
         [SerializeField] private EnemyData data;
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
+        [SerializeField] private Detector visualConePlayerDetector;
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
         [SerializeField] private Renderer[] renderers;
@@ -163,7 +164,7 @@ namespace Enemies
 
         private void StartPlayerTracking()
         {
-            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector);
+            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector, visualConePlayerDetector);
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
         }
 

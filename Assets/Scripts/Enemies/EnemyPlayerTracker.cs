@@ -12,21 +12,25 @@ namespace Enemies
         private bool isPlayerOuter;
         private Detector innerPlayerDetector;
         private Detector outerPlayerDetector;
+        private Detector visualConePlayerDetector;
 
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public EnemyPlayerTracker(Detector innerDetector, Detector outerDetector)
+        public EnemyPlayerTracker(Detector innerDetector, Detector outerDetector, Detector visualConeDetector)
         {
             innerPlayerDetector = innerDetector;
             outerPlayerDetector = outerDetector;
+            visualConePlayerDetector = visualConeDetector;
 
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
+            visualConePlayerDetector.DetectTag("Player");
             Detector.TagEntered += PlayerEnteredDetector;
             Detector.TagExited += PlayerExitedDetector;
             Detector.TagStaying += PlayerStayingInDetector;
-            innerPlayerDetector.gameObject.SetActive(true);
-            outerPlayerDetector.gameObject.SetActive(true);
+            innerPlayerDetector.gameObject.SetActive(false);
+            outerPlayerDetector.gameObject.SetActive(false);
+            visualConePlayerDetector.gameObject.SetActive(true);
         }
         
         private void CheckConditions(bool isPlayerInner, bool isPlayerOuter)
@@ -49,8 +53,20 @@ namespace Enemies
         public void PlayerEnteredDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-            if(triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner:true, isPlayerOuter);
-            else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: true);
+            if(triggeredDetector == innerPlayerDetector)
+            {
+                CheckConditions(isPlayerInner:true, isPlayerOuter);
+            }
+            else if (triggeredDetector == outerPlayerDetector)
+            {
+                CheckConditions(isPlayerInner, isPlayerOuter: true);
+            }
+            else if(triggeredDetector == visualConePlayerDetector)
+            {
+                visualConePlayerDetector.gameObject.SetActive(false);
+                innerPlayerDetector.gameObject.SetActive(true);
+                outerPlayerDetector.gameObject.SetActive(true);
+            }
         }
 
         public void PlayerStayingInDetector(object sender, EventArgs e)
