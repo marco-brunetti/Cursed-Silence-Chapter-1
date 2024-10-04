@@ -40,6 +40,12 @@ public class PlayerData : ScriptableObject
 
     [Header("Player Combat")] public int DamageAmount = 10;
     public float AttackDistance = 1.5f;
+    [field: SerializeField] public int Health { get; private set; } = 100;
+    [field: SerializeField, Range(0, 100)] public int Poise { get; private set; } = 50;
+    [field: SerializeField, Range(0, 50)] public int LightAttack { get; private set; } = 10;
+    [field: SerializeField, Range(0, 50)] public int LightPoiseDecrement { get; private set; } = 10;
+    [field: SerializeField, Range(0, 50)] public int HeavyAttack { get; private set; } = 20;
+    [field: SerializeField, Range(0, 50)] public int HeavyPoiseDecrement { get; private set; } = 20;
 
     [Header("Interactables")] public float InteractDistance = 2f;
     public LayerMask InteractLayer;

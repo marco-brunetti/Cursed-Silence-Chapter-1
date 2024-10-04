@@ -141,7 +141,7 @@ namespace Enemies
 
         private void OnPlayerTrackerUpdated(object sender, EnemyPlayerTrackerArgs e)
         {
-            if (!isReacting && (EnemyPlayerTracker)sender == playerTracker)
+            if (currentState != EnemyState.Dead && !isReacting && (EnemyPlayerTracker)sender == playerTracker)
             {
                 if (e.IsPlayerInInnerZone) ChangeState(EnemyState.Attack);
                 else if (e.IsPlayerInOuterZone) ChangeState(EnemyState.Walk);

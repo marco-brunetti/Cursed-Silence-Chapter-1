@@ -78904,28 +78904,28 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: CanRecieveDamage
-    data: 
+    functionName: SetVulnerable
+    data: false
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.3
-    functionName: CantRecieveDamage
-    data: 
+  - time: 1.1666666
+    functionName: SetVulnerable
+    data: true
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.2666667
+    functionName: SetVulnerable
+    data: false
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 2.3333333
     functionName: ChangeCurrentAttackClip
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 2.6
-    functionName: CanRecieveDamage
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

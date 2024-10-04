@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-public class AnimationManager : MonoBehaviour
+public class AnimationManager
 {
     private Animator animator;
     private Dictionary<int, List<AnimationClip>> dict = new();

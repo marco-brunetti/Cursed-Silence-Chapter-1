@@ -47,7 +47,7 @@ namespace Enemies
 
         private EnemyState DecrementPoiseState(EnemyAttackedStateData stateData)
         {
-            currentPoise -= stateData.PoiseDecrement;
+            currentPoise -= stateData.PoiseDecrement; //THIS HAS TO BE RESET WHEN ENEMY ATTACKS
 
             //StatsChanged?.Invoke(this, GetUpdatedStatsArgs("poise_decrement", poiseDecrement: stateData.PoiseDecrement));
 
@@ -74,14 +74,10 @@ namespace Enemies
         {
             switch (type)
             {
-                case "block":
-                    return new UpdatedStatsEventArgs() { Type = type, RandomBlockResult = randomBlockResult };
-                case "damage":
-                    return new UpdatedStatsEventArgs() { Type = type, CurrentHealth = currentHealth, HealthDecrement = damage };
-                case "poise_decrement":
-                    return new UpdatedStatsEventArgs() { Type = type, CurrentPoise = currentPoise, PoiseDecrement = poiseDecrement };
-                default:
-                    return null;
+                case "block": return new UpdatedStatsEventArgs() { Type = type, RandomBlockResult = randomBlockResult };
+                case "damage": return new UpdatedStatsEventArgs() { Type = type, CurrentHealth = currentHealth, HealthDecrement = damage };
+                case "poise_decrement": return new UpdatedStatsEventArgs() { Type = type, CurrentPoise = currentPoise, PoiseDecrement = poiseDecrement };
+                default: return null;
             }
         }
     }
