@@ -4,6 +4,9 @@ namespace Enemies
 {
     public class EnemyStats
     {
+        private int normalizedBlockProbability;
+        private int normalizedTakeDamageProbability;
+
         private int currentHealth;
         private int currentPoise;
         private EnemyData data;
@@ -14,12 +17,22 @@ namespace Enemies
             this.data = data;
             currentHealth = data.Health;
             currentPoise = data.Poise;
-            random = new System.Random(Guid.NewGuid().GetHashCode());
+            random = new Random(Guid.NewGuid().GetHashCode());
+
+            NormalizeReactionProbability(data);
+
+        }
+
+        private void NormalizeReactionProbability(EnemyData data)
+        {
+            var normalizeFactor = 1 / (data.BlockProbability + data.TakeDamageProbability);
+            normalizedBlockProbability = (int)(data.BlockProbability * normalizeFactor * 100);
+            normalizedTakeDamageProbability = (int)(data.TakeDamageProbability * normalizeFactor);
         }
             
         
         
-        public EnemyState RecievedAttackState(EnemyState currentState)
+        public EnemyState RecievedAttack(EnemyState currentState)
         {
             
             EnemyState newState = EnemyState.Attack;
