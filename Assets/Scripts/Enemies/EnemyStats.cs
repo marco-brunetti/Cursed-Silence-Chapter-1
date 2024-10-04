@@ -38,8 +38,7 @@ namespace Enemies
             {
                 if(isVulnerable)
                 {
-                    currentHealth -= damage;
-                    newState = EnemyState.React; //Add big react
+                    newState = TakeDamage(damage); //Add big react
                 }
                 else
                 {
@@ -47,31 +46,26 @@ namespace Enemies
 
                     if(currentPoise <= 0)
                     {
-                        currentHealth -= damage;
-                        newState = EnemyState.React;
-
+                        newState = TakeDamage(damage);
                         currentPoise = data.Poise;
                     }
                 }
             }
             else if (currentState == EnemyState.Walk || currentState == EnemyState.Idle)
             {
-                var i = random.Next(0, 100);
-                
-                if (i < normalizedBlockProbability) 
-                {
-                    newState = EnemyState.Block;
-                }
-                else
-                {
-                    currentHealth -= damage;
-                    newState = EnemyState.React;
-                }
+                if (random.Next(0, 100) < normalizedBlockProbability) newState = EnemyState.Block;
+                else newState = TakeDamage(damage);
             }
 
             if (currentHealth <= 0) newState = EnemyState.Dead;
 
             return newState;
+        }
+
+        private EnemyState TakeDamage(int damage)
+        {
+            currentHealth -= damage;
+            return EnemyState.React;
         }
 
         public void ResetPoise()
