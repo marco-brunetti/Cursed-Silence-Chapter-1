@@ -1,12 +1,13 @@
 using UnityEngine;
 using static UnityEngine.UI.Image;
 using UnityEngine.Rendering;
+using System.Numerics;
 
 namespace SnowHorse.Utils
 {
     public class Raycaster
     {
-        public static T Cast<T>(Ray ray, out Vector3 hitPoint, CastType castType = CastType.mixed, float maxDistance = Mathf.Infinity, LayerMask layerMask = new LayerMask(), bool debugMode = false, Color debugColor = new Color(), Color hitDebugColor = new Color())
+        public static T Cast<T>(RaycastData data, out Vector3 hitPoint)
         {
             var o = Cast(ray, out hitPoint, castType, maxDistance, layerMask, debugMode, debugColor, hitDebugColor);
 
@@ -66,6 +67,20 @@ namespace SnowHorse.Utils
             Debug.DrawRay(ray.origin, ray.direction * distance, color);
         }
 	}
+    
+    public class RaycastData
+    {
+        public Ray Ray;
+        public Vector3 Origin;
+        public Vector3 Direction;
+        public CastType CastType;
+        public float MaxDistance;
+        public LayerMask LayerMask;
+        public bool DebugMode;
+        public Color DebugColor;
+        public Color HitDebugColor;
+    }
+
 }
 
 public enum CastType
