@@ -9,6 +9,7 @@ namespace Player
         private PlayerController _controller;
         private PlayerData _data;
 
+        private float currentAttackTime;
         private bool isAttacking;
 
         private void Start()
@@ -20,9 +21,8 @@ namespace Player
         public void Manage()
         {
             if(!isAttacking && Input.GetMouseButton(0))
-            {
-                isAttacking = true;
-
+            { 
+                
             }
         }
 
