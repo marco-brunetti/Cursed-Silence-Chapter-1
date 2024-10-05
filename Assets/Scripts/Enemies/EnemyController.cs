@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using Player;
 
 namespace Enemies
@@ -24,7 +24,6 @@ namespace Enemies
         private System.Random random;
         private EnemyPlayerTracker playerTracker;
         private EnemyStats stats;
-
 
         public void IsVulnerable(bool enable) => isVulnerable = enable;
 
