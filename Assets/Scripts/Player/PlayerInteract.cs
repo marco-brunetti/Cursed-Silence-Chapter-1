@@ -23,10 +23,15 @@ namespace Player
             else if (!GameController.Instance.IsInDream && 
             (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
             {
-                var interactable = Raycaster.Cast<Interactable>(new() { origin = _playerController.Camera.position, direction = _playerController.Camera.forward },
-                                                                out Vector3 hitPoint,
-                                                                maxDistance: playerData.InteractDistance,
-                                                                layerMask: playerData.InteractLayer);
+                var raycast = new RaycastData
+                {
+                    Origin = _playerController.Camera.position,
+                    Direction = _playerController.Camera.forward,
+                    MaxDistance = playerData.InteractDistance,
+                    LayerMask = playerData.InteractLayer
+                };
+
+                var interactable = Raycaster.Find<Interactable>(raycast, out Vector3 hitPoint);
 
                 if(interactable) ManageInteraction(interactable, inspector);
                 else _playerController.InteractableInSight = null;

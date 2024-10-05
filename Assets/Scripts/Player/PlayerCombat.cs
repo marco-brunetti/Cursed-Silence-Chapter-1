@@ -8,85 +8,38 @@ namespace Player
     {
         private PlayerController _controller;
         private PlayerData _data;
-        private PlayerCombatState _state;
-        private System.Random _random;
+
+        private bool isAttacking;
 
         private void Start()
         {
             if (!_controller) _controller = PlayerController.Instance;
             _data = _controller.PlayerData;
-            _random = new System.Random(Guid.NewGuid().GetHashCode());
-            ChangeState(PlayerCombatState.Idle);
         }
 
-        private void Update()
+        public void Manage()
         {
-            switch (_state)
+            if(!isAttacking && Input.GetMouseButton(0))
             {
-                case PlayerCombatState.Idle:
-                    ManageIdle();
-                    break;
-                case PlayerCombatState.Attack:
-                    ManageAttack();
-                    break;
-                case PlayerCombatState.Block:
-                    ManageBlock();
-                    break;
-                case PlayerCombatState.Stunned:
-                    ManageStunned();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+                isAttacking = true;
 
-        private void ManageIdle()
-        {
-            if (Input.GetMouseButtonDown(0) && !_controller.InteractableInSight)
-            {
-                ChangeState(PlayerCombatState.Attack);
             }
         }
 
         private void ManageAttack()
         {
-            //Add player animation
+            var raycast = new RaycastData
+            {
+                Origin = _controller.Camera.position,
+                Direction = _controller.Camera.forward,
+                MaxDistance = _data.AttackDistance,
+                LayerMask = _data.InteractLayer
+            };
 
-            var enemy = Raycaster.Cast<EnemyController>(new() { origin = _controller.Camera.position, direction = _controller.Camera.forward },
-                                                        out Vector3 hitPoint,
-                                                        maxDistance: _data.AttackDistance,
-                                                        layerMask: _data.InteractLayer,
-                                                        debugMode: true);
+            var enemy = Raycaster.Find<EnemyController>(raycast, out Vector3 hitPoint);
 
             if (enemy) enemy.DealDamage(_data.DamageAmount, 10);
             else Debug.Log("Player attack nothing");
-
-            ChangeState(PlayerCombatState.Idle);
         }
-
-        private void ManageBlock()
-        {
-            //Add block logic
-            ChangeState(PlayerCombatState.Idle);
-        }
-
-        private void ManageStunned()
-        {
-            //Add stunned logic
-            ChangeState(PlayerCombatState.Idle);
-        }
-
-        private void ChangeState(PlayerCombatState newState)
-        {
-            _state = newState;
-        }
-    }
-    
-    public enum PlayerCombatState 
-    {
-        Idle,
-        Attack,
-        Block,
-        Stunned
     }
 }

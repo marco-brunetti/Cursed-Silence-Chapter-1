@@ -45,6 +45,7 @@ public class PlayerData : ScriptableObject
     [field: SerializeField, Range(0, 50)] public int LightAttack { get; private set; } = 10;
     [field: SerializeField, Range(0, 50)] public int LightPoiseDecrement { get; private set; } = 10;
     [field: SerializeField, Range(0, 50)] public int HeavyAttack { get; private set; } = 20;
+    [field: SerializeField, Range(0, 50)] public float HeavyAttackLoadTime{ get; private set; } = 2.5f;
     [field: SerializeField, Range(0, 50)] public int HeavyPoiseDecrement { get; private set; } = 20;
 
     [Header("Interactables")] public float InteractDistance = 2f;

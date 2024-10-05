@@ -1,91 +1,101 @@
 using UnityEngine;
-using static UnityEngine.UI.Image;
-using UnityEngine.Rendering;
-using System.Numerics;
 
 namespace SnowHorse.Utils
 {
     public class Raycaster
     {
-        public static T Cast<T>(RaycastData data, out Vector3 hitPoint)
+        public static T Find<T>(RaycastData data, out Vector3 hitPoint)
         {
-            var o = Cast(ray, out hitPoint, castType, maxDistance, layerMask, debugMode, debugColor, hitDebugColor);
+            if (data.Ray == null) data.Ray = new Ray(origin: data.Origin, direction: data.Direction);
+            GameObject gameObject;
 
-            if (o && o.TryGetComponent(out T obj)) return obj;
-            else return default;
-        }
-
-        public static GameObject Cast(Vector3 origin, Vector3 direction, out Vector3 hitPoint, CastType castType = CastType.mixed, float maxDistance = Mathf.Infinity, LayerMask layerMask = new LayerMask(), bool debugMode = false, Color debugColor = new Color(), Color hitDebugColor = new Color())
-        {
-            return Cast(new Ray(origin, direction), out hitPoint, castType, maxDistance, layerMask, debugMode, debugColor, hitDebugColor);
-        }
-
-        public static GameObject Cast(Ray ray, out Vector3 hitPoint, CastType castType = CastType.mixed, float maxDistance = Mathf.Infinity, LayerMask layerMask = new LayerMask(), bool debugMode = false, Color debugColor = new Color(), Color hitDebugColor = new Color())
-        {
-			if (layerMask.value == 0) layerMask = -1;
-            GameObject objectHit;
-
-            switch (castType)
+            switch (data.CastType)
             {
-                case CastType.cast3D:
-                    objectHit = Cast3D(ray, maxDistance, layerMask, out hitPoint);
+                case CastType.Cast3D:
+                    gameObject = Cast3D(data, out hitPoint);
                     break;
-                case CastType.cast2D:
-                    objectHit = Cast2D(ray, maxDistance, layerMask, out hitPoint);
+                case CastType.Cast2D:
+                    gameObject = Cast2D(data, out hitPoint);
                     break;
+                case CastType.Mixed:
                 default:
-                case CastType.mixed:
-                    objectHit = Cast3D(ray, maxDistance, layerMask, out hitPoint);
-                    if(!objectHit) objectHit = Cast2D(ray, maxDistance, layerMask, out hitPoint);
+                    gameObject = Cast3D(data, out hitPoint);
+                    if(!gameObject) gameObject = Cast2D(data, out hitPoint);
                     break;
             }
 
-			if(debugMode) DebugRaycast(debugColor, hitDebugColor, ray, maxDistance, objectHit, hitPoint);
-            return objectHit;
+            if(gameObject)
+            {
+                if (typeof(T) == typeof(GameObject)) return (T)(object)gameObject;
+                else if (gameObject.TryGetComponent(out T obj)) return obj;
+            }
+
+            return default;
         }
 
-		private static GameObject Cast3D(Ray ray, float maxDistance, LayerMask layerMask, out Vector3 hitPoint)
+		private static GameObject Cast3D(RaycastData data, out Vector3 hitPoint)
 		{
-            hitPoint = Physics.Raycast(ray, out RaycastHit hit, maxDistance, layerMask) ? hit.point : Vector3.zero;
-			return hit.collider ? hit.collider.gameObject : null;
-		}
+            Physics.Raycast((Ray)data.Ray, out RaycastHit hit, data.MaxDistance, data.LayerMask.value);
 
-		private static GameObject Cast2D(Ray ray, float maxDistance, LayerMask layerMask, out Vector3 hitPoint)
-		{
-            var hit = Physics2D.GetRayIntersection(ray, maxDistance, layerMask);
             hitPoint = hit.collider ? hit.point : Vector3.zero;
+            DebugRaycast(data, hit: hit);
+
             return hit.collider ? hit.collider.gameObject : null;
 		}
 
-		private static void DebugRaycast(Color nonHitColor, Color hitColor, Ray ray, float maxDistance, GameObject objectHit, Vector3 hitPoint)
+		private static GameObject Cast2D(RaycastData data, out Vector3 hitPoint)
 		{
-            var nonHitCol = nonHitColor.a == 0 ? Color.red : nonHitColor;
-            var hitCol = hitColor.a == 0 ? Color.green : hitColor;
-            var color = objectHit ? hitCol : nonHitCol;
+            var hit = Physics2D.GetRayIntersection((Ray)data.Ray, data.MaxDistance, data.LayerMask.value);
 
-            var distance = objectHit ? Vector3.Distance(hitPoint, ray.origin) : maxDistance == Mathf.Infinity ? 10000 : maxDistance;
-            Debug.DrawRay(ray.origin, ray.direction * distance, color);
+            hitPoint = hit.collider ? hit.point : Vector3.zero;
+            DebugRaycast(data, hit2D: hit);
+
+            return hit.collider ? hit.collider.gameObject : null;
+		}
+
+		private static void DebugRaycast(RaycastData data, RaycastHit? hit = null, RaycastHit2D? hit2D = null)
+		{
+            if(!data.Debug) return;
+
+            var ray = (Ray)data.Ray;
+            Collider objectHit = null;
+            Collider2D objectHit2D = null;
+            Vector3 hitPoint;
+
+
+            if (hit != null)
+            {
+                objectHit = ((RaycastHit)hit).collider;
+                hitPoint = ((RaycastHit)hit).point;
+            }
+            else
+            {
+                objectHit2D = ((RaycastHit2D)hit2D).collider;
+                hitPoint = ((RaycastHit2D)hit2D).point;
+            }
+
+            var distance = (objectHit || objectHit2D) ? Vector3.Distance(hitPoint, ray.origin) : data.MaxDistance;
+            Debug.DrawRay(ray.origin, ray.direction * distance, color: (objectHit || objectHit2D) ? data.HitDebugColor : data.NonHitDebugColor);
         }
 	}
     
     public class RaycastData
     {
-        public Ray Ray;
-        public Vector3 Origin;
-        public Vector3 Direction;
-        public CastType CastType;
-        public float MaxDistance;
-        public LayerMask LayerMask;
-        public bool DebugMode;
-        public Color DebugColor;
-        public Color HitDebugColor;
+        public Ray? Ray = null;
+        public Vector3 Origin = Vector3.zero;
+        public Vector3 Direction = Vector3.one;
+        public CastType CastType = CastType.Mixed;
+        public float MaxDistance = 10000;
+        public LayerMask LayerMask = -1;
+        public bool Debug = false;
+        public Color NonHitDebugColor = Color.red;
+        public Color HitDebugColor = Color.green;
     }
-
 }
 
 public enum CastType
 {
-	cast2D,
-	cast3D,
-	mixed
+	Cast2D,
+	Cast3D,
+	Mixed
 }
