@@ -12,6 +12,7 @@ namespace Player
 
         private float currentAttackLoadTime;
         private float currentLightAttackCooldown;
+        private bool attackQueued;
 
         private void Start()
         {
@@ -21,8 +22,19 @@ namespace Player
 
         public void Manage()
         {
-            if(Input.GetMouseButtonDown(0)) ChangeState(CombatState.Attack);
+            if(currentLightAttackCooldown > 0)
+            {
+                currentLightAttackCooldown -= Time.deltaTime;
+            }
+
+            if(Input.GetMouseButtonDown(0))
+            {
+                attackQueued = true;
+                ChangeState(CombatState.Attack);
+            }
+                
             if(Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
+
 
             switch (_currentState)
             {
@@ -30,39 +42,33 @@ namespace Player
                     AttackState();
                     break;
                 case CombatState.Block:
-                    break;
-                case CombatState.None:
+                    BlockState();
                     break;
             }
         }
 
         private void AttackState()
         {
-            currentAttackLoadTime += Time.deltaTime;
-
-            if (Input.GetMouseButtonUp(0))
+            if (attackQueued && currentLightAttackCooldown <= 0)
             {
-                if (currentAttackLoadTime <= _data.LightAttackMaxTime)
-                {
-                    AttackEnemy(isHeavyAttack: false);
-                }
-                else if (currentAttackLoadTime < _data.HeavyAttackLoadTime)
-                {
-                    //Cancel heavy attack?
-                    Debug.Log($"Player HEAVY ATTACK CANCELLED.");
-                }
-                else
-                {
-                    AttackEnemy(isHeavyAttack: true);
-                }
+                currentAttackLoadTime += Time.deltaTime;
 
-                ChangeState(CombatState.None);
+                if (Input.GetMouseButtonUp(0))
+                {
+                    if (currentAttackLoadTime <= _data.LightAttackMaxTime) AttackEnemy(isHeavyAttack: false);
+                    else if (currentAttackLoadTime < _data.HeavyAttackLoadTime) Debug.Log($"Player HEAVY ATTACK CANCELLED.");
+                    else AttackEnemy(isHeavyAttack: true);
+
+                    currentLightAttackCooldown = _data.LightAttackCooldown;
+                    attackQueued = false;
+                    ChangeState(CombatState.None);
+                }
             }
         }
 
         private void BlockState()
         {
-            
+            attackQueued = false;
         }
 
         private void AttackEnemy(bool isHeavyAttack)
