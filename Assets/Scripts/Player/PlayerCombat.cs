@@ -10,9 +10,9 @@ namespace Player
         private PlayerData _data;
         private CombatState _currentState;
 
-        private float currentAttackTime;
-        private bool isAttacking;
-        private bool isBlocking;
+        private float currentAttackLoadTime;
+        private float currentLightAttackCooldown;
+        private float currentHeavyAttackCooldown;
 
         private void Start()
         {
@@ -22,50 +22,43 @@ namespace Player
 
         public void Manage()
         {
-            if(Input.GetMouseButton(0)) ChangeState(CombatState.Attack);
-            if(Input.GetMouseButton(1)) ChangeState(CombatState.Block);
+            if(Input.GetMouseButtonDown(0)) ChangeState(CombatState.Attack);
+            if(Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
 
             switch (_currentState)
             {
-                case CombatState.Idle:
-                    break;
                 case CombatState.Attack:
                     AttackState();
                     break;
-                case CombatState.HeavyAttack:
-                    break;
                 case CombatState.Block:
+                    break;
+                case CombatState.None:
                     break;
             }
         }
 
         private void AttackState()
         {
-            if (!isAttacking)
-            {
-                if (currentAttackTime < _data.HeavyAttackLoadTime) currentAttackTime += Time.deltaTime;
-            }
-
+            currentAttackLoadTime += Time.deltaTime;
 
             if (Input.GetMouseButtonUp(0))
             {
-                isAttacking = true;
-
-                if (currentAttackTime < _data.LightAttackMaxTime)
+                if (currentAttackLoadTime <= _data.LightAttackMaxTime)
                 {
                     AttackEnemy(isHeavyAttack: false);
                 }
-                else if (currentAttackTime < _data.HeavyAttackLoadTime)
+                else if (currentAttackLoadTime < _data.HeavyAttackLoadTime)
                 {
                     //Cancel heavy attack?
+                    Debug.Log($"Player HEAVY ATTACK CANCELLED.");
                 }
                 else
                 {
                     AttackEnemy(isHeavyAttack: true);
                 }
-            }
 
-            /*TEST*/AttackEnemy(isHeavyAttack: true);
+                ChangeState(CombatState.None);
+            }
         }
 
         private void BlockState()
@@ -92,25 +85,26 @@ namespace Player
                 var poiseDecrement = isHeavyAttack ? _data.HeavyAttackPoiseDecrement : _data.LightAttackPoiseDecrement;
                 enemy.DealDamage(damage, poiseDecrement);
             }
-            else 
-            {
-                Debug.Log("Player attack nothing");
-            }
+
+            string targetName = enemy ? enemy.name.ToUpper() : "NONE"; 
+
+            if (isHeavyAttack) Debug.Log($"Player used HEAVY ATTACK against: {targetName}");
+            else Debug.Log($"Player used LIGHT ATTACK against: {targetName}");
 
             Debug.DrawRay(raycast.Origin, raycast.Direction * raycast.MaxDistance);
         }
 
         private void ChangeState(CombatState newState)
         {
+            currentAttackLoadTime = 0;
             _currentState = newState;
         }
 
         private enum CombatState
         {
-            Idle,
             Attack,
-            HeavyAttack,
-            Block
+            Block,
+            None
         }
     }
 }

@@ -1,3 +1,5 @@
+using Player;
+using SnowHorse.Utils;
 using System;
 
 namespace Enemies
@@ -10,18 +12,18 @@ namespace Enemies
 
         private bool isPlayerInner;
         private bool isPlayerOuter;
-        private Detector innerPlayerDetector;
-        private Detector outerPlayerDetector;
-        private Detector visualConePlayerDetector;
-
+        private readonly Detector innerPlayerDetector;
+        private readonly Detector outerPlayerDetector;
+        private readonly Detector visualConePlayerDetector;
+        private readonly EnemyController controller;
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public EnemyPlayerTracker(Detector innerDetector, Detector outerDetector, Detector visualConeDetector)
+        public EnemyPlayerTracker(Detector innerDetector, Detector outerDetector, Detector visualConeDetector, EnemyController controller)
         {
             innerPlayerDetector = innerDetector;
             outerPlayerDetector = outerDetector;
             visualConePlayerDetector = visualConeDetector;
-
+            this.controller = controller;
             innerPlayerDetector.DetectTag("Player");
             outerPlayerDetector.DetectTag("Player");
             visualConePlayerDetector.DetectTag("Player");
@@ -31,6 +33,20 @@ namespace Enemies
             innerPlayerDetector.gameObject.SetActive(false);
             outerPlayerDetector.gameObject.SetActive(false);
             visualConePlayerDetector.gameObject.SetActive(true);
+        }
+
+        public void ActivateDetectors()
+        {
+            visualConePlayerDetector.gameObject.SetActive(false);
+            innerPlayerDetector.gameObject.SetActive(true);
+            outerPlayerDetector.gameObject.SetActive(true);
+        }
+
+        public void ActivateVisualCone()
+        {
+            visualConePlayerDetector.gameObject.SetActive(true);
+            innerPlayerDetector.gameObject.SetActive(false);
+            outerPlayerDetector.gameObject.SetActive(false);
         }
         
         private void CheckConditions(bool isPlayerInner, bool isPlayerOuter)
@@ -50,39 +66,45 @@ namespace Enemies
             this.isPlayerOuter = isPlayerOuter;
         }
 
-        public void PlayerEnteredDetector(object sender, EventArgs e)
+        private void PlayerEnteredDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-            if(triggeredDetector == innerPlayerDetector)
-            {
-                CheckConditions(isPlayerInner:true, isPlayerOuter);
-            }
-            else if (triggeredDetector == outerPlayerDetector)
-            {
-                CheckConditions(isPlayerInner, isPlayerOuter: true);
-            }
-            else if(triggeredDetector == visualConePlayerDetector)
-            {
-                visualConePlayerDetector.gameObject.SetActive(false);
-                innerPlayerDetector.gameObject.SetActive(true);
-                outerPlayerDetector.gameObject.SetActive(true);
-
-                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
-            }
+            if(triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner: true, isPlayerOuter);
+            else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: true);
+            else if(triggeredDetector == visualConePlayerDetector) CheckIfInVisualField();
         }
 
-        public void PlayerStayingInDetector(object sender, EventArgs e)
+        private void PlayerStayingInDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
             if (triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner: true, isPlayerOuter);
             else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: true);
+            else if(triggeredDetector == visualConePlayerDetector) CheckIfInVisualField();
         }
 
-        public void PlayerExitedDetector(object sender, EventArgs e)
+        private void PlayerExitedDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
             if (triggeredDetector == innerPlayerDetector) CheckConditions(isPlayerInner: false, isPlayerOuter);
             else if (triggeredDetector == outerPlayerDetector) CheckConditions(isPlayerInner, isPlayerOuter: false);
+        }
+
+        private void CheckIfInVisualField()
+        {
+            var raycast = new RaycastData
+            {
+                Origin = controller.transform.position,
+                Direction = PlayerController.Instance.Player.transform.position - controller.transform.position,
+                Debug = true
+            };
+
+            Raycaster.FindWithTag("Player", raycast, out UnityEngine.Vector3 hitPoint);
+
+            visualConePlayerDetector.gameObject.SetActive(false);
+            innerPlayerDetector.gameObject.SetActive(true);
+            outerPlayerDetector.gameObject.SetActive(true);
+
+            PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
         }
         
         public void Dispose()

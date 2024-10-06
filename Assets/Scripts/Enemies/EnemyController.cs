@@ -44,6 +44,8 @@ namespace Enemies
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount, int poiseDecrement)
         {
+            if(currentState == EnemyState.Idle) playerTracker.ActivateDetectors();
+
             if (currentState != EnemyState.Dead && isVulnerable && !isReacting)
             {
                 ChangeState(stats.RecievedAttack(new(currentState, isVulnerable, damageAmount, poiseDecrement)));
@@ -152,9 +154,20 @@ namespace Enemies
                     return;
                 }
                 
-                if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
-                else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
-                else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle) ChangeState(EnemyState.Idle);
+                if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack)
+                {
+                    ChangeState(EnemyState.Attack);
+                }
+                else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk)
+                {
+                    ChangeState(EnemyState.Walk);
+                }
+                else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle)
+                {
+                    playerTracker.ActivateVisualCone();
+                    ChangeState(EnemyState.Idle);
+                }
+                    
 
                 if(!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
                 {

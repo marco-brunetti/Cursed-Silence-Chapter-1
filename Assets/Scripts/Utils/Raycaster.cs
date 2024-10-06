@@ -4,6 +4,15 @@ namespace SnowHorse.Utils
 {
     public class Raycaster
     {
+        public static GameObject FindWithTag(string tag, RaycastData data, out Vector3 hitPoint)
+        {
+            var foundObject = Find<GameObject>(data, out hitPoint);
+
+            if (foundObject && foundObject.CompareTag(tag)) return foundObject;
+            return null;
+        }
+
+
         public static T Find<T>(RaycastData data, out Vector3 hitPoint)
         {
             if (data.Ray == null) data.Ray = new Ray(origin: data.Origin, direction: data.Direction);
