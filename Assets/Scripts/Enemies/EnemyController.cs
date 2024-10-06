@@ -190,7 +190,7 @@ namespace Enemies
 
         private void StartPlayerTracking()
         {
-            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector, visualConePlayerDetector);
+            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector, visualConePlayerDetector, this);
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
         }
 

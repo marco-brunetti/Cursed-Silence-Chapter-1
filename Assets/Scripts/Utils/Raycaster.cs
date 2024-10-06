@@ -4,87 +4,60 @@ namespace SnowHorse.Utils
 {
     public class Raycaster
     {
-        public static GameObject FindWithTag(string tag, RaycastData data, out Vector3 hitPoint)
+        public static RaycastResult<GameObject> FindWithTag(RaycastData data)
         {
-            var foundObject = Find<GameObject>(data, out hitPoint);
+            var result = Find<GameObject>(data);
 
-            if (foundObject && foundObject.CompareTag(tag)) return foundObject;
+            if (result != null && result.HitObject.CompareTag(data.FindTag)) return result;
             return null;
         }
 
 
-        public static T Find<T>(RaycastData data, out Vector3 hitPoint)
+        public static RaycastResult<T> Find<T>(RaycastData data)
         {
-            if (data.Ray == null) data.Ray = new Ray(origin: data.Origin, direction: data.Direction);
-            GameObject gameObject;
+            data.Ray ??= new Ray(origin: data.Origin, direction: data.Direction);
+            RaycastResult<GameObject> result;
 
-            switch (data.CastType)
+            result = data.CastType switch
             {
-                case CastType.Cast3D:
-                    gameObject = Cast3D(data, out hitPoint);
-                    break;
-                case CastType.Cast2D:
-                    gameObject = Cast2D(data, out hitPoint);
-                    break;
-                case CastType.Mixed:
-                default:
-                    gameObject = Cast3D(data, out hitPoint);
-                    if(!gameObject) gameObject = Cast2D(data, out hitPoint);
-                    break;
+                CastType.Cast3D => Cast3D(data),
+                CastType.Cast2D => Cast2D(data),
+                CastType.Mixed => Cast3D(data) ?? Cast2D(data),
+                _ => null
+            };
+
+            if(result != null && typeof(T) != typeof(GameObject))
+            {
+                if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
+                else return null;
             }
 
-            if(gameObject)
-            {
-                if (typeof(T) == typeof(GameObject)) return (T)(object)gameObject;
-                else if (gameObject.TryGetComponent(out T obj)) return obj;
-            }
-
-            return default;
+            return (RaycastResult<T>)(object)result;
         }
 
-		private static GameObject Cast3D(RaycastData data, out Vector3 hitPoint)
+		private static RaycastResult<GameObject> Cast3D(RaycastData data)
 		{
             Physics.Raycast((Ray)data.Ray, out RaycastHit hit, data.MaxDistance, data.LayerMask.value);
-
-            hitPoint = hit.collider ? hit.point : Vector3.zero;
-            DebugRaycast(data, hit: hit);
-
-            return hit.collider ? hit.collider.gameObject : null;
+            var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
+            DebugRaycast(data, result);
+            return result;
 		}
 
-		private static GameObject Cast2D(RaycastData data, out Vector3 hitPoint)
+		private static RaycastResult<GameObject> Cast2D(RaycastData data)
 		{
             var hit = Physics2D.GetRayIntersection((Ray)data.Ray, data.MaxDistance, data.LayerMask.value);
-
-            hitPoint = hit.collider ? hit.point : Vector3.zero;
-            DebugRaycast(data, hit2D: hit);
-
-            return hit.collider ? hit.collider.gameObject : null;
+            var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
+            DebugRaycast(data, result);
+            return result;
 		}
 
-		private static void DebugRaycast(RaycastData data, RaycastHit? hit = null, RaycastHit2D? hit2D = null)
+		private static void DebugRaycast(RaycastData data, RaycastResult<GameObject> result)
 		{
             if(!data.Debug) return;
 
             var ray = (Ray)data.Ray;
-            Collider objectHit = null;
-            Collider2D objectHit2D = null;
-            Vector3 hitPoint;
-
-
-            if (hit != null)
-            {
-                objectHit = ((RaycastHit)hit).collider;
-                hitPoint = ((RaycastHit)hit).point;
-            }
-            else
-            {
-                objectHit2D = ((RaycastHit2D)hit2D).collider;
-                hitPoint = ((RaycastHit2D)hit2D).point;
-            }
-
-            var distance = (objectHit || objectHit2D) ? Vector3.Distance(hitPoint, ray.origin) : data.MaxDistance;
-            Debug.DrawRay(ray.origin, ray.direction * distance, color: (objectHit || objectHit2D) ? data.HitDebugColor : data.NonHitDebugColor);
+            var distance = (result != null) ? Vector3.Distance((Vector3)result.HitPoint, ray.origin) : data.MaxDistance;
+            Debug.DrawRay(ray.origin, ray.direction * distance, color: (result != null) ? data.HitDebugColor : data.NonHitDebugColor);
         }
 	}
     
@@ -99,6 +72,19 @@ namespace SnowHorse.Utils
         public bool Debug = false;
         public Color NonHitDebugColor = Color.red;
         public Color HitDebugColor = Color.green;
+        public string FindTag = string.Empty;
+    }
+
+    public class RaycastResult<T>
+    {
+        public readonly T HitObject;
+        public readonly Vector3? HitPoint;
+
+        public RaycastResult(T hitObject = default, Vector3? hitPoint = null)
+        {
+            HitObject = hitObject;
+            HitPoint = hitPoint;
+        }
     }
 }
 

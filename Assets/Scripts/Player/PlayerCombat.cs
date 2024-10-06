@@ -12,7 +12,6 @@ namespace Player
 
         private float currentAttackLoadTime;
         private float currentLightAttackCooldown;
-        private float currentHeavyAttackCooldown;
 
         private void Start()
         {
@@ -77,7 +76,7 @@ namespace Player
                 Debug = true
             };
 
-            var enemy = Raycaster.Find<EnemyController>(raycast, out Vector3 hitPoint);
+            var enemy = Raycaster.Find<EnemyController>(raycast).HitObject;
 
             if (enemy)
             {

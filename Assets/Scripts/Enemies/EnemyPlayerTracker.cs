@@ -12,9 +12,9 @@ namespace Enemies
 
         private bool isPlayerInner;
         private bool isPlayerOuter;
-        private readonly Detector innerPlayerDetector;
-        private readonly Detector outerPlayerDetector;
-        private readonly Detector visualConePlayerDetector;
+        private Detector innerPlayerDetector;
+        private Detector outerPlayerDetector;
+        private Detector visualConePlayerDetector;
         private readonly EnemyController controller;
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
@@ -94,11 +94,12 @@ namespace Enemies
             var raycast = new RaycastData
             {
                 Origin = controller.transform.position,
-                Direction = PlayerController.Instance.Player.transform.position - controller.transform.position,
+                Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
+                FindTag = "Player",
                 Debug = true
             };
 
-            Raycaster.FindWithTag("Player", raycast, out UnityEngine.Vector3 hitPoint);
+            if(Raycaster.FindWithTag(raycast) != null) return;
 
             visualConePlayerDetector.gameObject.SetActive(false);
             innerPlayerDetector.gameObject.SetActive(true);
@@ -111,6 +112,7 @@ namespace Enemies
         {
             innerPlayerDetector = null;
             outerPlayerDetector = null;
+            visualConePlayerDetector = null;
             Detector.TagEntered -= PlayerEnteredDetector;
             Detector.TagExited -= PlayerExitedDetector;
             Detector.TagStaying -= PlayerStayingInDetector;

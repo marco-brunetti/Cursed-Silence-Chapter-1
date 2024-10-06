@@ -1,7 +1,5 @@
 using SnowHorse.Utils;
-using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Player
 {
@@ -31,7 +29,7 @@ namespace Player
                     LayerMask = playerData.InteractLayer
                 };
 
-                var interactable = Raycaster.Find<Interactable>(raycast, out Vector3 hitPoint);
+                var interactable = Raycaster.Find<Interactable>(raycast).HitObject;
 
                 if(interactable) ManageInteraction(interactable, inspector);
                 else _playerController.InteractableInSight = null;
