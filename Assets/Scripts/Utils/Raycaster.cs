@@ -4,11 +4,21 @@ namespace SnowHorse.Utils
 {
     public class Raycaster
     {
-        public static RaycastResult<GameObject> FindWithTag(RaycastData data)
+        public static RaycastResult<T> FindWithTag<T>(RaycastData data)
         {
             var result = Find<GameObject>(data);
 
-            if (result != null && result.HitObject.CompareTag(data.FindTag)) return result;
+            if (result != null && result.HitObject.CompareTag(data.FindTag))
+            {
+                if (result != null && typeof(T) != typeof(GameObject))
+                {
+                    if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
+                    else return null;
+                }
+
+                return (RaycastResult<T>)(object)result;
+            };
+
             return null;
         }
 

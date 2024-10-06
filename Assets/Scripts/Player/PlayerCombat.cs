@@ -67,7 +67,7 @@ namespace Player
 
         private void AttackEnemy(bool isHeavyAttack)
         {
-            var raycast = new RaycastData
+            var rayData = new RaycastData
             {
                 Origin = _controller.Camera.position,
                 Direction = _controller.Camera.forward,
@@ -76,7 +76,7 @@ namespace Player
                 Debug = true
             };
 
-            var enemy = Raycaster.Find<EnemyController>(raycast).HitObject;
+            var enemy = Raycaster.Find<EnemyController>(rayData)?.HitObject;
 
             if (enemy)
             {
@@ -90,7 +90,7 @@ namespace Player
             if (isHeavyAttack) Debug.Log($"Player used HEAVY ATTACK against: {targetName}");
             else Debug.Log($"Player used LIGHT ATTACK against: {targetName}");
 
-            Debug.DrawRay(raycast.Origin, raycast.Direction * raycast.MaxDistance);
+            Debug.DrawRay(rayData.Origin, rayData.Direction * rayData.MaxDistance);
         }
 
         private void ChangeState(CombatState newState)

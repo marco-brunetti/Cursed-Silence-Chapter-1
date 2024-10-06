@@ -1,6 +1,7 @@
 using Player;
 using SnowHorse.Utils;
 using System;
+using UnityEngine;
 
 namespace Enemies
 {
@@ -91,7 +92,7 @@ namespace Enemies
 
         private void CheckIfInVisualField()
         {
-            var raycast = new RaycastData
+            var playerTag = new RaycastData
             {
                 Origin = controller.transform.position,
                 Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
@@ -99,7 +100,7 @@ namespace Enemies
                 Debug = true
             };
 
-            if(Raycaster.FindWithTag(raycast) != null) return;
+            if(Raycaster.FindWithTag<GameObject>(playerTag) != null) return;
 
             visualConePlayerDetector.gameObject.SetActive(false);
             innerPlayerDetector.gameObject.SetActive(true);

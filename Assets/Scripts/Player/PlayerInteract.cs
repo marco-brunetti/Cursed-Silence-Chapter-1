@@ -21,7 +21,7 @@ namespace Player
             else if (!GameController.Instance.IsInDream && 
             (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
             {
-                var raycast = new RaycastData
+                var rayData = new RaycastData
                 {
                     Origin = _playerController.Camera.position,
                     Direction = _playerController.Camera.forward,
@@ -29,7 +29,7 @@ namespace Player
                     LayerMask = playerData.InteractLayer
                 };
 
-                var interactable = Raycaster.Find<Interactable>(raycast).HitObject;
+                var interactable = Raycaster.Find<Interactable>(rayData)?.HitObject;
 
                 if(interactable) ManageInteraction(interactable, inspector);
                 else _playerController.InteractableInSight = null;
