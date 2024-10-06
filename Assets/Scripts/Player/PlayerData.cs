@@ -38,14 +38,16 @@ public class PlayerData : ScriptableObject
     public float MaxStressLevel = 2;
     public float StressDisipateSpeed = 0.1f;
 
-    [Header("Player Combat")] public float AttackDistance {get; private set; } = 1.5f;
-    [field: SerializeField] public int Health { get; private set; } = 100;
+    [field: SerializeField, Header("Resistance")] public int Health { get; private set; } = 100;
     [field: SerializeField, Range(0, 100)] public int Poise { get; private set; } = 50;
-    [field: SerializeField, Range(0, 50)] public int LightAttackDamage { get; private set; } = 10;
+    [field: SerializeField, Header("Attack")] public float AttackDistance { get; private set; } = 1.5f;
+    [field: SerializeField, Header("Light Attack"), Range(0, 50)] public int LightAttackDamage { get; private set; } = 10;
     [field: SerializeField, Range(0, 50)] public float LightAttackMaxTime { get; private set; } = 0.3f;
+    [field: SerializeField, Range(0, 50)] public float LightAttackCooldown { get; private set; } = 0.5f;
     [field: SerializeField, Range(0, 50)] public int LightAttackPoiseDecrement { get; private set; } = 10;
-    [field: SerializeField, Range(0, 50)] public int HeavyAttackDamage { get; private set; } = 20;
+    [field: SerializeField, Header("Heavy Attack"), Range(0, 50)] public int HeavyAttackDamage { get; private set; } = 20;
     [field: SerializeField, Range(0, 50)] public float HeavyAttackLoadTime{ get; private set; } = 2.5f;
+    [field: SerializeField, Range(0, 50)] public float HeavyAttackCooldown { get; private set; } = 2.5f;
     [field: SerializeField, Range(0, 50)] public int HeavyAttackPoiseDecrement { get; private set; } = 20;
 
     [Header("Interactables")] public float InteractDistance = 2f;

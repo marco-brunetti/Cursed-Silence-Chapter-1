@@ -62,8 +62,17 @@ MonoBehaviour:
   MinStressLevel: 1
   MaxStressLevel: 2
   StressDisipateSpeed: 0.1
-  DamageAmount: 10
-  AttackDistance: 2.5
+  <Health>k__BackingField: 100
+  <Poise>k__BackingField: 50
+  <AttackDistance>k__BackingField: 3
+  <LightAttackDamage>k__BackingField: 10
+  <LightAttackMaxTime>k__BackingField: 0.3
+  <LightAttackCooldown>k__BackingField: 0.5
+  <LightAttackPoiseDecrement>k__BackingField: 10
+  <HeavyAttackDamage>k__BackingField: 20
+  <HeavyAttackLoadTime>k__BackingField: 2.5
+  <HeavyAttackCooldown>k__BackingField: 2.5
+  <HeavyAttackPoiseDecrement>k__BackingField: 20
   InteractDistance: 2
   InteractLayer:
     serializedVersion: 2

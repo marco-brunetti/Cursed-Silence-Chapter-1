@@ -41,7 +41,6 @@ namespace Enemies
             stats = new EnemyStats(data);
         }
 
-
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount, int poiseDecrement)
         {
@@ -75,6 +74,9 @@ namespace Enemies
                     break;
                 case EnemyState.Block:
                     Block();
+                    break;
+                default:
+                    ChangeState(EnemyState.Idle);
                     break;
             }
 
@@ -153,6 +155,11 @@ namespace Enemies
                 if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
                 else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
                 else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle) ChangeState(EnemyState.Idle);
+
+                if(!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
+                {
+                    ChangeState(EnemyState.Idle); //Set in case there is a problem with the tracker
+                }
             }
         }
 
@@ -185,18 +192,18 @@ namespace Enemies
         {
             StopPlayerTracking();
         }
+    }
 
-        private enum EnemyState
-        {
-            Idle,
-            Walk,
-            Attack,
-            React,
-            Escape,
-            Block,
-            Stunned,
-            Dead,
-            Scream
-        }
+    public enum EnemyState
+    {
+        Idle,
+        Walk,
+        Attack,
+        React,
+        Escape,
+        Block,
+        Stunned,
+        Dead,
+        Scream
     }
 }

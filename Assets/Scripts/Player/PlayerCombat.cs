@@ -1,8 +1,6 @@
 using UnityEngine;
 using Enemies;
 using SnowHorse.Utils;
-using System;
-using System.Runtime.InteropServices;
 
 namespace Player
 {
@@ -32,6 +30,7 @@ namespace Player
                 case CombatState.Idle:
                     break;
                 case CombatState.Attack:
+                    AttackState();
                     break;
                 case CombatState.HeavyAttack:
                     break;
@@ -56,7 +55,7 @@ namespace Player
                 {
                     AttackEnemy(isHeavyAttack: false);
                 }
-                else if (currentAttackTime < _data.HeavyAttackMaxTime)
+                else if (currentAttackTime < _data.HeavyAttackLoadTime)
                 {
                     //Cancel heavy attack?
                 }
@@ -65,6 +64,8 @@ namespace Player
                     AttackEnemy(isHeavyAttack: true);
                 }
             }
+
+            /*TEST*/AttackEnemy(isHeavyAttack: true);
         }
 
         private void BlockState()
@@ -79,7 +80,8 @@ namespace Player
                 Origin = _controller.Camera.position,
                 Direction = _controller.Camera.forward,
                 MaxDistance = _data.AttackDistance,
-                LayerMask = _data.InteractLayer
+                LayerMask = _data.InteractLayer,
+                Debug = true
             };
 
             var enemy = Raycaster.Find<EnemyController>(raycast, out Vector3 hitPoint);
@@ -94,6 +96,8 @@ namespace Player
             {
                 Debug.Log("Player attack nothing");
             }
+
+            Debug.DrawRay(raycast.Origin, raycast.Direction * raycast.MaxDistance);
         }
 
         private void ChangeState(CombatState newState)

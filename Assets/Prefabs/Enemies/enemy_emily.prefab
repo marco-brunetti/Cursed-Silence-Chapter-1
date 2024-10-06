@@ -647,7 +647,7 @@ GameObject:
   - component: {fileID: 756714597800603186}
   - component: {fileID: 1572807588287005271}
   - component: {fileID: 1654067300738085344}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: OuterPlayerDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6090,7 +6090,7 @@ GameObject:
   - component: {fileID: 6766415870205116866}
   - component: {fileID: 7681168129923378609}
   - component: {fileID: 9028537843957146633}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: VisualConeDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6177,11 +6177,11 @@ MeshCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -1286839281823400419, guid: 26f81153da5616b44bf0b8782918dde5, type: 3}
 --- !u!135 &6766415870205116866
@@ -6220,7 +6220,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -6821,7 +6821,7 @@ GameObject:
   - component: {fileID: 867346258243502545}
   - component: {fileID: 1879518658432881783}
   - component: {fileID: 5162494344755006637}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: InnerPlayerDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
