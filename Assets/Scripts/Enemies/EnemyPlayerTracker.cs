@@ -13,6 +13,7 @@ namespace Enemies
 
         private bool isPlayerInner;
         private bool isPlayerOuter;
+        private float visualConeCheckCounter;
         private Detector innerPlayerDetector;
         private Detector outerPlayerDetector;
         private Detector visualConePlayerDetector;
@@ -92,22 +93,30 @@ namespace Enemies
 
         private void CheckIfInVisualField()
         {
-            var playerTag = new RaycastData
+            visualConeCheckCounter -= Time.deltaTime;
+
+            if(visualConeCheckCounter <= 0)
             {
-                Origin = controller.transform.position,
-                Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
-                FindTag = "Player",
-                LayerMask = controller.EnemyData.DetectionMask,
-                Debug = true
-            };
+                var playerTag = new RaycastData
+                {
+                    Origin = controller.transform.position,
+                    Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
+                    FindTag = "Player",
+                    LayerMask = controller.EnemyData.DetectionMask,
+                    Debug = true
+                };
 
-            if(Raycaster.FindWithTag<GameObject>(playerTag) == null) return;
+                visualConeCheckCounter = 0.1f;
+                if (Raycaster.FindWithTag<GameObject>(playerTag) == null) return;
 
-            visualConePlayerDetector.gameObject.SetActive(false);
-            innerPlayerDetector.gameObject.SetActive(true);
-            outerPlayerDetector.gameObject.SetActive(true);
+                visualConePlayerDetector.gameObject.SetActive(false);
+                innerPlayerDetector.gameObject.SetActive(true);
+                outerPlayerDetector.gameObject.SetActive(true);
 
-            PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
+                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
+            }
+
+            
         }
         
         public void Dispose()
