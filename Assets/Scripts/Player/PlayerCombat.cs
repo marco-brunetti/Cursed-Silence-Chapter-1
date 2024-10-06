@@ -1,6 +1,8 @@
 using UnityEngine;
 using Enemies;
 using SnowHorse.Utils;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Player
 {
@@ -8,9 +10,11 @@ namespace Player
     {
         private PlayerController _controller;
         private PlayerData _data;
+        private CombatState _currentState;
 
         private float currentAttackTime;
         private bool isAttacking;
+        private bool isBlocking;
 
         private void Start()
         {
@@ -20,13 +24,55 @@ namespace Player
 
         public void Manage()
         {
-            if(!isAttacking && Input.GetMouseButton(0))
-            { 
-                
+            if(Input.GetMouseButton(0)) ChangeState(CombatState.Attack);
+            if(Input.GetMouseButton(1)) ChangeState(CombatState.Block);
+
+            switch (_currentState)
+            {
+                case CombatState.Idle:
+                    break;
+                case CombatState.Attack:
+                    break;
+                case CombatState.HeavyAttack:
+                    break;
+                case CombatState.Block:
+                    break;
             }
         }
 
-        private void ManageAttack()
+        private void AttackState()
+        {
+            if (!isAttacking)
+            {
+                if (currentAttackTime < _data.HeavyAttackLoadTime) currentAttackTime += Time.deltaTime;
+            }
+
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                isAttacking = true;
+
+                if (currentAttackTime < _data.LightAttackMaxTime)
+                {
+                    AttackEnemy(isHeavyAttack: false);
+                }
+                else if (currentAttackTime < _data.HeavyAttackMaxTime)
+                {
+                    //Cancel heavy attack?
+                }
+                else
+                {
+                    AttackEnemy(isHeavyAttack: true);
+                }
+            }
+        }
+
+        private void BlockState()
+        {
+            
+        }
+
+        private void AttackEnemy(bool isHeavyAttack)
         {
             var raycast = new RaycastData
             {
@@ -38,8 +84,29 @@ namespace Player
 
             var enemy = Raycaster.Find<EnemyController>(raycast, out Vector3 hitPoint);
 
-            if (enemy) enemy.DealDamage(_data.DamageAmount, 10);
-            else Debug.Log("Player attack nothing");
+            if (enemy)
+            {
+                var damage = isHeavyAttack ? _data.HeavyAttackDamage : _data.LightAttackDamage;
+                var poiseDecrement = isHeavyAttack ? _data.HeavyAttackPoiseDecrement : _data.LightAttackPoiseDecrement;
+                enemy.DealDamage(damage, poiseDecrement);
+            }
+            else 
+            {
+                Debug.Log("Player attack nothing");
+            }
+        }
+
+        private void ChangeState(CombatState newState)
+        {
+            _currentState = newState;
+        }
+
+        private enum CombatState
+        {
+            Idle,
+            Attack,
+            HeavyAttack,
+            Block
         }
     }
 }

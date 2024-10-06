@@ -174,6 +174,7 @@ namespace Enemies
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
         }
 
+
         private void StopPlayerTracking()
         {
             EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
@@ -184,18 +185,18 @@ namespace Enemies
         {
             StopPlayerTracking();
         }
-    }
 
-    public enum EnemyState
-    {
-        Idle,
-        Walk,
-        Attack,
-        React,
-        Escape,
-        Block,
-        Stunned,
-        Dead,
-        Scream
+        private enum EnemyState
+        {
+            Idle,
+            Walk,
+            Attack,
+            React,
+            Escape,
+            Block,
+            Stunned,
+            Dead,
+            Scream
+        }
     }
 }
