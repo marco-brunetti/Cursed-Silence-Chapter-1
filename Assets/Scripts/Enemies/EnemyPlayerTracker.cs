@@ -97,10 +97,11 @@ namespace Enemies
                 Origin = controller.transform.position,
                 Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
                 FindTag = "Player",
+                LayerMask = controller.EnemyData.DetectionMask,
                 Debug = true
             };
 
-            if(Raycaster.FindWithTag<GameObject>(playerTag) != null) return;
+            if(Raycaster.FindWithTag<GameObject>(playerTag) == null) return;
 
             visualConePlayerDetector.gameObject.SetActive(false);
             innerPlayerDetector.gameObject.SetActive(true);

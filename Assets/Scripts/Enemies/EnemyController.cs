@@ -6,8 +6,7 @@ using Player;
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
-    { 
-        [SerializeField] private EnemyData data;
+    {
         [SerializeField] private Detector innerPlayerDetector;
         [SerializeField] private Detector outerPlayerDetector;
         [SerializeField] private Detector visualConePlayerDetector;
@@ -25,6 +24,7 @@ namespace Enemies
         private EnemyPlayerTracker playerTracker;
         private EnemyStats stats;
 
+        [field: SerializeField] public EnemyData EnemyData { get; private set; }
         public void IsVulnerable(bool enable) => isVulnerable = enable;
 
         private void Awake()
@@ -38,7 +38,7 @@ namespace Enemies
             player = PlayerController.Instance.Player.transform;
             AnimationInit();
             StartPlayerTracking();
-            stats = new EnemyStats(data);
+            stats = new EnemyStats(EnemyData);
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -184,7 +184,7 @@ namespace Enemies
 
         private void AnimationInit()
         {
-            animation.Init(controller: this, enemyData: data, player);
+            animation.Init(controller: this, enemyData: EnemyData, player);
             ChangeState(EnemyState.Idle);
         }
 

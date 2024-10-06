@@ -8,16 +8,7 @@ namespace SnowHorse.Utils
         {
             var result = Find<GameObject>(data);
 
-            if (result != null && result.HitObject.CompareTag(data.FindTag))
-            {
-                if (result != null && typeof(T) != typeof(GameObject))
-                {
-                    if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
-                    else return null;
-                }
-
-                return (RaycastResult<T>)(object)result;
-            };
+            if (result != null && result.HitObject.CompareTag(data.FindTag)) return GetComponent<T>(result);
 
             return null;
         }
@@ -36,20 +27,26 @@ namespace SnowHorse.Utils
                 _ => null
             };
 
-            if(result != null && typeof(T) != typeof(GameObject))
-            {
-                if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
-                else return null;
-            }
+            DebugRaycast(data, result);
 
-            return (RaycastResult<T>)(object)result;
+            if (result != null) return GetComponent<T>(result);
+
+            return null;
         }
 
-		private static RaycastResult<GameObject> Cast3D(RaycastData data)
+        private static RaycastResult<T> GetComponent<T>(RaycastResult<GameObject> result)
+        {
+            if(typeof(T) == typeof(GameObject)) return (RaycastResult<T>)(object)result;
+
+            if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
+            
+            return null;
+        }
+
+        private static RaycastResult<GameObject> Cast3D(RaycastData data)
 		{
             Physics.Raycast((Ray)data.Ray, out RaycastHit hit, data.MaxDistance, data.LayerMask.value);
             var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
-            DebugRaycast(data, result);
             return result;
 		}
 
@@ -57,7 +54,6 @@ namespace SnowHorse.Utils
 		{
             var hit = Physics2D.GetRayIntersection((Ray)data.Ray, data.MaxDistance, data.LayerMask.value);
             var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
-            DebugRaycast(data, result);
             return result;
 		}
 
