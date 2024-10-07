@@ -19,16 +19,16 @@ public class AnimationManager
         aoc = new AnimatorOverrideController(animatorController);
         animator.runtimeAnimatorController = aoc;
 
-        if(clips == null) clips = Resources.LoadAll<AnimationClip>(animationPath);
+        if (clips == null) clips = Resources.LoadAll<AnimationClip>(animationPath);
         originalControllerClips = animatorController.animationClips;
 
         foreach (var animKey in animationKeys)
         {
             //The animation already in the controller must be equals the key
-            if (!Array.Exists(originalControllerClips, x => x.name == animKey.Key)) 
+            if (!Array.Exists(originalControllerClips, x => x.name == animKey.Key))
             {
                 Debug.Log($"Warning: Animator controller does not contain state: {animKey.Key}");
-                continue;        
+                continue;
             }
 
             var nameFilter = animKey.Key.Length + 3; //Makes sure only this key is present and not another with the same word included

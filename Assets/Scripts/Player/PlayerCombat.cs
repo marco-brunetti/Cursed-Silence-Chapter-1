@@ -22,18 +22,18 @@ namespace Player
 
         public void Manage()
         {
-            if(currentLightAttackCooldown > 0)
+            if (currentLightAttackCooldown > 0)
             {
                 currentLightAttackCooldown -= Time.deltaTime;
             }
 
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 attackQueued = true;
                 ChangeState(CombatState.Attack);
             }
-                
-            if(Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
+
+            if (Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
 
 
             switch (_currentState)
@@ -42,7 +42,11 @@ namespace Player
                     AttackState();
                     break;
                 case CombatState.Block:
+                    attackQueued = false;
                     BlockState();
+                    break;
+                default:
+                    attackQueued = false;
                     break;
             }
         }
@@ -68,7 +72,7 @@ namespace Player
 
         private void BlockState()
         {
-            attackQueued = false;
+            _controller.Animation.Block();
         }
 
         private void AttackEnemy(bool isHeavyAttack)
@@ -86,13 +90,25 @@ namespace Player
 
             if (enemy)
             {
-                var damage = isHeavyAttack ? _data.HeavyAttackDamage : _data.LightAttackDamage;
-                var poiseDecrement = isHeavyAttack ? _data.HeavyAttackPoiseDecrement : _data.LightAttackPoiseDecrement;
+                int damage;
+                int poiseDecrement;
+                if (isHeavyAttack)
+                {
+                    damage = _data.HeavyAttackDamage;
+                    poiseDecrement = _data.HeavyAttackPoiseDecrement;
+                    _controller.Animation.HeavyAttack();
+                }
+                else
+                {
+                    damage = _data.LightAttackDamage;
+                    poiseDecrement = _data.LightAttackPoiseDecrement;
+                    _controller.Animation.Attack();
+                }
+
                 enemy.DealDamage(damage, poiseDecrement);
             }
 
-            string targetName = enemy ? enemy.name.ToUpper() : "NONE"; 
-
+            string targetName = enemy ? enemy.name.ToUpper() : "NONE";
             if (isHeavyAttack) Debug.Log($"Player used HEAVY ATTACK against: {targetName}");
             else Debug.Log($"Player used LIGHT ATTACK against: {targetName}");
 

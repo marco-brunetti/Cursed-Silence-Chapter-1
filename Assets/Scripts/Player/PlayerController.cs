@@ -9,8 +9,8 @@ namespace Player
     {
         public static PlayerController Instance { get; private set; }
         [field: SerializeField] public PlayerInventory Inventory { get; private set; }
-
         [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
+        [field: SerializeField] public PlayerAnimation Animation { get; private set; }
         [field: SerializeField] public GameObject Player { get; private set; }
 
         [SerializeField] private Transform _groundSpawnPoint;
@@ -53,7 +53,6 @@ namespace Player
             if (Instance != null && Instance != this)
                 Destroy(gameObject);
             else Instance = this;
-
 
             PlayerData = _data.dataObject;
 
