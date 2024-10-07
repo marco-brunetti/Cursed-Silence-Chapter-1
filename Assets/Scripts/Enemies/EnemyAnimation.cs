@@ -15,6 +15,7 @@ namespace Enemies
         private Vector3 lookPos;
         private Coroutine lookAtPlayer;
         private Coroutine moveTowards;
+        private Coroutine attack;
         private Animator animator;
         private EnemyController controller;
         private EnemyData data;
@@ -54,7 +55,7 @@ namespace Enemies
 
         #region Animation Events
         public void SetVulnerable(string flag) => controller.IsVulnerable(flag == "true" ? true : false);
-        public void ChangeCurrentAttackClip() => canChangeAttackAnimation = true;
+        public void ChangeNextAttackClip() => canChangeAttackAnimation = true;
 
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
         public void ReactStopMovement()
@@ -66,11 +67,11 @@ namespace Enemies
             reactMoveSpeed = 0;
             controller.ReactStop();
         }
-        
+
         public void BlockStop() => controller.ReactStop();
 
         public void WalkStarted(float walkSpeed)
-        { 
+        {
             if (animation.CurrentKey == AnimWalkForward.Value && moveTowards == null)
             {
                 WalkSpeed = walkSpeed;
@@ -85,40 +86,31 @@ namespace Enemies
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
-            
+
         public void Die()
         {
             animation.EnableKey(AnimDieForward, deactivateOtherKeys: true);
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
-            
+
         public void React()
         {
             animation.EnableKey(AnimReactFront, deactivateOtherKeys: true);
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
-        
+
         public void Block()
         {
             animation.EnableKey(AnimBlock, deactivateOtherKeys: true);
             LookAtPlayer(true);
             MoveTowardsPlayer(false);
         }
-            
+
         public void Attack()
         {
-            if(animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
-            {
-                animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
-            }
-            else if (canChangeAttackAnimation)
-            {
-                if (animation.CurrentKey == AnimAttack.Value) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
-                else animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
-                canChangeAttackAnimation = false;
-            }
+            attack ??= StartCoroutine(AttackingPlayer());
 
             LookAtPlayer(true);
             MoveTowardsPlayer(false);
@@ -129,7 +121,7 @@ namespace Enemies
             animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
             LookAtPlayer(true, 50);
         }
- 
+
         private void MoveTowardsPlayer(bool isMoving, float speed = 0)
         {
             if (moveTowards != null)
@@ -143,9 +135,31 @@ namespace Enemies
             }
         }
 
+        private IEnumerator AttackingPlayer()
+        {
+            if (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
+            {
+                animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+            }
+
+            while (animation.CurrentKey == AnimAttack.Value || animation.CurrentKey == AnimHeavyAttack.Value)
+            {
+                if (canChangeAttackAnimation)
+                {
+                    if (animation.CurrentKey == AnimAttack.Value) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
+                    else animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                    canChangeAttackAnimation = false;
+                }
+
+                yield return null;
+            }
+
+            attack = null;
+        }
+
         private IEnumerator MovingTowardsPlayer(float speed)
         {
-            while(true)
+            while (true)
             {
                 var targetPosition = new Vector3(player.position.x, controller.transform.position.y, player.position.z);
                 controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, speed * Time.deltaTime);
@@ -163,11 +177,11 @@ namespace Enemies
         {
             lookLerpTime = 0;
             lookPos = controller.transform.position + controller.transform.forward;
-            
+
             while (true)
             {
-                var target = GetTargetDirOnYAxis(origin:controller.transform.position, target:player.position);
-                
+                var target = GetTargetDirOnYAxis(origin: controller.transform.position, target: player.position);
+
                 if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
                 else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
 
@@ -181,7 +195,7 @@ namespace Enemies
         {
             var finalPos = origin + (new Vector3(target.x, origin.y, target.z) - origin).normalized;
 
-            if(debug && color != null) Debug.DrawLine(origin, finalPos, (Color)color);
+            if (debug && color != null) Debug.DrawLine(origin, finalPos, (Color)color);
 
             return finalPos;
         }

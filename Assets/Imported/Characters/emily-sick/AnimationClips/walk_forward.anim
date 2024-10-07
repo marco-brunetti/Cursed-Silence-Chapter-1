@@ -46021,16 +46021,23 @@ AnimationClip:
   m_HasMotionFloatCurves: 1
   m_Events:
   - time: 0
+    functionName: SetVulnerable
+    data: true
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0
     functionName: WalkStarted
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 1.75
     intParameter: 0
     messageOptions: 0
-  - time: 0
-    functionName: SetVulnerable
-    data: true
+  - time: 0.3
+    functionName: WalkStarted
+    data: 
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
+    floatParameter: 1.75
     intParameter: 0
     messageOptions: 0

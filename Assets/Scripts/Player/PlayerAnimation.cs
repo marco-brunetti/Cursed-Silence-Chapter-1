@@ -22,7 +22,7 @@ public class PlayerAnimation : MonoBehaviour
         data = controller.PlayerData;
 
         KeyValuePair<string, int>[] animationKeys =
-{
+        {
             AnimAttack,
             AnimHeavyAttack,
             AnimBlock
