@@ -44,6 +44,13 @@ namespace Enemies
             outerPlayerDetector.gameObject.SetActive(true);
         }
 
+        public void DeactivateDetectors()
+        {
+            visualConePlayerDetector.gameObject.SetActive(false);
+            innerPlayerDetector.gameObject.SetActive(false);
+            outerPlayerDetector.gameObject.SetActive(false);
+        }
+
         public void ActivateVisualCone()
         {
             visualConePlayerDetector.gameObject.SetActive(true);
@@ -61,7 +68,7 @@ namespace Enemies
                 IsPlayerInOuterZone = isPlayerOuter && !isPlayerInner;
                 IsPlayerOutsideDetectors = !isPlayerInner && !isPlayerOuter;
 
-                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors));
+                PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors));
             }
 
             this.isPlayerInner = isPlayerInner;
@@ -113,7 +120,7 @@ namespace Enemies
                 innerPlayerDetector.gameObject.SetActive(true);
                 outerPlayerDetector.gameObject.SetActive(true);
 
-                PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
+                PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(playerEnteredVisualCone: true));
             }
         }
         
@@ -135,7 +142,7 @@ namespace Enemies
         public bool IsPlayerOutsideDetectors { get; private set; }
         public bool PlayerEnteredVisualCone { get; private set; }
 
-        public EnemyPlayerTrackerArgs(bool isPlayerInInnerZone, bool isPlayerInOuterZone, bool isPlayerOutsideDetectors, bool playerEnteredVisualCone = false)
+        public EnemyPlayerTrackerArgs(bool isPlayerInInnerZone = false, bool isPlayerInOuterZone = false, bool isPlayerOutsideDetectors = false, bool playerEnteredVisualCone = false)
         {
             IsPlayerInInnerZone = isPlayerInInnerZone;
             IsPlayerInOuterZone = isPlayerInOuterZone;

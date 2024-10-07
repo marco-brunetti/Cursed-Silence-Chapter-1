@@ -59,6 +59,7 @@ namespace Enemies
         {
             isReacting = false;
             currentState = newState;
+            playerTracker.ActivateDetectors();
 
             switch (currentState)
             {
@@ -70,6 +71,9 @@ namespace Enemies
                     break;
                 case EnemyState.Attack:
                     Attack();
+                    break;
+                case EnemyState.SpecialAttack:
+                    SpecialAttack();
                     break;
                 case EnemyState.Walk:
                     Walk();
@@ -101,6 +105,12 @@ namespace Enemies
         private void Attack()
         {
             animation.Attack();
+        }
+
+        private void SpecialAttack()
+        {
+            playerTracker.DeactivateDetectors();
+            animation.SpecialAttack();
         }
 
         private void React()
@@ -152,8 +162,7 @@ namespace Enemies
             {
                 if (e.PlayerEnteredVisualCone)
                 {
-                    if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
-                    else if (currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
+                    ChangeState(EnemyState.Walk);
                     return;
                 }
 
@@ -215,11 +224,11 @@ namespace Enemies
         Idle,
         Walk,
         Attack,
+        SpecialAttack,
         React,
         Escape,
         Block,
-        Stunned,
-        Dead,
-        Scream
+        Wander,
+        Dead
     }
 }

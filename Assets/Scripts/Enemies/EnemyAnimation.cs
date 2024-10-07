@@ -121,6 +121,11 @@ namespace Enemies
             MoveTowardsPlayer(false);
         }
 
+        public void SpecialAttack()
+        {
+            
+        }
+
         public void Walk()
         {
             animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
