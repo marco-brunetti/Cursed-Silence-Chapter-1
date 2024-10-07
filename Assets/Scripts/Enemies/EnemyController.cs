@@ -15,7 +15,7 @@ namespace Enemies
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
-        private bool isVulnerable;
+        [SerializeField] private bool isVulnerable;
         private bool isReacting;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
@@ -44,7 +44,7 @@ namespace Enemies
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount, int poiseDecrement)
         {
-            if(currentState == EnemyState.Idle) playerTracker.ActivateDetectors();
+            if (currentState == EnemyState.Idle) playerTracker.ActivateDetectors();
 
             if (currentState != EnemyState.Dead && isVulnerable && !isReacting)
             {
@@ -147,13 +147,13 @@ namespace Enemies
         {
             if (currentState != EnemyState.Dead && !isReacting && (EnemyPlayerTracker)sender == playerTracker)
             {
-                if(e.PlayerEnteredVisualCone) 
+                if (e.PlayerEnteredVisualCone)
                 {
                     if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack) ChangeState(EnemyState.Attack);
-                    else if(currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
+                    else if (currentState != EnemyState.Walk) ChangeState(EnemyState.Walk);
                     return;
                 }
-                
+
                 if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack)
                 {
                     ChangeState(EnemyState.Attack);
@@ -167,9 +167,9 @@ namespace Enemies
                     playerTracker.ActivateVisualCone();
                     ChangeState(EnemyState.Idle);
                 }
-                    
 
-                if(!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
+
+                if (!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
                 {
                     ChangeState(EnemyState.Idle); //Set in case there is a problem with the tracker
                 }

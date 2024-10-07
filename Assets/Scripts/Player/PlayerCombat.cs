@@ -51,6 +51,11 @@ namespace Player
             }
         }
 
+        public void DealDamage()
+        {
+            attackQueued = false;
+        }
+
         private void AttackState()
         {
             if (attackQueued && currentLightAttackCooldown <= 0)

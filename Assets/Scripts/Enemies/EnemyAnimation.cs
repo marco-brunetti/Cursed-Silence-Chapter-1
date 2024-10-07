@@ -54,7 +54,7 @@ namespace Enemies
         }
 
         #region Animation Events
-        public void SetVulnerable(string flag) => controller.IsVulnerable(flag == "true" ? true : false);
+        public void SetVulnerable(string flag) => controller.IsVulnerable(flag.ToLower() == "true");
         public void ChangeNextAttackClip() => canChangeAttackAnimation = true;
 
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
