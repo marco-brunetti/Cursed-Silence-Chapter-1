@@ -2,18 +2,15 @@ using UnityEngine;
 
 namespace SnowHorse.Utils
 {
-    public class Raycaster
+    public static class Raycaster
     {
         public static RaycastResult<T> FindWithTag<T>(RaycastData data)
         {
             var result = Find<GameObject>(data);
-
             if (result != null && result.HitObject.CompareTag(data.FindTag)) return GetComponent<T>(result);
-
             return null;
         }
-
-
+        
         public static RaycastResult<T> Find<T>(RaycastData data)
         {
             data.Ray ??= new Ray(origin: data.Origin, direction: data.Direction);
@@ -28,18 +25,14 @@ namespace SnowHorse.Utils
             };
 
             DebugRaycast(data, result);
-
             if (result != null) return GetComponent<T>(result);
-
             return null;
         }
 
         private static RaycastResult<T> GetComponent<T>(RaycastResult<GameObject> result)
         {
             if(typeof(T) == typeof(GameObject)) return (RaycastResult<T>)(object)result;
-
             if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
-            
             return null;
         }
 
@@ -60,7 +53,6 @@ namespace SnowHorse.Utils
 		private static void DebugRaycast(RaycastData data, RaycastResult<GameObject> result)
 		{
             if(!data.Debug) return;
-
             var ray = (Ray)data.Ray;
             var distance = (result != null) ? Vector3.Distance((Vector3)result.HitPoint, ray.origin) : data.MaxDistance;
             Debug.DrawRay(ray.origin, ray.direction * distance, color: (result != null) ? data.HitDebugColor : data.NonHitDebugColor);

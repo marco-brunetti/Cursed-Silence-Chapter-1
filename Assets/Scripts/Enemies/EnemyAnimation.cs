@@ -21,6 +21,7 @@ namespace Enemies
         private EnemyData data;
         private Transform player;
         private new AnimationManager animation;
+        private System.Random random;
 
         private readonly KeyValuePair<string, int> AnimDieForward = new("death_forward", Animator.StringToHash("death_forward"));
         private readonly KeyValuePair<string, int> AnimIdle = new("idle", Animator.StringToHash("idle"));
@@ -34,6 +35,7 @@ namespace Enemies
 
         public void Init(EnemyController controller, EnemyData enemyData, Transform player)
         {
+            random = new System.Random(Guid.NewGuid().GetHashCode());
             animator = GetComponent<Animator>();
             this.controller = controller;
             data = enemyData;
@@ -78,6 +80,9 @@ namespace Enemies
                 MoveTowardsPlayer(true, WalkSpeed);
             }
         }
+
+        //public void HeavyAttack => //Apply heavy attack;
+        //public void Attack => //Apply attack;
         #endregion
 
         public void Idle()
@@ -140,14 +145,22 @@ namespace Enemies
             if (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
             {
                 animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                yield return null;
             }
 
             while (animation.CurrentKey == AnimAttack.Value || animation.CurrentKey == AnimHeavyAttack.Value)
             {
                 if (canChangeAttackAnimation)
                 {
-                    if (animation.CurrentKey == AnimAttack.Value) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
-                    else animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                    if (animation.CurrentKey == AnimAttack.Value)
+                    {
+                        if (random.Next(0, 100) < data.HeavyAttackProbability) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
+                    }
+                    else
+                    {
+                        animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                    }
+                    
                     canChangeAttackAnimation = false;
                 }
 

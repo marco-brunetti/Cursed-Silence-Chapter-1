@@ -88,7 +88,7 @@ namespace Player
                 Direction = _controller.Camera.forward,
                 MaxDistance = _data.AttackDistance,
                 LayerMask = _data.InteractLayer,
-                Debug = true
+                //Debug = true
             };
 
             var enemy = Raycaster.Find<EnemyController>(rayData)?.HitObject;

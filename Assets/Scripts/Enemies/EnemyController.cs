@@ -15,7 +15,8 @@ namespace Enemies
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
-        [SerializeField] private bool isVulnerable;
+        private bool canDie;
+        private bool isVulnerable;
         private bool isReacting;
         private Transform player;
         private List<Renderer> invisibleRenderers = new();
@@ -46,9 +47,11 @@ namespace Enemies
         {
             if (currentState == EnemyState.Idle) playerTracker.ActivateDetectors();
 
-            if (currentState != EnemyState.Dead && isVulnerable && !isReacting)
+            var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
+
+            if (isValidState && !isReacting)
             {
-                ChangeState(stats.RecievedAttack(new(currentState, isVulnerable, damageAmount, poiseDecrement)));
+                ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, damageAmount, poiseDecrement)));
             }
         }
 

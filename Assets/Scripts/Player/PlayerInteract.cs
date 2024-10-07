@@ -26,7 +26,8 @@ namespace Player
                     Origin = _playerController.Camera.position,
                     Direction = _playerController.Camera.forward,
                     MaxDistance = playerData.InteractDistance,
-                    LayerMask = playerData.InteractLayer
+                    LayerMask = playerData.InteractLayer,
+                    //Debug = true
                 };
 
                 var interactable = Raycaster.Find<Interactable>(rayData)?.HitObject;

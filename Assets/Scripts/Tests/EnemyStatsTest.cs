@@ -29,16 +29,16 @@ namespace Enemies
 
         private EnemyStats stats;
 
-        void Awake()
+        private void Awake()
         {
             stats = new(data);
             blockProbability = data.BlockProbability;
             //stats.StatsChanged += OnStatsChanged;
         }
 
-        void Update()
+        private void Update()
         {
-            stats.RecievedAttack(new(enemyState, isVulnerable, damage, poiseDecrement));
+            stats.ReceivedAttack(new(enemyState, canDie: true, isVulnerable, damage, poiseDecrement));
         }
 
         private void OnStatsChanged(object sender, UpdatedStatsEventArgs e)

@@ -19,7 +19,7 @@ namespace Enemies
             random = new Random(Guid.NewGuid().GetHashCode());
         }
 
-        public EnemyState RecievedAttack(EnemyAttackedStateData stateData)
+        public EnemyState ReceivedAttack(EnemyAttackedStateData stateData)
         {
             switch (stateData.CurrentState)
             {
@@ -65,7 +65,13 @@ namespace Enemies
 
             //StatsChanged?.Invoke(this, GetUpdatedStatsArgs("damage", damage: stateData.Damage));
 
-            if (currentHealth <= 0) return EnemyState.Dead;
+            if (currentHealth <= 0)
+            {
+                if (stateData.CanDie) return EnemyState.Dead;
+                
+                return EnemyState.Escape;
+            }
+                
             return EnemyState.React;
         }
 
@@ -85,19 +91,20 @@ namespace Enemies
     public class EnemyAttackedStateData
     {
         public readonly EnemyState CurrentState;
+        public readonly bool CanDie;
         public readonly bool IsVulnerable;
         public readonly int Damage;
         public readonly int PoiseDecrement;
 
-        public EnemyAttackedStateData(EnemyState currentState, bool isVulnerable, int damage, int poiseDecrement)
+        public EnemyAttackedStateData(EnemyState currentState, bool canDie, bool isVulnerable, int damage, int poiseDecrement)
         {
             CurrentState = currentState;
+            CanDie = canDie;
             IsVulnerable = isVulnerable;
             Damage = damage;
             PoiseDecrement = poiseDecrement;
         }
     }
-
 }
 
 public class UpdatedStatsEventArgs : EventArgs

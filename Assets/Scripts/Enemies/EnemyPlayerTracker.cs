@@ -97,17 +97,17 @@ namespace Enemies
 
             if(visualConeCheckCounter <= 0)
             {
-                var playerTag = new RaycastData
+                var tagData = new RaycastData
                 {
+                    FindTag = "Player",
                     Origin = controller.transform.position,
                     Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
-                    FindTag = "Player",
                     LayerMask = controller.EnemyData.DetectionMask,
-                    Debug = true
+                    //Debug = true
                 };
 
                 visualConeCheckCounter = 0.1f;
-                if (Raycaster.FindWithTag<GameObject>(playerTag) == null) return;
+                if (Raycaster.FindWithTag<GameObject>(tagData) == null) return;
 
                 visualConePlayerDetector.gameObject.SetActive(false);
                 innerPlayerDetector.gameObject.SetActive(true);
@@ -115,8 +115,6 @@ namespace Enemies
 
                 PlayerTrackerUpdated?.Invoke(this, new(IsPlayerInInnerZone, IsPlayerInOuterZone, IsPlayerOutsideDetectors, playerEnteredVisualCone: true));
             }
-
-            
         }
         
         public void Dispose()
