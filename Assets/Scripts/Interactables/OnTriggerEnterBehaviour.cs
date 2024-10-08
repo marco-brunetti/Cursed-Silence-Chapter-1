@@ -1,11 +1,12 @@
 using UnityEngine;
+using Interactables.Behaviours;
 
 public class OnTriggerEnterBehaviour : MonoBehaviour
 {
     [SerializeField] private string _colliderTag = "Player";
     [SerializeField] private GameObject[] _behaviours;
 
-    [SerializeField] private bool _deactivateTrigger;
+    [SerializeField] private DeactivateType _deactivateType;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -17,9 +18,23 @@ public class OnTriggerEnterBehaviour : MonoBehaviour
             }
         }
 
-        if(_deactivateTrigger)
+        switch(_deactivateType)
         {
-            GetComponent<Collider>().enabled = false;
+            case DeactivateType.None:
+                return;
+            case DeactivateType.Collider:
+                GetComponent<Collider>().enabled = false;
+                break;
+            case DeactivateType.GameObject:
+                gameObject.SetActive(false);
+                break;
         }
+    }
+
+    private enum DeactivateType
+    {
+        None,
+        Collider,
+        GameObject
     }
 }

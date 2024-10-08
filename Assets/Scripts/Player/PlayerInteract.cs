@@ -1,44 +1,50 @@
-using Unity.VisualScripting;
+using SnowHorse.Utils;
 using UnityEngine;
 
-public class PlayerInteract : MonoBehaviour
+namespace Player
 {
-    private PlayerController _playerController;
-    private Ray _interactRay;
-
-    private void Start()
+    public class PlayerInteract : MonoBehaviour
     {
-        _playerController = PlayerController.Instance;
-    }
+        private PlayerController _playerController;
 
-    public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
-    {
-        if (!GameController.Instance.IsInDream && (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
+        private void Start()
         {
-            _interactRay.origin = PlayerController.Instance.Camera.position;
-            _interactRay.direction = PlayerController.Instance.Camera.forward;
+            _playerController = PlayerController.Instance;
+        }
 
-            RaycastHit hit;
-
-            if (Physics.Raycast(_interactRay, out hit, playerData.InteractDistance, playerData.InteractLayer))
-            {
-                if (!PlayerController.Instance.Inspector.IsInspecting && hit.collider != null)
-                {
-                    ManageInteraction(hit.collider.gameObject, inspector);
-                }
-            }
-            else
+        public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
+        {
+            if(_playerController.IsInspecting)
             {
                 _playerController.InteractableInSight = null;
             }
-        }   
-    }
+            else if (!GameController.Instance.IsInDream && 
+            (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
+            {
+                var rayData = new RaycastData
+                {
+                    Origin = _playerController.Camera.position,
+                    Direction = _playerController.Camera.forward,
+                    MaxDistance = playerData.InteractDistance,
+                    LayerMask = playerData.InteractLayer,
+                    //Debug = true
+                };
 
-    private void ManageInteraction(GameObject interactableObject, PlayerInspect inspector)
-    {
-        if (interactableObject.TryGetComponent(out Interactable interactable))
+                var interactable = Raycaster.Find<Interactable>(rayData)?.HitObject;
+
+                if(interactable) ManageInteraction(interactable, inspector);
+                else _playerController.InteractableInSight = null;
+            }
+        }
+
+        private void ManageInteraction(Interactable interactable, PlayerInspect inspector)
         {
             _playerController.InteractableInSight = interactable;
+
+            if (interactable.RequiredInventoryItems.Count > 0)
+            {
+                //Show inventory required object in UI
+            }
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -50,13 +56,9 @@ public class PlayerInteract : MonoBehaviour
                 else
                 {
                     interactable.Interact(_playerController, false, true);
-                    inspector.StartInspection(interactableObject.transform);
+                    inspector.StartInspection(interactable.transform);
                 }
             }
-        }
-        else if (inspector.IsInspecting == false)
-        {
-            _playerController.InteractableInSight = null;
         }
     }
 }

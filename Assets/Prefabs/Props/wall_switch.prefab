@@ -165,16 +165,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1841c4163f33d4846ad11e87ae810ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NonInspectable: 1
-  InspectableOnly: 0
   InspectableInitialRotation: {x: 0, y: 0, z: 0}
+  InspectablePosition: {x: 0, y: 0, z: 0}
   RotateX: 0
   RotateY: 0
   FreezePlayerRotation: 0
   FreezePlayerMotion: 0
-  InteractionBehaviours:
-  - {fileID: 2287696052563514422}
-  InspectionBehaviours: []
   DeactivateBehaviours: 0
 --- !u!114 &2108850363573690439
 MonoBehaviour:
@@ -185,18 +181,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2287696052563514422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b83fde1bd8c823a48884f82ae83396d5, type: 3}
+  m_Script: {fileID: 11500000, guid: a66dde03b2b6a4046bd8a0d483e0c2d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isOn: 0
-  _lightsOn:
-  - {fileID: 0}
-  _lightsOff:
-  - {fileID: 0}
-  _offModel: {fileID: 3055665944510292883}
-  _onModel: {fileID: 6157419839641116330}
-  _onAudio: {fileID: 8942117828767287666}
-  _offAudio: {fileID: 4553050451252982156}
+  lightsOn: []
+  lightsOff: []
+  offModel: {fileID: 0}
+  onModel: {fileID: 0}
+  onAudio: {fileID: 0}
+  offAudio: {fileID: 0}
 --- !u!1 &3055665944510292883
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,16 +403,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5d0979a4072334d9b05b916001fae4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _delay: 0
-  _audioClip: {fileID: 8300000, guid: 29a74440afb53444cb0c748f3c96fe30, type: 3}
-  _useGlobalVolume: 0
-  _onInteraction: 1
-  _onInspection: 0
-  _playOnce: 0
-  _audioSource: {fileID: 3228396277166556834}
-  _volume: 0.5
+  delay: 0
+  audioClip: {fileID: 8300000, guid: 29a74440afb53444cb0c748f3c96fe30, type: 3}
+  onInteraction: 1
+  onInspection: 0
+  playOnce: 0
+  audioSource: {fileID: 3228396277166556834}
+  volume: 0.5
   _3DBlend: 0.964
-  _pitch: 1
+  pitch: 1
 --- !u!82 &3228396277166556834
 AudioSource:
   m_ObjectHideFlags: 0
@@ -560,16 +553,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f5d0979a4072334d9b05b916001fae4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _delay: 0
-  _audioClip: {fileID: 8300000, guid: 4d8412d5c3fdd014182d591320855a6c, type: 3}
-  _useGlobalVolume: 0
-  _onInteraction: 1
-  _onInspection: 0
-  _playOnce: 0
-  _audioSource: {fileID: 7528110332810218691}
-  _volume: 0.5
+  delay: 0
+  audioClip: {fileID: 8300000, guid: 4d8412d5c3fdd014182d591320855a6c, type: 3}
+  onInteraction: 1
+  onInspection: 0
+  playOnce: 0
+  audioSource: {fileID: 7528110332810218691}
+  volume: 0.5
   _3DBlend: 0.964
-  _pitch: 1
+  pitch: 1
 --- !u!82 &7528110332810218691
 AudioSource:
   m_ObjectHideFlags: 0
