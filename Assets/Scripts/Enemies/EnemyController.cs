@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Player;
+using UnityEngine.Serialization;
 
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
-    {
-        [SerializeField] private Detector innerPlayerDetector;
-        [SerializeField] private Detector outerPlayerDetector;
-        [SerializeField] private Detector visualConePlayerDetector;
+    { 
+        [SerializeField] private Detector attackZone;
+        [SerializeField] private Detector awareZone;
+        [SerializeField] private CustomShapeDetector visualCone;
         [SerializeField] private new Collider collider;
         [SerializeField] private new EnemyAnimation animation;
         [SerializeField] private Renderer[] renderers;
@@ -32,13 +33,14 @@ namespace Enemies
         {
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
+            StartPlayerTracking();
         }
 
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
             AnimationInit();
-            StartPlayerTracking();
+            
             stats = new EnemyStats(EnemyData);
         }
 
@@ -59,7 +61,7 @@ namespace Enemies
         {
             isReacting = false;
             currentState = newState;
-            playerTracker.ActivateDetectors();
+            // playerTracker.ActivateDetectors();
 
             switch (currentState)
             {
@@ -191,7 +193,7 @@ namespace Enemies
         public void ReactStop()
         {
             isReacting = false;
-            OnPlayerTrackerUpdated(playerTracker, new(playerTracker.IsPlayerInInnerZone, playerTracker.IsPlayerInOuterZone, playerTracker.IsPlayerOutsideDetectors));
+            OnPlayerTrackerUpdated(playerTracker, new(playerTracker.InAttackZone, playerTracker.InAwareZone, playerTracker.OutsideZone));
         }
 
         private void AnimationInit()
@@ -202,7 +204,7 @@ namespace Enemies
 
         private void StartPlayerTracking()
         {
-            playerTracker = new EnemyPlayerTracker(innerPlayerDetector, outerPlayerDetector, visualConePlayerDetector, this);
+            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
         }
 
