@@ -79,28 +79,28 @@ public class EnemyAnimationGeneric : MonoBehaviour
     public void Idle(string key = "idle", bool lookAtPlayer = false)
     {
         animation.Enable(animKeys[key], deactivateOtherKeys: true);
-        LookAtPlayer(false);
+        LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void Die(string key = "die", bool lookAtPlayer = false)
     {
         animation.Enable(animKeys[key], deactivateOtherKeys: true);
-        LookAtPlayer(false);
+        LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void React(string key = "react", bool lookAtPlayer = false)
     {
         animation.Enable(animKeys[key], deactivateOtherKeys: true);
-        LookAtPlayer(false);
+        LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void Block(string key = "block", bool lookAtPlayer = false)
     {
         animation.Enable(animKeys[key], deactivateOtherKeys: true);
-        LookAtPlayer(true);
+        LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
@@ -108,7 +108,7 @@ public class EnemyAnimationGeneric : MonoBehaviour
     {
         attack ??= StartCoroutine(AttackingPlayer());
 
-        LookAtPlayer(true);
+        LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
@@ -120,7 +120,7 @@ public class EnemyAnimationGeneric : MonoBehaviour
     public void Walk(string key = "walk", bool lookAtPlayer = false)
     {
         animation.Enable(animKeys[key], deactivateOtherKeys: true);
-        LookAtPlayer(true, 50);
+        LookAtPlayer(lookAtPlayer);
     }
 
     private void MoveTowardsPlayer(bool isMoving, float speed = 0)
@@ -144,19 +144,11 @@ public class EnemyAnimationGeneric : MonoBehaviour
             yield return null;
         }
 
-        while (animation.CurrentKey == AnimAttack.Value || animation.CurrentKey == AnimHeavyAttack.Value)
+        while (animation.CurrentKey == animKeys["attack"].Value || animation.CurrentKey == animKeys["heavy_attack"].Value)
         {
             if (canChangeAttackAnimation)
             {
-                if (animation.CurrentKey == AnimAttack.Value)
-                {
-                    if (random.Next(0, 100) < data.HeavyAttackProbability) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
-                }
-                else
-                {
-                    animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
-                }
-
+                animation.ChangeNextState(key1:animKeys["attack"], key2:animKeys["heavy_attack"], key2Probability:data.HeavyAttackProbability);
                 canChangeAttackAnimation = false;
             }
 

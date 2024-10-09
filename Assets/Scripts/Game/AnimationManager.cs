@@ -44,6 +44,18 @@ public class AnimationManager
         ChangeClip(key);
     }
 
+    public void ChangeNextState(KeyValuePair<string, int> key1, KeyValuePair<string, int> key2, int key2Probability = 100)
+    {
+        if (CurrentKey == key1.Value && random.Next(100) < key2Probability)
+        {
+            Enable(key2);
+        }
+        else
+        {
+            Enable(key1);
+        }
+    }
+
     public void Disable(KeyValuePair<string, int> key)
     {
         if (animator.GetBool(key.Value) == true)
