@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using UnityEngine;
 
 namespace Enemies
 {
+    //Attach to the game object that has the animator if the animation events are needed
     public class EnemyAnimationGeneric : MonoBehaviour
     {
         private float reactMoveSpeed;
@@ -26,17 +28,20 @@ namespace Enemies
             animator = GetComponent<Animator>();
             this.enemy = enemy;
             data = enemyData;
-
-            SetAnimationKeys(data.AnimationKeys);
-            animation = new(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, data.AnimationClips);
+            SetAnimationKeys(data);
         }
 
-        private void SetAnimationKeys(string[] keys)
+        private void SetAnimationKeys(EnemyData data)
         {
-            foreach (var key in keys)
-            {
-                animKeys.Add(key, new KeyValuePair<string, int>(key, Animator.StringToHash(key)));
-            }
+            var mandatoryKeys = new List<string> { data.IdleKey, data.MoveKey, data.AttackKey, data.DeathKey };
+            mandatoryKeys.ForEach(key => animKeys.Add(key, new KeyValuePair<string, int>(key, Animator.StringToHash(key))));
+
+            var optionalKeys = new List<string> { data.HeavyAttackKey, data.SpecialAttackKey, data.ReactKey, data.BlockKey };
+            optionalKeys.Where(x=> !string.IsNullOrEmpty(x)).ToList().ForEach(x=> animKeys.Add(x, new KeyValuePair<string, int>(x, Animator.StringToHash(x))));
+            
+            Array.ForEach(data.AdditionalAnimKeys, x=> animKeys.Add(x, new KeyValuePair<string, int>(x,Animator.StringToHash(x))));
+            
+            animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, data.AnimationClips);
         }
 
         #region Animation Events

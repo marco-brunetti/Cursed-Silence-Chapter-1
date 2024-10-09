@@ -129,7 +129,7 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(Data.WalkKey, lookTarget:player, moveTarget:player);
+            animation.SetState(Data.MoveKey, lookTarget:player, moveTarget:player);
         }
         
         protected virtual void React()
