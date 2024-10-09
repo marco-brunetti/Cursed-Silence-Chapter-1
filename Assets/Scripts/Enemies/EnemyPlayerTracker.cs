@@ -48,6 +48,9 @@ namespace Enemies
             visualCone.gameObject.SetActive(false);
             attackZone.gameObject.SetActive(false);
             awareZone.gameObject.SetActive(false);
+            inAttackZone = false;
+            inAwareZone = false;
+            OutsideZone = false;
         }
 
 

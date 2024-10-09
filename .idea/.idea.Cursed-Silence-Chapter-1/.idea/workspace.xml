@@ -6,25 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="01059b12-fdf2-4f4d-a277-b2b0ff5ad29b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/death_forward.anim" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/death_forward.anim.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/react_front.anim" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/react_front.anim.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/walk_forward.anim" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/AnimationClips/walk_forward.anim.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/emily-sick-controller.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/emily-sick-controller.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_emily.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_emily.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ScriptableObjects/Enemy1Data.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ScriptableObjects/Enemy1Data.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimationGeneric.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimationGeneric.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyEmily.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyEmily.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/AnimationManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/AnimationManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerAnimation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerCombat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerCombat.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" afterDir="false" />
@@ -190,7 +175,7 @@
       <workItem from="1728062680882" duration="3000" />
       <workItem from="1728308452972" duration="4159000" />
       <workItem from="1728477587267" duration="7789000" />
-      <workItem from="1728485985814" duration="18755000" />
+      <workItem from="1728485985814" duration="20153000" />
     </task>
     <servers />
   </component>
@@ -212,17 +197,56 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs</url>
-          <line>98</line>
-          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\Enemy.cs" containingFunctionPresentation="Method 'ChangeState'">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Detector.cs</url>
+          <line>25</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Detector.cs" containingFunctionPresentation="Method 'Init'">
             <startOffsets>
-              <option value="3392" />
+              <option value="911" />
             </startOffsets>
             <endOffsets>
-              <option value="3399" />
+              <option value="927" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="13" />
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Detector.cs</url>
+          <line>55</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Detector.cs" containingFunctionPresentation="Method 'OnTriggerInit'">
+            <startOffsets>
+              <option value="1993" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2086" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Detector.cs</url>
+          <line>64</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Detector.cs" containingFunctionPresentation="Method 'OnTriggerEnter'">
+            <startOffsets>
+              <option value="2277" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2314" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Detector.cs</url>
+          <line>74</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Detector.cs" containingFunctionPresentation="Method 'OnTriggerExit'">
+            <startOffsets>
+              <option value="2619" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2655" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

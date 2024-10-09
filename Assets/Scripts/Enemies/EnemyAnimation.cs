@@ -48,11 +48,8 @@ namespace Enemies
         public void SetVulnerable(string flag) => enemy.IsVulnerable(flag.ToLower() == "true");
         public void ChangeNextAttackClip() => enemy.ChangeNextAttack(true);
 
-        public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
-        public void ReactStopMovement()
-        {
-            reactMoveSpeed = 0;
-        }
+        public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoving()); }
+        public void ReactStopMovement() => reactMoveSpeed = 0;
         public void ReactStop()
         {
             reactMoveSpeed = 0;
@@ -139,7 +136,7 @@ namespace Enemies
             return finalPos;
         }
 
-        private IEnumerator ReactMoveTimer()
+        private IEnumerator ReactMoving()
         {
             while (reactMoveSpeed > 0)
             {

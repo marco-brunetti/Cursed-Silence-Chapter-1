@@ -55,10 +55,10 @@ namespace Enemies
             ChangeState(EnemyState.Idle);
         }
         
-        private void StartPlayerTracking()
+        private void StartPlayerTracking(bool visualConeOnly = true)
         {
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
-            playerTracker.Start(visualConeOnly: true);
+            playerTracker.Start(visualConeOnly);
         }
         
         private void StopPlayerTracking()
@@ -135,6 +135,7 @@ namespace Enemies
         protected virtual void React()
         {
             isReacting = true;
+            StopPlayerTracking();
             animation.SetState(Data.ReactKey);
         }
         
@@ -229,7 +230,7 @@ namespace Enemies
         public void ReactStop()
         {
             isReacting = false;
-            OnPlayerTrackerUpdated(playerTracker, new(playerTracker.InAttackZone, playerTracker.InAwareZone, playerTracker.OutsideZone));
+            StartPlayerTracking(visualConeOnly: false);
         }
     }
     

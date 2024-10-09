@@ -8,10 +8,6 @@ namespace Enemies
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private Renderer[] particleRenderers;
 
-        private bool canDie;
-        private bool isVulnerable;
-        private bool isReacting;
-
         private List<Renderer> invisibleRenderers = new();
 
         protected override void Die()
