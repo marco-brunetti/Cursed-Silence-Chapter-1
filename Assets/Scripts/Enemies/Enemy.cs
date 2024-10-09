@@ -14,6 +14,9 @@ namespace Enemies
         [SerializeField] private CustomShapeDetector visualCone;
         [SerializeField] private new EnemyAnimationGeneric animation;
 
+        private bool canDie;
+        private bool isVulnerable;
+        private bool isReacting;
         private bool hasHeavyAttack;
         private bool hasSpecialAttack;
         private bool changeNextAttack;
@@ -25,6 +28,9 @@ namespace Enemies
         private Coroutine attack;
 
         [field: SerializeField] public EnemyData Data { get; private set; }
+        public void IsVulnerable(bool enable) => isVulnerable = enable;
+
+        public void ChangeNextAttack(bool enable) => changeNextAttack = enable;
 
         public virtual void Awake()
         {
@@ -40,13 +46,37 @@ namespace Enemies
             player = PlayerController.Instance.Player.transform;
             AnimationInit();
             StartPlayerTracking();
-            stats = new EnemyStats(EnemyData);
+            stats = new EnemyStats(Data);
         }
         
         private void AnimationInit()
         {
-            animation.Init(controller: this, enemyData: EnemyData, player);
+            animation.Init(enemy: this, enemyData: Data);
             ChangeState(EnemyState.Idle);
+        }
+        
+        private void StartPlayerTracking()
+        {
+            EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
+            playerTracker.Start(visualConeOnly: true);
+        }
+        
+        private void StopPlayerTracking()
+        {
+            EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
+            playerTracker.Stop();
+        }
+        
+        public void DealDamage(int damageAmount, int poiseDecrement)
+        {
+            if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
+
+            var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
+
+            if (isValidState && !isReacting)
+            {
+                ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, damageAmount, poiseDecrement)));
+            }
         }
         
         private void ChangeState(EnemyState newState)
@@ -57,16 +87,16 @@ namespace Enemies
             switch (currentState)
             {
                 case EnemyState.Idle:
-                    animation.SetState(Data.IdleKey);
+                    Idle();
                     break;
                 case EnemyState.Dead:
-                    animation.SetState(Data.DeathKey);
+                    Die();
                     break;
                 case EnemyState.Attack:
                     Attack();
                     break;
                 case EnemyState.Walk:
-                    animation.SetState(Data.WalkKey, lookTarget:player, moveTarget:player);
+                    Move();
                     break;
                 case EnemyState.React:
                     React();
@@ -80,11 +110,38 @@ namespace Enemies
             }
         }
 
-        public virtual void Attack()
+        protected virtual void Idle()
+        {
+            animation.SetState(Data.IdleKey);
+        }
+        
+        protected virtual void Die()
+        {
+            StopPlayerTracking();
+            collider.enabled = false;
+            animation.SetState(Data.DeathKey);
+        }
+
+        protected virtual void Attack()
         {
             attack ??= StartCoroutine(AttackingPlayer());
         }
-    
+        
+        protected virtual void Move()
+        {
+            animation.SetState(Data.WalkKey, lookTarget:player, moveTarget:player);
+        }
+        
+        protected virtual void React()
+        {
+            throw new System.NotImplementedException();
+        }
+        
+        protected virtual void Block()
+        {
+            throw new System.NotImplementedException();
+        }
+
         private IEnumerator AttackingPlayer()
         {
             var attackKeysList = new List<string> { Data.AttackKey };
@@ -133,6 +190,44 @@ namespace Enemies
             }
                 
             changeNextAttack = false;
+        }
+        
+        protected virtual void OnPlayerTrackerUpdated(object sender, EnemyPlayerTrackerArgs e)
+        {
+            if (currentState != EnemyState.Dead && !isReacting && (EnemyPlayerTracker)sender == playerTracker)
+            {
+                if (e.PlayerEnteredVisualCone)
+                {
+                    ChangeState(EnemyState.Walk);
+                    return;
+                }
+
+                if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack)
+                {
+                    ChangeState(EnemyState.Attack);
+                }
+                else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk)
+                {
+                    ChangeState(EnemyState.Walk);
+                }
+                else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle)
+                {
+                    playerTracker.Start(visualConeOnly: true);
+                    ChangeState(EnemyState.Idle);
+                }
+
+
+                if (!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
+                {
+                    ChangeState(EnemyState.Idle); //Set in case there is a problem with the tracker
+                }
+            }
+        }
+        
+        public void ReactStop()
+        {
+            isReacting = false;
+            OnPlayerTrackerUpdated(playerTracker, new(playerTracker.InAttackZone, playerTracker.InAwareZone, playerTracker.OutsideZone));
         }
     }
     

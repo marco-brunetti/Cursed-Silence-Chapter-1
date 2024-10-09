@@ -5,11 +5,10 @@ using System.Collections.Generic;
 
 public class AnimationManager
 {
-    private Animator animator;
-    private Dictionary<int, List<AnimationClip>> dict = new();
-    private System.Random random;
-    private AnimatorOverrideController aoc;
-    private AnimationClip[] originalControllerClips;
+    private readonly Animator animator;
+    private readonly Dictionary<int, List<AnimationClip>> dict = new();
+    private readonly System.Random random;
+    private readonly AnimatorOverrideController aoc;
     public int CurrentKey { get; private set; }
     public string CurrentKeyString { get; private set; }
 
@@ -21,12 +20,12 @@ public class AnimationManager
         animator.runtimeAnimatorController = aoc;
 
         if (clips == null) clips = Resources.LoadAll<AnimationClip>(animationPath);
-        originalControllerClips = animatorController.animationClips;
+        var originalClips = animatorController.animationClips;
 
         foreach (var animKey in animationKeys)
         {
             //The animation already in the controller must be equals the key
-            if (!Array.Exists(originalControllerClips, x => x.name == animKey.Key))
+            if (!Array.Exists(originalClips, x => x.name == animKey.Key))
             {
                 Debug.LogError($"Warning: Animator controller does not contain state: {animKey.Key.ToUpper()}");
                 continue;
@@ -45,15 +44,15 @@ public class AnimationManager
         ChangeClip(key);
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     private void ChangeClip(KeyValuePair<string, int> animKey)
     {
-        if (!dict.ContainsKey(animKey.Value))
+        if (!dict.TryGetValue(animKey.Value, out var anim))
         {
             Debug.LogError($"Animation key {animKey.Key.ToUpper()} not found. Check if the animator contains a state with {animKey.Key.ToUpper()} clip.");
             return;
         }
 
-        var anim = dict[animKey.Value];
         var index = random.Next(anim.Count());
         aoc[animKey.Key] = anim[index];
         animator.SetBool(animKey.Value, true);

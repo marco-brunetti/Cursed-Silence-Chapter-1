@@ -1,51 +1,46 @@
-using Enemies;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyEmily : Enemy
+namespace Enemies
 {
-    [SerializeField] private Renderer[] renderers;
-    [SerializeField] private Renderer[] particleRenderers;
-
-    private bool canDie;
-    private bool isVulnerable;
-    private bool isReacting;
-
-    private List<Renderer> invisibleRenderers = new();
-
-    public override void Attack()
+    public class EnemyEmily : Enemy
     {
-        throw new System.NotImplementedException();
-    }
+        [SerializeField] private Renderer[] renderers;
+        [SerializeField] private Renderer[] particleRenderers;
 
-    public override void Block()
-    {
-        throw new System.NotImplementedException();
-    }
+        private bool canDie;
+        private bool isVulnerable;
+        private bool isReacting;
 
-    public override void Die()
-    {
-        throw new System.NotImplementedException();
-    }
+        private List<Renderer> invisibleRenderers = new();
 
-    public override void Idle()
-    {
-        throw new System.NotImplementedException();
-    }
+        protected override void Die()
+        {
+            base.Die();
+            EnemyDisappear();
+        }
+    
+        private void EnemyDisappear()
+        {
+            foreach (var r in renderers)
+            {
+                var c = r.material.color;
 
-    public override void Move()
-    {
-        throw new System.NotImplementedException();
-    }
+                if (c.a > 0)
+                {
+                    float disappearSpeed;
+                    if (r is ParticleSystemRenderer) disappearSpeed = 0.1f;
+                    else disappearSpeed = 0.01f;
 
-    public override void React()
-    {
-        throw new System.NotImplementedException();
-    }
+                    var alpha = c.a - disappearSpeed * Time.deltaTime;
+                    alpha = Mathf.Clamp(alpha, 0, 1);
+                    r.material.color = new Color(c.r, c.g, c.b, alpha);
+                }
 
-    public override void SpecialAttack()
-    {
-        throw new System.NotImplementedException();
+                if (c.a <= 0 && !invisibleRenderers.Contains(r)) invisibleRenderers.Add(r);
+            }
+
+            if (invisibleRenderers.Count == renderers.Length) Destroy(gameObject);
+        }
     }
 }
