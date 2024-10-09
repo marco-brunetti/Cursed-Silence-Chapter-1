@@ -11,6 +11,7 @@ public class AnimationManager
     private AnimatorOverrideController aoc;
     private AnimationClip[] originalControllerClips;
     public int CurrentKey { get; private set; }
+    public string CurrentKeyString { get; private set; }
 
     public AnimationManager(KeyValuePair<string, int>[] animationKeys, Animator animator, RuntimeAnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
     {
@@ -37,33 +38,21 @@ public class AnimationManager
         }
     }
 
-    public void Enable(KeyValuePair<string, int> key, bool deactivateOtherKeys = false)
+    public void Enable(KeyValuePair<string, int> key, bool deactivateOtherKeys = true)
     {
         if (animator.GetBool(key.Value) == true) return;
         if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != key.Value) animator.SetBool(hash, false); });
         ChangeClip(key);
     }
 
-    public void ChangeNextState(KeyValuePair<string, int> key1, KeyValuePair<string, int> key2, int key2Probability = 100)
-    {
-        if (CurrentKey == key1.Value && random.Next(100) < key2Probability)
-        {
-            Enable(key2);
-        }
-        else
-        {
-            Enable(key1);
-        }
-    }
-
-    public void Disable(KeyValuePair<string, int> key)
-    {
-        if (animator.GetBool(key.Value) == true)
-        {
-            animator.SetBool(key.Value, false);
-            CurrentKey = 0;
-        }
-    }
+    // public void Disable(KeyValuePair<string, int> key)
+    // {
+    //     if (animator.GetBool(key.Value) == true)
+    //     {
+    //         animator.SetBool(key.Value, false);
+    //         CurrentKey = 0;
+    //     }
+    // }
 
     private void ChangeClip(KeyValuePair<string, int> animKey)
     {
@@ -78,5 +67,6 @@ public class AnimationManager
         aoc[animKey.Key] = anim[index];
         animator.SetBool(animKey.Value, true);
         CurrentKey = animKey.Value;
+        CurrentKeyString = animKey.Key;
     }
 }

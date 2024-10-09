@@ -25,7 +25,7 @@ public class EnemyAnimationGeneric : MonoBehaviour
     private Dictionary<string, KeyValuePair<string,int>> animKeys = new();
 
     [NonSerialized] public float WalkSpeed;
-
+    public string CurrentKey => animation.CurrentKeyString;
     public void Init(EnemyController controller, EnemyData enemyData, Transform player)
     {
         random = new System.Random(Guid.NewGuid().GetHashCode());
@@ -78,48 +78,50 @@ public class EnemyAnimationGeneric : MonoBehaviour
 
     public void Idle(string key = "idle", bool lookAtPlayer = false)
     {
-        animation.Enable(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key]);
         LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void Die(string key = "die", bool lookAtPlayer = false)
     {
-        animation.Enable(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key]);
         LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void React(string key = "react", bool lookAtPlayer = false)
     {
-        animation.Enable(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key]);
         LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
     public void Block(string key = "block", bool lookAtPlayer = false)
     {
-        animation.Enable(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key]);
         LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
 
-    public void Attack(string key = "attack", bool lookAtPlayer = false)
+    public void Attack(string attackKey = "attack", bool lookAtPlayer = false)
     {
-        attack ??= StartCoroutine(AttackingPlayer());
+        attack ??= StartCoroutine(AttackingPlayer(attackKey, heavyAttackKey, specialAttackKey));
 
         LookAtPlayer(lookAtPlayer);
         MoveTowardsPlayer(false);
     }
+    
+    public void HeavyAttack(string key = "heavy_attack", bool lookAtPlayer = false)
 
     public void SpecialAttack(string key = "special_attack", bool lookAtPlayer = false)
     {
-
+        
     }
 
     public void Walk(string key = "walk", bool lookAtPlayer = false)
     {
-        animation.Enable(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key]);
         LookAtPlayer(lookAtPlayer);
     }
 
@@ -136,27 +138,50 @@ public class EnemyAnimationGeneric : MonoBehaviour
         }
     }
 
-    private IEnumerator AttackingPlayer()
-    {
-        if (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
-        {
-            animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
-            yield return null;
-        }
-
-        while (animation.CurrentKey == animKeys["attack"].Value || animation.CurrentKey == animKeys["heavy_attack"].Value)
-        {
-            if (canChangeAttackAnimation)
-            {
-                animation.ChangeNextState(key1:animKeys["attack"], key2:animKeys["heavy_attack"], key2Probability:data.HeavyAttackProbability);
-                canChangeAttackAnimation = false;
-            }
-
-            yield return null;
-        }
-
-        attack = null;
-    }
+    // private IEnumerator AttackingPlayer(string attackKey, string heavyAttackKey, string specialAttackKey)
+    // {
+    //     var attackKeysList = new List<int> { animKeys[attackKey].Value };
+    //     if(!string.IsNullOrEmpty(heavyAttackKey)) attackKeysList.Add(animKeys[heavyAttackKey].Value);
+    //     if(!string.IsNullOrEmpty(specialAttackKey)) attackKeysList.Add(animKeys[specialAttackKey].Value);
+    //     
+    //     if (!attackKeysList.Contains(animation.CurrentKey))
+    //     {
+    //         animation.Enable(animKeys[attackKey]);
+    //         yield return null;
+    //     }
+    //
+    //     while (attackKeysList.Contains(animation.CurrentKey))
+    //     {
+    //         if (canChangeAttackAnimation) RandomizeAttacks(attackKey, heavyAttackKey, specialAttackKey);
+    //         yield return null;
+    //     }
+    //
+    //     attack = null;
+    // }
+    //
+    // private void RandomizeAttacks(string attackKey, string heavyAttackKey, string specialAttackKey)
+    // {
+    //     if (animation.CurrentKey == animKeys[attackKey].Value)
+    //     {
+    //         if (!string.IsNullOrEmpty(heavyAttackKey) && !string.IsNullOrEmpty(specialAttackKey))
+    //         {
+    //             var p = random.Next(0, 100);
+    //             if(p < data.SpecialAttackProbability) animation.Enable(animKeys[specialAttackKey]);
+    //             else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.Enable(animKeys[heavyAttackKey]);
+    //         }
+    //         else if (!string.IsNullOrEmpty(heavyAttackKey))
+    //         {
+    //             var p = random.Next(0, 100);
+    //             if (p < data.HeavyAttackProbability) animation.Enable(animKeys[heavyAttackKey]);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         animation.Enable(animKeys[attackKey]);
+    //     }
+    //             
+    //     canChangeAttackAnimation = false;
+    // }
 
     private IEnumerator MovingTowardsPlayer(float speed)
     {

@@ -13,12 +13,26 @@ namespace Enemies
     
         [field: SerializeField, Header("Attack stats"), Range(0, 50)] public int LightAttack { get; private set; } = 10;
         [field: SerializeField, Range(0, 50)] public int LightPoiseDecrement { get; private set; } = 10;
+        
         [field: SerializeField, Range(0, 50)] public int HeavyAttack { get; private set; } = 20;
-        [field: SerializeField, Range(0, 50)] public int HeavyPoiseDecrement { get; private set; } = 20;
         [field: SerializeField, Range(0, 50)] public int HeavyAttackProbability { get; private set; } = 20;
+        [field: SerializeField, Range(0, 50)] public int HeavyPoiseDecrement { get; private set; } = 20;
+
+        
+        [field: SerializeField, Range(0, 50)] public int SpecialAttack { get; private set; } = 20;
+        [field: SerializeField, Range(0, 50)] public int SpecialAttackProbability { get; private set; } = 20;
+        [field: SerializeField, Range(0, 50)] public int SpecialPoiseDecrement { get; private set; } = 20;
+        
+        
+        
         [field: SerializeField] public LayerMask DetectionMask { get; private set; }
 
-        [field: SerializeField, Header("Animations"), Space(10)] public string[] AnimationKeys { get; private set; }
+        [field: SerializeField, Header("Animations"), Space(10)]
+        public string AttackKey { get; private set; } = "attack";
+        [field: SerializeField] public string HeavyAttackKey { get; private set; } = "";
+        [field: SerializeField] public string SpecialAttackKey { get; private set; } = "";
+        
+        [field: SerializeField] public string[] AnimationKeys { get; private set; }
         [field: SerializeField] public AnimationClip[] AnimationClips {  get; private set; }
         [field: SerializeField] public RuntimeAnimatorController AnimatorController { get; private set; }
     }
