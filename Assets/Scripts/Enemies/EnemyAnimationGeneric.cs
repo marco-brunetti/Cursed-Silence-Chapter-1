@@ -14,8 +14,8 @@ namespace Enemies
         private float lookLerpTime;
         private float moveSpeed;
         private Vector3 lookPos;
-        private Coroutine lookAtPlayer;
-        private Coroutine moveTowards;
+        private Coroutine lookAtTarget;
+        private Coroutine moveTowardsTarget;
         private Animator animator;
         private Enemy enemy;
         private EnemyData data;
@@ -61,7 +61,7 @@ namespace Enemies
 
         public void BlockStop() => enemy.ReactStop();
 
-        public void WalkStarted(float walkSpeed) => moveSpeed = moveTowards == null ? walkSpeed : moveSpeed;
+        public void WalkStarted(float speed) => moveSpeed = moveTowardsTarget == null ? speed : moveSpeed;
 
         #endregion
 
@@ -69,16 +69,10 @@ namespace Enemies
         {
             if (lookTarget) LookAtTarget(lookTarget);
             else StopLooking();
-
-            if (moveTarget)
-            {
-                this.moveSpeed = moveSpeed;
-                MoveTowardsTarget(moveTarget, this.moveSpeed);
-            }
-            else
-            {
-                StopMoving(); 
-            }
+            
+            this.moveSpeed = moveSpeed;
+            if (moveTarget) MoveTowardsTarget(moveTarget, this.moveSpeed);
+            else StopMoving(); 
         
             animation.Enable(animKeys[animKey]);
         }
@@ -86,7 +80,7 @@ namespace Enemies
         private void MoveTowardsTarget(Transform targetTransform, float speed)
         {
             StopMoving();
-            moveTowards = StartCoroutine(MovingTowardsTarget(targetTransform, speed));
+            moveTowardsTarget = StartCoroutine(MovingTowardsTarget(targetTransform, speed));
         }
 
         private IEnumerator MovingTowardsTarget(Transform targetTransform, float speed)
@@ -101,10 +95,10 @@ namespace Enemies
 
         private void StopMoving()
         {
-            if (moveTowards != null)
+            if (moveTowardsTarget != null)
             {
-                StopCoroutine(moveTowards);
-                moveTowards = null;
+                StopCoroutine(moveTowardsTarget);
+                moveTowardsTarget = null;
                 moveSpeed = 0;
             }
         }
@@ -112,7 +106,7 @@ namespace Enemies
         private void LookAtTarget(Transform targetTransform, float duration = 50)
         {
             StopLooking();
-            lookAtPlayer = StartCoroutine(LookingAtTarget(targetTransform, duration));
+            lookAtTarget = StartCoroutine(LookingAtTarget(targetTransform, duration));
         }
 
         private IEnumerator LookingAtTarget(Transform targetTransform, float duration)
@@ -134,7 +128,7 @@ namespace Enemies
 
         private void StopLooking()
         {
-            if (lookAtPlayer != null) StopCoroutine(lookAtPlayer);
+            if (lookAtTarget != null) StopCoroutine(lookAtTarget);
         }
 
         //Get direction with correct vector length
