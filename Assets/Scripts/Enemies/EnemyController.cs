@@ -8,7 +8,7 @@ namespace Enemies
 {
     public class EnemyController : MonoBehaviour
     {
-        [SerializeField] private Detector attackZone;
+        /*[SerializeField] private Detector attackZone;
         [SerializeField] private Detector awareZone;
         [SerializeField] private CustomShapeDetector visualCone;
         [SerializeField] private new Collider collider;
@@ -218,6 +218,6 @@ namespace Enemies
         private void OnDisable()
         {
             StopPlayerTracking();
-        }
+        }*/
     }
 }

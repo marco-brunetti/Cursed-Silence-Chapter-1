@@ -37,9 +37,6 @@ namespace Enemies
             Detector.TagDetectedStart += OnDetectorStart;
             CustomShapeDetector.TagStaying += OnPlayerInsideVisualCone;
             ActivateZones(visualConeOnly);
-            attackZone.Init(new() { "player" }, DetectorShape.Sphere, attackZone.transform.localScale);
-            awareZone.Init(new() { "player" }, DetectorShape.Sphere, awareZone.transform.localScale);
-            this.visualCone.DetectTag("Player");
         }
 
         public void Stop()
@@ -59,6 +56,16 @@ namespace Enemies
             visualCone.gameObject.SetActive(visualConeOnly);
             attackZone.gameObject.SetActive(!visualConeOnly);
             awareZone.gameObject.SetActive(!visualConeOnly);
+
+            if (visualConeOnly)
+            {
+                visualCone.DetectTag("Player");
+            }
+            else
+            {
+                attackZone.Init(new() { "player" }, DetectorShape.Sphere, attackZone.transform.localScale);
+                awareZone.Init(new() { "player" }, DetectorShape.Sphere, awareZone.transform.localScale);
+            }
         }
 
 

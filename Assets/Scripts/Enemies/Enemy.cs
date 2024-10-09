@@ -12,7 +12,7 @@ namespace Enemies
         [SerializeField] private Detector attackZone;
         [SerializeField] private Detector awareZone;
         [SerializeField] private CustomShapeDetector visualCone;
-        [SerializeField] private new EnemyAnimationGeneric animation;
+        [SerializeField] private new EnemyAnimation animation;
 
         private bool canDie;
         private bool isVulnerable;
@@ -134,12 +134,14 @@ namespace Enemies
         
         protected virtual void React()
         {
-            throw new System.NotImplementedException();
+            isReacting = true;
+            animation.SetState(Data.ReactKey);
         }
         
         protected virtual void Block()
         {
-            throw new System.NotImplementedException();
+            isReacting = true;
+            animation.SetState(Data.BlockKey);
         }
 
         private IEnumerator AttackingPlayer()

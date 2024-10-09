@@ -37,9 +37,10 @@ public class AnimationManager
         }
     }
 
+    //Original state clip and bool should have the same name as the key string
     public void Enable(KeyValuePair<string, int> key, bool deactivateOtherKeys = true)
     {
-        if (animator.GetBool(key.Value) == true) return;
+        if (animator.GetBool(key.Value)) return;
         if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != key.Value) animator.SetBool(hash, false); });
         ChangeClip(key);
     }

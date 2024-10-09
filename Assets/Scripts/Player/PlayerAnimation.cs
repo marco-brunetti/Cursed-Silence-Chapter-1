@@ -28,7 +28,7 @@ public class PlayerAnimation : MonoBehaviour
             AnimBlock
         };
 
-        //animation = new(animationKeys, animator, data.AnimatorController, data.AnimationClips);
+        animation = new(animationKeys, animator, data.AnimatorController, data.AnimationClips);
     }
 
     public void Attack()

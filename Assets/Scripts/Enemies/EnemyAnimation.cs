@@ -1,63 +1,52 @@
-using SnowHorse.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using SnowHorse.Utils;
 using UnityEngine;
 
 namespace Enemies
 {
-    [RequireComponent(typeof(Animator))]
+    //Attach to the game object that has the animator if the animation events are needed
     public class EnemyAnimation : MonoBehaviour
     {
-        private bool canChangeAttackAnimation = true;
         private float reactMoveSpeed;
         private float lookLerpTime;
+        private float moveSpeed;
         private Vector3 lookPos;
-        private Coroutine lookAtPlayer;
-        private Coroutine moveTowards;
-        private Coroutine attack;
+        private Coroutine lookAtTarget;
+        private Coroutine moveTowardsTarget;
         private Animator animator;
-        private EnemyController controller;
+        private Enemy enemy;
         private EnemyData data;
-        private Transform player;
         private new AnimationManager animation;
-        private System.Random random;
-
-        private readonly KeyValuePair<string, int> AnimDieForward = new("death_forward", Animator.StringToHash("death_forward"));
-        private readonly KeyValuePair<string, int> AnimIdle = new("idle", Animator.StringToHash("idle"));
-        private readonly KeyValuePair<string, int> AnimAttack = new("attack", Animator.StringToHash("attack"));
-        private readonly KeyValuePair<string, int> AnimHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
-        private readonly KeyValuePair<string, int> AnimWalkForward = new("walk_forward", Animator.StringToHash("walk_forward"));
-        private readonly KeyValuePair<string, int> AnimReactFront = new("react_front", Animator.StringToHash("react_front"));
-        private readonly KeyValuePair<string, int> AnimBlock = new("block", Animator.StringToHash("block"));
-
-        [NonSerialized] public float WalkSpeed;
-
-        public void Init(EnemyController controller, EnemyData enemyData, Transform player)
+        private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
+        
+        public string CurrentKey => animation.CurrentKeyString;
+        public void Init(Enemy enemy, EnemyData enemyData)
         {
-            random = new System.Random(Guid.NewGuid().GetHashCode());
             animator = GetComponent<Animator>();
-            this.controller = controller;
+            this.enemy = enemy;
             data = enemyData;
-            this.player = player;
+            SetAnimationKeys(data);
+        }
 
-            KeyValuePair<string, int>[] animationKeys =
-            {
-                AnimDieForward,
-                AnimIdle,
-                AnimAttack,
-                AnimHeavyAttack,
-                AnimWalkForward,
-                AnimReactFront,
-                AnimBlock
-            };
+        private void SetAnimationKeys(EnemyData data)
+        {
+            var mandatoryKeys = new List<string> { data.IdleKey, data.MoveKey, data.AttackKey, data.DeathKey };
+            mandatoryKeys.ForEach(key => animKeys.Add(key, new KeyValuePair<string, int>(key, Animator.StringToHash(key))));
 
-            //animation = new(animationKeys, animator, animatorController: data.AnimatorController, data.AnimationClips);
+            var optionalKeys = new List<string> { data.HeavyAttackKey, data.SpecialAttackKey, data.ReactKey, data.BlockKey };
+            optionalKeys.Where(x=> !string.IsNullOrEmpty(x)).ToList().ForEach(x=> animKeys.Add(x, new KeyValuePair<string, int>(x, Animator.StringToHash(x))));
+            
+            Array.ForEach(data.AdditionalAnimKeys, x=> animKeys.Add(x, new KeyValuePair<string, int>(x,Animator.StringToHash(x))));
+            
+            animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, data.AnimationClips);
         }
 
         #region Animation Events
-        public void SetVulnerable(string flag) => controller.IsVulnerable(flag.ToLower() == "true");
-        public void ChangeNextAttackClip() => canChangeAttackAnimation = true;
+        public void SetVulnerable(string flag) => enemy.IsVulnerable(flag.ToLower() == "true");
+        public void ChangeNextAttackClip() => enemy.ChangeNextAttack(true);
 
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoveTimer()); }
         public void ReactStopMovement()
@@ -67,154 +56,86 @@ namespace Enemies
         public void ReactStop()
         {
             reactMoveSpeed = 0;
-            controller.ReactStop();
+            enemy.ReactStop();
         }
 
-        public void BlockStop() => controller.ReactStop();
+        public void BlockStop() => enemy.ReactStop();
 
-        public void WalkStarted(float walkSpeed)
-        {
-            if (animation.CurrentKey == AnimWalkForward.Value && moveTowards == null)
-            {
-                WalkSpeed = walkSpeed;
-                MoveTowardsPlayer(true, WalkSpeed);
-            }
-        }
+        public void WalkStarted(float speed) => moveSpeed = speed;
 
-        //public void HeavyAttack => //Apply heavy attack;
-        //public void Attack => //Apply attack;
         #endregion
 
-        public void Idle()
+        public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null, float moveSpeed = 0)
         {
-            animation.Enable(AnimIdle, deactivateOtherKeys: true);
-            LookAtPlayer(false);
-            MoveTowardsPlayer(false);
-        }
-
-        public void Die()
-        {
-            animation.Enable(AnimDieForward, deactivateOtherKeys: true);
-            LookAtPlayer(false);
-            MoveTowardsPlayer(false);
-        }
-
-        public void React()
-        {
-            animation.Enable(AnimReactFront, deactivateOtherKeys: true);
-            LookAtPlayer(false);
-            MoveTowardsPlayer(false);
-        }
-
-        public void Block()
-        {
-            animation.Enable(AnimBlock, deactivateOtherKeys: true);
-            LookAtPlayer(true);
-            MoveTowardsPlayer(false);
-        }
-
-        public void Attack()
-        {
-            attack ??= StartCoroutine(AttackingPlayer());
-
-            LookAtPlayer(true);
-            MoveTowardsPlayer(false);
-        }
-
-        public void SpecialAttack()
-        {
+            if (lookTarget) LookAtTarget(lookTarget);
+            else StopLooking();
             
+            this.moveSpeed = moveSpeed;
+            if (moveTarget) MoveTowardsTarget(moveTarget);
+            else StopMoving(); 
+        
+            animation.Enable(animKeys[animKey]);
         }
 
-        public void Walk()
+        private void MoveTowardsTarget(Transform targetTransform)
         {
-            animation.Enable(AnimWalkForward, deactivateOtherKeys: true);
-            LookAtPlayer(true, 50);
+            StopMoving();
+            moveTowardsTarget = StartCoroutine(MovingTowardsTarget(targetTransform));
         }
 
-        private void MoveTowardsPlayer(bool isMoving, float speed = 0)
-        {
-            if (moveTowards != null)
-            {
-                StopCoroutine(moveTowards);
-                moveTowards = null;
-            }
-            if (isMoving)
-            {
-                moveTowards = StartCoroutine(MovingTowardsPlayer(speed));
-            }
-        }
-
-        private IEnumerator AttackingPlayer()
-        {
-            if (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
-            {
-                animation.Enable(AnimAttack, deactivateOtherKeys: true);
-                yield return null;
-            }
-
-            while (animation.CurrentKey == AnimAttack.Value || animation.CurrentKey == AnimHeavyAttack.Value)
-            {
-                if (canChangeAttackAnimation)
-                {
-                    if (animation.CurrentKey == AnimAttack.Value)
-                    {
-                        if (random.Next(0, 100) < data.HeavyAttackProbability) animation.Enable(AnimHeavyAttack, deactivateOtherKeys: true);
-                    }
-                    else
-                    {
-                        animation.Enable(AnimAttack, deactivateOtherKeys: true);
-                    }
-                    
-                    canChangeAttackAnimation = false;
-                }
-
-                yield return null;
-            }
-
-            attack = null;
-        }
-
-        private IEnumerator MovingTowardsPlayer(float speed)
+        private IEnumerator MovingTowardsTarget(Transform targetTransform)
         {
             while (true)
             {
-                var targetPosition = new Vector3(player.position.x, controller.transform.position.y, player.position.z);
-                controller.transform.position = Vector3.MoveTowards(controller.transform.position, targetPosition, speed * Time.deltaTime);
+                var targetPosition = new Vector3(targetTransform.position.x, enemy.transform.position.y, targetTransform.position.z);
+                enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, targetPosition, moveSpeed * Time.deltaTime);
                 yield return null;
             }
         }
 
-        private void LookAtPlayer(bool isLooking, float duration = 50)
+        private void StopMoving()
         {
-            if (lookAtPlayer != null) StopCoroutine(lookAtPlayer);
-            if (isLooking) lookAtPlayer = StartCoroutine(LookingAtPlayer(duration));
+            if (moveTowardsTarget != null)
+            {
+                StopCoroutine(moveTowardsTarget);
+                moveTowardsTarget = null;
+                moveSpeed = 0;
+            }
         }
 
-        private IEnumerator LookingAtPlayer(float duration, float correctionAngle = 0)
+        private void LookAtTarget(Transform targetTransform, float duration = 50)
+        {
+            StopLooking();
+            lookAtTarget = StartCoroutine(LookingAtTarget(targetTransform, duration));
+        }
+
+        private IEnumerator LookingAtTarget(Transform targetTransform, float duration)
         {
             lookLerpTime = 0;
-            lookPos = controller.transform.position + controller.transform.forward;
+            lookPos = enemy.transform.position + enemy.transform.forward;
 
             while (true)
             {
-                var target = GetTargetDirOnYAxis(origin: controller.transform.position, target: player.position);
+                var target = GetTargetDirOnYAxis(origin: enemy.transform.position, target: targetTransform.position);
 
                 if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
                 else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
 
-                controller.transform.LookAt(GetTargetDirOnYAxis(origin: controller.transform.position, target: lookPos));
+                enemy.transform.LookAt(GetTargetDirOnYAxis(origin: enemy.transform.position, target: lookPos));
                 yield return null;
             }
+        }
+
+        private void StopLooking()
+        {
+            if (lookAtTarget != null) StopCoroutine(lookAtTarget);
         }
 
         //Get direction with correct vector length
         private Vector3 GetTargetDirOnYAxis(Vector3 origin, Vector3 target, bool debug = false, Color? color = null)
         {
             var finalPos = origin + (new Vector3(target.x, origin.y, target.z) - origin).normalized;
-
             if (debug && color != null) Debug.DrawLine(origin, finalPos, (Color)color);
-
             return finalPos;
         }
 
@@ -222,7 +143,7 @@ namespace Enemies
         {
             while (reactMoveSpeed > 0)
             {
-                controller.transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
+                enemy.transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
                 yield return null;
             }
         }

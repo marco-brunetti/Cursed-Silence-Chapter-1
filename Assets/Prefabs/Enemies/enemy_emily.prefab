@@ -648,7 +648,7 @@ GameObject:
   - component: {fileID: 1572807588287005271}
   - component: {fileID: 1654067300738085344}
   m_Layer: 2
-  m_Name: OuterPlayerDetector
+  m_Name: AwareZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6091,7 +6091,7 @@ GameObject:
   - component: {fileID: 7681168129923378609}
   - component: {fileID: 327899824026079892}
   m_Layer: 2
-  m_Name: VisualConeDetector
+  m_Name: VisualCone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6409,7 +6409,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3683561436850837521}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a7a317e5301d884c9429711a7d0797a, type: 3}
+  m_Script: {fileID: 11500000, guid: ccbff4b0f9524e0419d68f01354f30fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4206634655657807200
@@ -6454,7 +6454,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2857212413535442305}
   - component: {fileID: 3456246182837194075}
-  - component: {fileID: 8152720857693137428}
+  - component: {fileID: 8157727075883485053}
   m_Layer: 0
   m_Name: enemy_emily
   m_TagString: Untagged
@@ -6477,10 +6477,10 @@ Transform:
   m_Children:
   - {fileID: 844040708351282917}
   - {fileID: 1468691368306606465}
+  - {fileID: 1786778314097146271}
   - {fileID: 4059277292854182571}
   - {fileID: 1851306572075094468}
   - {fileID: 5014231153237378205}
-  - {fileID: 1786778314097146271}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 89.776, z: 0}
 --- !u!136 &3456246182837194075
@@ -6506,7 +6506,7 @@ CapsuleCollider:
   m_Height: 2.510499
   m_Direction: 1
   m_Center: {x: 0, y: 1.2291493, z: 0.06357193}
---- !u!114 &8152720857693137428
+--- !u!114 &8157727075883485053
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6515,23 +6515,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 4218518653637063232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 644293750ae4d724f97ac8a778b9e058, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cdeeaa044eae4747a353bf107de40d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collider: {fileID: 3456246182837194075}
   attackZone: {fileID: 5162494344755006637}
   awareZone: {fileID: 1654067300738085344}
   visualCone: {fileID: 327899824026079892}
-  collider: {fileID: 3456246182837194075}
   animation: {fileID: 5473916689290141561}
+  <Data>k__BackingField: {fileID: 11400000, guid: 11f06388ff5daae4e9c3a6cfb4ae755e, type: 2}
   renderers:
   - {fileID: 6779283700528413950}
   - {fileID: 7166730298423265265}
   - {fileID: 300572003101741961}
   - {fileID: 3703731412557975778}
+  particleRenderers:
   - {fileID: 1980848608484121606}
   - {fileID: 5134892279779244177}
-  particleRenderers: []
-  <EnemyData>k__BackingField: {fileID: 11400000, guid: 11f06388ff5daae4e9c3a6cfb4ae755e, type: 2}
 --- !u!1 &4449811750522857222
 GameObject:
   m_ObjectHideFlags: 0
@@ -6822,7 +6822,7 @@ GameObject:
   - component: {fileID: 1879518658432881783}
   - component: {fileID: 5162494344755006637}
   m_Layer: 2
-  m_Name: InnerPlayerDetector
+  m_Name: AttackZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -91,7 +91,7 @@ namespace Player
                 //Debug = true
             };
 
-            var enemy = Raycaster.Find<EnemyController>(rayData)?.HitObject;
+            var enemy = Raycaster.Find<Enemy>(rayData)?.HitObject;
 
             if (enemy)
             {
