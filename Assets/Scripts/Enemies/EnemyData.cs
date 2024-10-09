@@ -33,6 +33,8 @@ namespace Enemies
         [field: SerializeField] public string AttackKey { get; private set; } = "attack";
         [field: SerializeField] public string HeavyAttackKey { get; private set; } = "";
         [field: SerializeField] public string SpecialAttackKey { get; private set; } = "";
+        [field: SerializeField] public string ReactKey { get; private set; } = "";
+        [field: SerializeField] public string BlockKey { get; private set; } = "";
         [field: SerializeField] public string DeathKey { get; private set; } = "die";
         
         

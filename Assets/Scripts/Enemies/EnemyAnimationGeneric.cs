@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace Enemies
         private Enemy enemy;
         private EnemyData data;
         private new AnimationManager animation;
-        private Dictionary<string, KeyValuePair<string,int>> animKeys = new();
+        private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         
         public string CurrentKey => animation.CurrentKeyString;
         public void Init(Enemy enemy, EnemyData enemyData)
@@ -32,7 +31,7 @@ namespace Enemies
             animation = new(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, data.AnimationClips);
         }
 
-        public void SetAnimationKeys(string[] keys)
+        private void SetAnimationKeys(string[] keys)
         {
             foreach (var key in keys)
             {

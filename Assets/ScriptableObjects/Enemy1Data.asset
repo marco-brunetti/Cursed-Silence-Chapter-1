@@ -18,11 +18,22 @@ MonoBehaviour:
   <LightAttack>k__BackingField: 10
   <LightPoiseDecrement>k__BackingField: 5
   <HeavyAttack>k__BackingField: 20
-  <HeavyPoiseDecrement>k__BackingField: 10
   <HeavyAttackProbability>k__BackingField: 20
+  <HeavyPoiseDecrement>k__BackingField: 10
+  <SpecialAttack>k__BackingField: 20
+  <SpecialAttackProbability>k__BackingField: 20
+  <SpecialPoiseDecrement>k__BackingField: 20
   <DetectionMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 1019
+  <IdleKey>k__BackingField: idle
+  <WalkKey>k__BackingField: walk
+  <AttackKey>k__BackingField: attack
+  <HeavyAttackKey>k__BackingField: heavy_attack
+  <SpecialAttackKey>k__BackingField: special_attack
+  <ReactKey>k__BackingField: react
+  <BlockKey>k__BackingField: block
+  <DeathKey>k__BackingField: die
   <AnimationKeys>k__BackingField:
   - death_forward
   - idle
