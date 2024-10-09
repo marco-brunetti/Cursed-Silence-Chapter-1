@@ -11,6 +11,7 @@ namespace Enemies
     {
         private float reactMoveSpeed;
         private float lookLerpTime;
+        private float moveSpeed;
         private Vector3 lookPos;
         private Coroutine lookAtPlayer;
         private Coroutine moveTowards;
@@ -19,8 +20,7 @@ namespace Enemies
         private EnemyData data;
         private new AnimationManager animation;
         private Dictionary<string, KeyValuePair<string,int>> animKeys = new();
-
-        [NonSerialized] public float WalkSpeed;
+        
         public string CurrentKey => animation.CurrentKeyString;
         public void Init(Enemy enemy, EnemyData enemyData)
         {
@@ -57,7 +57,7 @@ namespace Enemies
 
         public void BlockStop() => enemy.ReactStop();
 
-        public void WalkStarted(float walkSpeed) => WalkSpeed = moveTowards == null ? walkSpeed : WalkSpeed;
+        public void WalkStarted(float walkSpeed) => moveSpeed = moveTowards == null ? walkSpeed : moveSpeed;
 
         #endregion
 
@@ -68,8 +68,8 @@ namespace Enemies
 
             if (moveTarget)
             {
-                if(animKey.Contains("walk")) MoveTowardsTarget(moveTarget, WalkSpeed);
-                else MoveTowardsTarget(moveTarget, moveSpeed);
+                this.moveSpeed = moveSpeed;
+                MoveTowardsTarget(moveTarget, this.moveSpeed);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace Enemies
             {
                 StopCoroutine(moveTowards);
                 moveTowards = null;
-                if (CurrentKey.Contains("walk")) WalkSpeed = 0;
+                moveSpeed = 0;
             }
         }
 
