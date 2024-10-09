@@ -33,7 +33,7 @@ namespace Enemies
         {
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
-            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
+            //playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
         }
 
         private void Start()
@@ -219,18 +219,5 @@ namespace Enemies
         {
             StopPlayerTracking();
         }
-    }
-
-    public enum EnemyState
-    {
-        Idle,
-        Walk,
-        Attack,
-        SpecialAttack,
-        React,
-        Escape,
-        Block,
-        Wander,
-        Dead
     }
 }

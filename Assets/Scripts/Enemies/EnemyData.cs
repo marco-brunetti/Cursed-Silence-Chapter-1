@@ -28,9 +28,13 @@ namespace Enemies
         [field: SerializeField] public LayerMask DetectionMask { get; private set; }
 
         [field: SerializeField, Header("Animations"), Space(10)]
-        public string AttackKey { get; private set; } = "attack";
+        public string IdleKey { get; private set; } = "idle";
+        [field: SerializeField] public string WalkKey { get; private set; } = "walk";
+        [field: SerializeField] public string AttackKey { get; private set; } = "attack";
         [field: SerializeField] public string HeavyAttackKey { get; private set; } = "";
         [field: SerializeField] public string SpecialAttackKey { get; private set; } = "";
+        [field: SerializeField] public string DeathKey { get; private set; } = "die";
+        
         
         [field: SerializeField] public string[] AnimationKeys { get; private set; }
         [field: SerializeField] public AnimationClip[] AnimationClips {  get; private set; }

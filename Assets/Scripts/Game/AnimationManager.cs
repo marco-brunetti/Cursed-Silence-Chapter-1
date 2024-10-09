@@ -28,7 +28,7 @@ public class AnimationManager
             //The animation already in the controller must be equals the key
             if (!Array.Exists(originalControllerClips, x => x.name == animKey.Key))
             {
-                Debug.Log($"Warning: Animator controller does not contain state: {animKey.Key.ToUpper()}");
+                Debug.LogError($"Warning: Animator controller does not contain state: {animKey.Key.ToUpper()}");
                 continue;
             }
 
@@ -45,20 +45,11 @@ public class AnimationManager
         ChangeClip(key);
     }
 
-    // public void Disable(KeyValuePair<string, int> key)
-    // {
-    //     if (animator.GetBool(key.Value) == true)
-    //     {
-    //         animator.SetBool(key.Value, false);
-    //         CurrentKey = 0;
-    //     }
-    // }
-
     private void ChangeClip(KeyValuePair<string, int> animKey)
     {
         if (!dict.ContainsKey(animKey.Value))
         {
-            Debug.Log($"Animation key {animKey.Key.ToUpper()} not found. Check if the animator contains a state with {animKey.Key.ToUpper()} clip.");
+            Debug.LogError($"Animation key {animKey.Key.ToUpper()} not found. Check if the animator contains a state with {animKey.Key.ToUpper()} clip.");
             return;
         }
 

@@ -4,6 +4,7 @@ namespace SnowHorse.Utils
 {
     public static class Raycaster
     {
+        //Makes the raycast result independent of any component or class
         public static RaycastResult<T> FindWithTag<T>(RaycastData data)
         {
             var result = Find<GameObject>(data);
@@ -14,9 +15,8 @@ namespace SnowHorse.Utils
         public static RaycastResult<T> Find<T>(RaycastData data)
         {
             data.Ray ??= new Ray(origin: data.Origin, direction: data.Direction);
-            RaycastResult<GameObject> result;
 
-            result = data.CastType switch
+            var result = data.CastType switch
             {
                 CastType.Cast3D => Cast3D(data),
                 CastType.Cast2D => Cast2D(data),
