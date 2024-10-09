@@ -52,7 +52,7 @@ namespace Enemies
                 AnimBlock
             };
 
-            animation = new(animationKeys, animator, animatorController: data.AnimatorController, data.AnimationClips);
+            //animation = new(animationKeys, animator, animatorController: data.AnimatorController, data.AnimationClips);
         }
 
         #region Animation Events

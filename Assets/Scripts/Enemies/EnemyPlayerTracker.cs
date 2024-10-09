@@ -17,12 +17,12 @@ namespace Enemies
         private Detector attackZone;
         private Detector awareZone;
         private CustomShapeDetector visualCone;
-        private readonly EnemyController controller;
+        private readonly Enemy enemy;
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public EnemyPlayerTracker(EnemyController controller, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone)
+        public EnemyPlayerTracker(Enemy enemy, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone)
         {
-            this.controller = controller;
+            this.enemy = enemy;
             this.attackZone = attackZone;
             this.awareZone = awareZone;
             this.visualCone = visualCone;
@@ -111,9 +111,9 @@ namespace Enemies
                 var tagData = new RaycastData
                 {
                     FindTag = "Player",
-                    Origin = controller.transform.position,
-                    Direction = PlayerController.Instance.Camera.transform.position - controller.transform.position,
-                    LayerMask = controller.EnemyData.DetectionMask,
+                    Origin = enemy.transform.position,
+                    Direction = PlayerController.Instance.Camera.transform.position - enemy.transform.position,
+                    LayerMask = enemy.Data.DetectionMask,
                     //Debug = true
                 };
 

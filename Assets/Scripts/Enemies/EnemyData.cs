@@ -18,7 +18,8 @@ namespace Enemies
         [field: SerializeField, Range(0, 50)] public int HeavyAttackProbability { get; private set; } = 20;
         [field: SerializeField] public LayerMask DetectionMask { get; private set; }
 
-        [field: SerializeField, Header("Animations"), Space(10)] public AnimationClip[] AnimationClips {  get; private set; }
+        [field: SerializeField, Header("Animations"), Space(10)] public string[] AnimationKeys { get; private set; }
+        [field: SerializeField] public AnimationClip[] AnimationClips {  get; private set; }
         [field: SerializeField] public RuntimeAnimatorController AnimatorController { get; private set; }
     }
 }
