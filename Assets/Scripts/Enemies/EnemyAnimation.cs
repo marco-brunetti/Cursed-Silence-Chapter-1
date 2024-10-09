@@ -87,28 +87,28 @@ namespace Enemies
 
         public void Idle()
         {
-            animation.EnableKey(AnimIdle, deactivateOtherKeys: true);
+            animation.Enable(AnimIdle, deactivateOtherKeys: true);
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
 
         public void Die()
         {
-            animation.EnableKey(AnimDieForward, deactivateOtherKeys: true);
+            animation.Enable(AnimDieForward, deactivateOtherKeys: true);
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
 
         public void React()
         {
-            animation.EnableKey(AnimReactFront, deactivateOtherKeys: true);
+            animation.Enable(AnimReactFront, deactivateOtherKeys: true);
             LookAtPlayer(false);
             MoveTowardsPlayer(false);
         }
 
         public void Block()
         {
-            animation.EnableKey(AnimBlock, deactivateOtherKeys: true);
+            animation.Enable(AnimBlock, deactivateOtherKeys: true);
             LookAtPlayer(true);
             MoveTowardsPlayer(false);
         }
@@ -128,7 +128,7 @@ namespace Enemies
 
         public void Walk()
         {
-            animation.EnableKey(AnimWalkForward, deactivateOtherKeys: true);
+            animation.Enable(AnimWalkForward, deactivateOtherKeys: true);
             LookAtPlayer(true, 50);
         }
 
@@ -149,7 +149,7 @@ namespace Enemies
         {
             if (animation.CurrentKey != AnimAttack.Value && animation.CurrentKey != AnimHeavyAttack.Value)
             {
-                animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                animation.Enable(AnimAttack, deactivateOtherKeys: true);
                 yield return null;
             }
 
@@ -159,11 +159,11 @@ namespace Enemies
                 {
                     if (animation.CurrentKey == AnimAttack.Value)
                     {
-                        if (random.Next(0, 100) < data.HeavyAttackProbability) animation.EnableKey(AnimHeavyAttack, deactivateOtherKeys: true);
+                        if (random.Next(0, 100) < data.HeavyAttackProbability) animation.Enable(AnimHeavyAttack, deactivateOtherKeys: true);
                     }
                     else
                     {
-                        animation.EnableKey(AnimAttack, deactivateOtherKeys: true);
+                        animation.Enable(AnimAttack, deactivateOtherKeys: true);
                     }
                     
                     canChangeAttackAnimation = false;

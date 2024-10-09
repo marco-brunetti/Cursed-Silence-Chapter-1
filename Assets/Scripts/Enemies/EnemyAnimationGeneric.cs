@@ -76,35 +76,35 @@ public class EnemyAnimationGeneric : MonoBehaviour
     //public void Attack => //Apply attack;
     #endregion
 
-    public void Idle(string key = "idle")
+    public void Idle(string key = "idle", bool lookAtPlayer = false)
     {
-        animation.EnableKey(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key], deactivateOtherKeys: true);
         LookAtPlayer(false);
         MoveTowardsPlayer(false);
     }
 
-    public void Die(string key = "die")
+    public void Die(string key = "die", bool lookAtPlayer = false)
     {
-        animation.EnableKey(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key], deactivateOtherKeys: true);
         LookAtPlayer(false);
         MoveTowardsPlayer(false);
     }
 
-    public void React(string key = "react")
+    public void React(string key = "react", bool lookAtPlayer = false)
     {
-        animation.EnableKey(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key], deactivateOtherKeys: true);
         LookAtPlayer(false);
         MoveTowardsPlayer(false);
     }
 
-    public void Block(string key = "block")
+    public void Block(string key = "block", bool lookAtPlayer = false)
     {
-        animation.EnableKey(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key], deactivateOtherKeys: true);
         LookAtPlayer(true);
         MoveTowardsPlayer(false);
     }
 
-    public void Attack()
+    public void Attack(string key = "attack", bool lookAtPlayer = false)
     {
         attack ??= StartCoroutine(AttackingPlayer());
 
@@ -112,14 +112,14 @@ public class EnemyAnimationGeneric : MonoBehaviour
         MoveTowardsPlayer(false);
     }
 
-    public void SpecialAttack()
+    public void SpecialAttack(string key = "special_attack", bool lookAtPlayer = false)
     {
 
     }
 
-    public void Walk(string key = "walk")
+    public void Walk(string key = "walk", bool lookAtPlayer = false)
     {
-        animation.EnableKey(animKeys[key], deactivateOtherKeys: true);
+        animation.Enable(animKeys[key], deactivateOtherKeys: true);
         LookAtPlayer(true, 50);
     }
 

@@ -37,23 +37,23 @@ public class AnimationManager
         }
     }
 
-    public void EnableKey(KeyValuePair<string, int> animKey, bool deactivateOtherKeys = false)
+    public void Enable(KeyValuePair<string, int> key, bool deactivateOtherKeys = false)
     {
-        if (animator.GetBool(animKey.Value) == true) return;
-        if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != animKey.Value) animator.SetBool(hash, false); });
-        ChangeClip(animKey);
+        if (animator.GetBool(key.Value) == true) return;
+        if (deactivateOtherKeys) dict.Keys.ToList().ForEach(hash => { if (hash != key.Value) animator.SetBool(hash, false); });
+        ChangeClip(key);
     }
 
-    public void DisableKey(KeyValuePair<string, int> animKey)
+    public void Disable(KeyValuePair<string, int> key)
     {
-        if (animator.GetBool(animKey.Value) == true)
+        if (animator.GetBool(key.Value) == true)
         {
-            animator.SetBool(animKey.Value, false);
+            animator.SetBool(key.Value, false);
             CurrentKey = 0;
         }
     }
 
-    public void ChangeClip(KeyValuePair<string, int> animKey)
+    private void ChangeClip(KeyValuePair<string, int> animKey)
     {
         if (!dict.ContainsKey(animKey.Value))
         {
