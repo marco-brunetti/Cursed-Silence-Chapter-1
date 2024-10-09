@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 namespace Enemies
 {
     public class EnemyController : MonoBehaviour
-    { 
+    {
         [SerializeField] private Detector attackZone;
         [SerializeField] private Detector awareZone;
         [SerializeField] private CustomShapeDetector visualCone;
@@ -33,21 +33,21 @@ namespace Enemies
         {
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
-            StartPlayerTracking();
+            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
         }
 
         private void Start()
         {
             player = PlayerController.Instance.Player.transform;
             AnimationInit();
-            
+            StartPlayerTracking();
             stats = new EnemyStats(EnemyData);
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void DealDamage(int damageAmount, int poiseDecrement)
         {
-            if (currentState == EnemyState.Idle) playerTracker.ActivateDetectors();
+            if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
 
             var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
 
@@ -111,7 +111,7 @@ namespace Enemies
 
         private void SpecialAttack()
         {
-            playerTracker.DeactivateDetectors();
+            playerTracker.Stop();
             animation.SpecialAttack();
         }
 
@@ -178,7 +178,7 @@ namespace Enemies
                 }
                 else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle)
                 {
-                    playerTracker.ActivateVisualCone();
+                    playerTracker.Start(visualConeOnly: true);
                     ChangeState(EnemyState.Idle);
                 }
 
@@ -204,15 +204,15 @@ namespace Enemies
 
         private void StartPlayerTracking()
         {
-            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
+            playerTracker.Start(visualConeOnly: true);
         }
 
 
         private void StopPlayerTracking()
         {
             EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
-            playerTracker.Dispose();
+            playerTracker.Stop();
         }
 
         private void OnDisable()

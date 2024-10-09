@@ -11,8 +11,8 @@ namespace Enemies
         public bool InAwareZone { get; private set; }
         public bool OutsideZone { get; private set; }
 
-        private bool isPlayerInAttackZone;
-        private bool isPlayerInAwareZone;
+        private bool inAttackZone;
+        private bool inAwareZone;
         private float visualConeCheckCounter;
         private Detector attackZone;
         private Detector awareZone;
@@ -26,86 +26,87 @@ namespace Enemies
             this.attackZone = attackZone;
             this.awareZone = awareZone;
             this.visualCone = visualCone;
+        }
+
+        public void Start(bool visualConeOnly = false)
+        {
+            Stop();
+
             Detector.TagEntered += OnPlayerEnteredDetector;
             Detector.TagExited += OnPlayerExitedDetector;
             Detector.TagDetectedStart += OnDetectorStart;
-            CustomShapeDetector.TagStaying += OnPlayerStayingInDetector;
-            this.attackZone.gameObject.SetActive(false);
-            this.awareZone.gameObject.SetActive(false);
-            this.visualCone.gameObject.SetActive(true);
+            CustomShapeDetector.TagStaying += OnPlayerInsideVisualCone;
+            ActivateZones(visualConeOnly);
+            attackZone.Init(new() { "player" }, DetectorShape.Sphere, attackZone.transform.localScale);
+            awareZone.Init(new() { "player" }, DetectorShape.Sphere, awareZone.transform.localScale);
             this.visualCone.DetectTag("Player");
         }
 
-        public void ActivateDetectors()
+        public void Stop()
         {
-            visualCone.gameObject.SetActive(false);
-            attackZone.gameObject.SetActive(true);
-            awareZone.gameObject.SetActive(true);
-            attackZone.Init(new() {"player"}, DetectorShape.Sphere, attackZone.transform.localScale);
-            awareZone.Init(new (){"player"}, DetectorShape.Sphere, awareZone.transform.localScale);
-        }
-
-        public void DeactivateDetectors()
-        {
+            Detector.TagEntered -= OnPlayerEnteredDetector;
+            Detector.TagExited -= OnPlayerExitedDetector;
+            Detector.TagDetectedStart -= OnDetectorStart;
+            CustomShapeDetector.TagStaying -= OnPlayerInsideVisualCone;
             visualCone.gameObject.SetActive(false);
             attackZone.gameObject.SetActive(false);
             awareZone.gameObject.SetActive(false);
         }
 
-        public void ActivateVisualCone()
+
+        private void ActivateZones(bool visualConeOnly = false)
         {
-            visualCone.gameObject.SetActive(true);
-            attackZone.gameObject.SetActive(false);
-            awareZone.gameObject.SetActive(false);
+            visualCone.gameObject.SetActive(visualConeOnly);
+            attackZone.gameObject.SetActive(!visualConeOnly);
+            awareZone.gameObject.SetActive(!visualConeOnly);
         }
-        
-        private void CheckConditions(bool isPlayerInAttackZone, bool isPlayerInAwareZone)
+
+
+
+        private void CheckConditions(bool attackZoneDetected, bool awareZoneDetected)
         {
-            if(isPlayerInAttackZone) Detector.TagDetectedStart -= OnPlayerStayingInDetector;
-            
-            if(isPlayerInAttackZone != this.isPlayerInAttackZone || isPlayerInAwareZone != this.isPlayerInAwareZone)
+            if (attackZoneDetected != inAttackZone || awareZoneDetected != inAwareZone)
             {
-                InAttackZone = isPlayerInAttackZone;
-                InAwareZone = isPlayerInAwareZone && !isPlayerInAttackZone;
-                OutsideZone = !isPlayerInAttackZone && !isPlayerInAwareZone;
+                InAttackZone = attackZoneDetected;
+                InAwareZone = awareZoneDetected && !attackZoneDetected;
+                OutsideZone = !attackZoneDetected && !awareZoneDetected;
 
                 PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(InAttackZone, InAwareZone, OutsideZone));
             }
 
-            this.isPlayerInAttackZone = isPlayerInAttackZone;
-            this.isPlayerInAwareZone = isPlayerInAwareZone;
+            inAttackZone = attackZoneDetected;
+            inAwareZone = awareZoneDetected;
         }
 
         private void OnPlayerEnteredDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-            if(triggeredDetector == attackZone) CheckConditions(isPlayerInAttackZone: true, isPlayerInAwareZone);
-            else if (triggeredDetector == awareZone) CheckConditions(isPlayerInAttackZone, isPlayerInAwareZone: true);
+            if (triggeredDetector == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
+            else if (triggeredDetector == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
         }
 
         private void OnDetectorStart(object sender, DetectorEventArgs args)
         {
-            var triggeredDetector = (Detector)sender;
-            if(triggeredDetector == attackZone) CheckConditions(isPlayerInAttackZone: true, isPlayerInAwareZone);
+            if ((Detector)sender == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
         }
 
-        private void OnPlayerStayingInDetector(object sender, EventArgs e)
+        private void OnPlayerInsideVisualCone(object sender, EventArgs e)
         {
-            if((CustomShapeDetector)sender == visualCone) CheckIfInVisualField();
+            if ((CustomShapeDetector)sender == visualCone) CheckIfInVisualField();
         }
 
         private void OnPlayerExitedDetector(object sender, EventArgs e)
         {
             var triggeredDetector = (Detector)sender;
-            if (triggeredDetector == attackZone) CheckConditions(isPlayerInAttackZone: false, isPlayerInAwareZone);
-            else if (triggeredDetector == awareZone) CheckConditions(isPlayerInAttackZone, isPlayerInAwareZone: false);
+            if (triggeredDetector == attackZone) CheckConditions(attackZoneDetected: false, inAwareZone);
+            else if (triggeredDetector == awareZone) CheckConditions(inAttackZone, awareZoneDetected: false);
         }
 
         private void CheckIfInVisualField()
         {
             visualConeCheckCounter -= Time.deltaTime;
 
-            if(visualConeCheckCounter <= 0)
+            if (visualConeCheckCounter <= 0)
             {
                 var tagData = new RaycastData
                 {
@@ -119,20 +120,18 @@ namespace Enemies
                 visualConeCheckCounter = 0.1f;
                 if (Raycaster.FindWithTag<GameObject>(tagData) == null) return;
 
-                ActivateDetectors();
+                ActivateZones(visualConeOnly: false);
 
                 PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(playerEnteredVisualCone: true));
             }
         }
-        
+
         public void Dispose()
         {
+            Stop();
             attackZone = null;
             awareZone = null;
             visualCone = null;
-            Detector.TagEntered -= OnPlayerEnteredDetector;
-            Detector.TagExited -= OnPlayerExitedDetector;
-            Detector.TagDetectedStart -= OnPlayerStayingInDetector;
         }
     }
 
