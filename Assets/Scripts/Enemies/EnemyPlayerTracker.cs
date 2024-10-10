@@ -45,7 +45,7 @@ namespace Enemies
             Detector.TagExited -= OnPlayerExitedDetector;
             Detector.TagDetectedStart -= OnDetectorStart;
             CustomShapeDetector.TagStaying -= OnPlayerInsideVisualCone;
-            visualCone.gameObject.SetActive(false);
+            if(visualCone) visualCone.gameObject.SetActive(false);
             attackZone.gameObject.SetActive(false);
             awareZone.gameObject.SetActive(false);
             inAttackZone = false;
@@ -56,11 +56,11 @@ namespace Enemies
 
         private void ActivateZones(bool visualConeOnly = false)
         {
-            visualCone.gameObject.SetActive(visualConeOnly);
-            attackZone.gameObject.SetActive(!visualConeOnly);
-            awareZone.gameObject.SetActive(!visualConeOnly);
+            if (visualCone) visualCone.gameObject.SetActive(visualConeOnly);
+            attackZone.gameObject.SetActive(!visualConeOnly || !visualCone);
+            awareZone.gameObject.SetActive(!visualConeOnly || !visualCone);
 
-            if (visualConeOnly)
+            if (visualConeOnly && visualCone)
             {
                 visualCone.DetectTag("Player");
             }

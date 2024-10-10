@@ -8,24 +8,24 @@ namespace Enemies
 {
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private new Collider collider;
-        [SerializeField] private Detector attackZone;
-        [SerializeField] private Detector awareZone;
-        [SerializeField] private CustomShapeDetector visualCone;
-        [SerializeField] private new EnemyAnimation animation;
+        [SerializeField] protected new Collider collider;
+        [SerializeField] protected Detector attackZone;
+        [SerializeField] protected Detector awareZone;
+        [SerializeField] protected CustomShapeDetector visualCone;
+        [SerializeField] protected new EnemyAnimation animation;
 
-        private bool canDie;
-        private bool isVulnerable;
-        private bool isReacting;
-        private bool hasHeavyAttack;
-        private bool hasSpecialAttack;
-        private bool changeNextAttack;
-        private Transform player;
-        private EnemyState currentState;
-        private System.Random random;
-        private EnemyStats stats;
-        private EnemyPlayerTracker playerTracker;
-        private Coroutine attack;
+        protected bool canDie;
+        protected bool isVulnerable;
+        protected bool isReacting;
+        protected bool hasHeavyAttack;
+        protected bool hasSpecialAttack;
+        protected bool changeNextAttack;
+        protected Transform player;
+        protected EnemyState currentState;
+        protected System.Random random;
+        protected EnemyStats stats;
+        protected EnemyPlayerTracker playerTracker;
+        protected Coroutine attack;
 
         [field: SerializeField] public EnemyData Data { get; private set; }
         public void IsVulnerable(bool enable) => isVulnerable = enable;
