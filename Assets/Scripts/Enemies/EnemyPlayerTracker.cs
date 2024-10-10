@@ -124,7 +124,7 @@ namespace Enemies
                     Origin = enemy.transform.position,
                     Direction = PlayerController.Instance.Camera.transform.position - enemy.transform.position,
                     LayerMask = enemy.Data.DetectionMask,
-                    //Debug = true
+                    Debug = true
                 };
 
                 visualConeCheckCounter = 0.1f;
