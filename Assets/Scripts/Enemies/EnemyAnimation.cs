@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SnowHorse.Utils;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Enemies
 {
@@ -45,28 +43,18 @@ namespace Enemies
                 if(x == null) animList.Remove(x);
                 else animKeys.Add(x.name, new KeyValuePair<string, int>(x.name, Animator.StringToHash(x.name)));
             }
-
             animList.AddRange(data.AlternativeClips.Where(x=> x != null));
-            
             animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, animList.ToArray());
         }
 
         #region Animation Events
         public void SetVulnerable(string flag) => enemy.IsVulnerable(flag.ToLower() == "true");
         public void ChangeNextAttackClip() => enemy.ChangeNextAttack(true);
-
         public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoving()); }
         public void ReactStopMovement() => reactMoveSpeed = 0;
-        public void ReactStop()
-        {
-            reactMoveSpeed = 0;
-            enemy.ReactStop();
-        }
-
+        public void ReactStop() { reactMoveSpeed = 0; enemy.ReactStop(); }
         public void BlockStop() => enemy.ReactStop();
-
         public void WalkStarted(float speed) => moveSpeed = speed;
-
         #endregion
 
         public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null, float moveSpeed = 0)
