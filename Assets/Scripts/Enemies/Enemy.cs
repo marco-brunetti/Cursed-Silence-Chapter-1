@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Player;
 
@@ -13,9 +14,10 @@ namespace Enemies
         [SerializeField] protected Detector awareZone;
         [SerializeField] protected CustomShapeDetector visualCone;
         [SerializeField] protected new EnemyAnimation animation;
+        [SerializeField] private List<Renderer> renderers;
 
-        protected bool canDie;
-        protected bool isVulnerable;
+        protected bool canDie = true;
+        protected bool isVulnerable = true;
         protected bool isReacting;
         protected bool hasHeavyAttack;
         protected bool hasSpecialAttack;
@@ -119,6 +121,7 @@ namespace Enemies
         {
             StopPlayerTracking();
             collider.enabled = false;
+            StartCoroutine(EnemyDisappear());
             animation.SetState(Data.DeathAnim.name);
         }
 
@@ -231,6 +234,32 @@ namespace Enemies
         {
             isReacting = false;
             StartPlayerTracking(visualConeOnly: false);
+        }
+        
+        //Set materials to fade or transparent
+        private IEnumerator EnemyDisappear()
+        {
+            if (renderers.Count > 0)
+            {
+                while (renderers.Count > 0)
+                {
+                    foreach (var r in renderers.ToList())
+                    {
+                        var disappearSpeed = Data.OnDieDisappearSpeed;//r is ParticleSystemRenderer ? 0.1f : 0.01f;
+                        var c = r.material.color;
+                        var alpha = Mathf.Clamp(c.a - disappearSpeed * Time.deltaTime, 0, 1);
+                        r.material.color = new Color(c.r, c.g, c.b, alpha);
+                        if (alpha <= 0) renderers.Remove(r);
+                    }
+                    yield return null;
+                }
+            
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log($"No renderers to disappear in {gameObject.name}");
+            }
         }
     }
     

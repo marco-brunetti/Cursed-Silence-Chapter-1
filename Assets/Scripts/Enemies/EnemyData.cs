@@ -36,5 +36,6 @@ namespace Enemies
         [field: SerializeField] public AnimationClip[] AdditionalStateAnims { get; private set; }
         [field: SerializeField] public AnimationClip[] AlternativeClips {  get; private set; }
         [field: SerializeField] public RuntimeAnimatorController AnimatorController { get; private set; }
+        [field: SerializeField] public float OnDieDisappearSpeed { get; private set; } = 1;
     }
 }

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc88777887b93547afebfc12690e7e7, type: 3}
   m_Name: EnemySpiderData
   m_EditorClassIdentifier: 
-  <Health>k__BackingField: 100
-  <Poise>k__BackingField: 50
-  <LightAttackDamage>k__BackingField: 10
-  <HeavyAttackDamage>k__BackingField: 20
-  <SpecialAttackDamage>k__BackingField: 50
-  <LightAttackPoiseDecrement>k__BackingField: 10
-  <HeavyAttackPoiseDecrement>k__BackingField: 20
-  <SpecialAttackPoiseDecrement>k__BackingField: 20
-  <HeavyAttackProbability>k__BackingField: 20
-  <SpecialAttackProbability>k__BackingField: 5
-  <BlockProbability>k__BackingField: 20
+  <Health>k__BackingField: 10
+  <Poise>k__BackingField: 0
+  <LightAttackDamage>k__BackingField: 2
+  <HeavyAttackDamage>k__BackingField: 0
+  <SpecialAttackDamage>k__BackingField: 0
+  <LightAttackPoiseDecrement>k__BackingField: 2
+  <HeavyAttackPoiseDecrement>k__BackingField: 0
+  <SpecialAttackPoiseDecrement>k__BackingField: 0
+  <HeavyAttackProbability>k__BackingField: 0
+  <SpecialAttackProbability>k__BackingField: 0
+  <BlockProbability>k__BackingField: 0
   <DetectionMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 0
@@ -37,3 +37,4 @@ MonoBehaviour:
   <AdditionalStateAnims>k__BackingField: []
   <AlternativeClips>k__BackingField: []
   <AnimatorController>k__BackingField: {fileID: 9100000, guid: fe197d2a9886d3c488d90d84faf4275d, type: 2}
+  <OnDieDisappearSpeed>k__BackingField: 0.1
