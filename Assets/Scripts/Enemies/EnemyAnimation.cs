@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SnowHorse.Utils;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Enemies
 {
@@ -33,15 +34,21 @@ namespace Enemies
 
         private void SetAnimationKeys(EnemyData data)
         {
-            var mandatoryKeys = new List<string> { data.IdleKey, data.MoveKey, data.AttackKey, data.DeathKey };
-            mandatoryKeys.ForEach(key => animKeys.Add(key, new KeyValuePair<string, int>(key, Animator.StringToHash(key))));
+            var animList = new List<AnimationClip> { data.IdleAnim, data.MoveAnim, data.AttackAnim, data.DeathAnim, 
+                data.HeavyAttackAnim, data.SpecialAttackAnim, data.ReactAnim, data.BlockAnim };
+            
+            animList.AddRange(data.AdditionalStateAnims);
 
-            var optionalKeys = new List<string> { data.HeavyAttackKey, data.SpecialAttackKey, data.ReactKey, data.BlockKey };
-            optionalKeys.Where(x=> !string.IsNullOrEmpty(x)).ToList().ForEach(x=> animKeys.Add(x, new KeyValuePair<string, int>(x, Animator.StringToHash(x))));
+            //adding original anim names to dictionary before the alternative ones are processed
+            foreach (var x in animList.ToList())
+            {
+                if(x == null) animList.Remove(x);
+                else animKeys.Add(x.name, new KeyValuePair<string, int>(x.name, Animator.StringToHash(x.name)));
+            }
+
+            animList.AddRange(data.AlternativeClips.Where(x=> x != null));
             
-            Array.ForEach(data.AdditionalAnimKeys, x=> animKeys.Add(x, new KeyValuePair<string, int>(x,Animator.StringToHash(x))));
-            
-            animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, data.AnimationClips);
+            animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, animList.ToArray());
         }
 
         #region Animation Events

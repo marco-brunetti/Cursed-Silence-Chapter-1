@@ -34,8 +34,8 @@ namespace Enemies
 
         public virtual void Awake()
         {
-            hasHeavyAttack = !string.IsNullOrEmpty(Data.HeavyAttackKey);
-            hasSpecialAttack = !string.IsNullOrEmpty(Data.SpecialAttackKey);
+            hasHeavyAttack = Data.HeavyAttackAnim != null;
+            hasSpecialAttack = Data.SpecialAttackAnim != null;
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
             playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone);
@@ -112,14 +112,14 @@ namespace Enemies
 
         protected virtual void Idle()
         {
-            animation.SetState(Data.IdleKey);
+            animation.SetState(Data.IdleAnim.name);
         }
         
         protected virtual void Die()
         {
             StopPlayerTracking();
             collider.enabled = false;
-            animation.SetState(Data.DeathKey);
+            animation.SetState(Data.DeathAnim.name);
         }
 
         protected virtual void Attack()
@@ -129,31 +129,31 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(Data.MoveKey, lookTarget:player, moveTarget:player);
+            animation.SetState(Data.MoveAnim.name, lookTarget:player, moveTarget:player);
         }
         
         protected virtual void React()
         {
             isReacting = true;
             StopPlayerTracking();
-            animation.SetState(Data.ReactKey);
+            animation.SetState(Data.ReactAnim.name);
         }
         
         protected virtual void Block()
         {
             isReacting = true;
-            animation.SetState(Data.BlockKey);
+            animation.SetState(Data.BlockAnim.name);
         }
 
         private IEnumerator AttackingPlayer()
         {
-            var attackKeysList = new List<string> { Data.AttackKey };
-            if(hasHeavyAttack) attackKeysList.Add(Data.HeavyAttackKey);
-            if(hasSpecialAttack) attackKeysList.Add(Data.SpecialAttackKey);
+            var attackKeysList = new List<string> { Data.AttackAnim.name };
+            if(hasHeavyAttack) attackKeysList.Add(Data.HeavyAttackAnim.name);
+            if(hasSpecialAttack) attackKeysList.Add(Data.SpecialAttackAnim.name);
         
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
-                animation.SetState(Data.AttackKey, lookTarget: player);
+                animation.SetState(Data.AttackAnim.name, lookTarget: player);
                 yield return null;
             }
 
@@ -168,28 +168,28 @@ namespace Enemies
 
         private void SetRandomAttack()
         {
-            if (animation.CurrentKey == Data.AttackKey)
+            if (animation.CurrentKey == Data.AttackAnim.name)
             {
                 var p = 0;
                 if(hasHeavyAttack || hasSpecialAttack) p = random.Next(0, 100);
             
                 if (hasHeavyAttack && hasSpecialAttack)
                 {
-                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackKey, lookTarget: player);
-                    else if (p < Data.HeavyAttackProbability + Data.SpecialAttackProbability) animation.SetState(Data.HeavyAttackKey, lookTarget: player);
+                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, lookTarget: player);
+                    else if (p < Data.HeavyAttackProbability + Data.SpecialAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, lookTarget: player);
                 }
                 else if (hasHeavyAttack)
                 {
-                    if (p < Data.HeavyAttackProbability) animation.SetState(Data.HeavyAttackKey, lookTarget: player);
+                    if (p < Data.HeavyAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, lookTarget: player);
                 }
                 else if (hasSpecialAttack)
                 {
-                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackKey, lookTarget: player);
+                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, lookTarget: player);
                 }
             }
             else
             {
-                animation.SetState(Data.AttackKey, lookTarget: player);
+                animation.SetState(Data.AttackAnim.name, lookTarget: player);
             }
                 
             changeNextAttack = false;

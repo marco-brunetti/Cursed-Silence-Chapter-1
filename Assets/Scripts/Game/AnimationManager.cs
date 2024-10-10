@@ -32,7 +32,8 @@ public class AnimationManager
             }
 
             var nameFilter = animKey.Key.Length + 3; //Makes sure only this key is present and not another with the same word included
-            List<AnimationClip> animations = clips.Where(x => x.name.Contains(animKey.Key) && x.name.Length <= nameFilter).ToList();
+            List<AnimationClip> animations = clips.Where(x => x != null && x.name.Contains(animKey.Key) && x.name.Length <= nameFilter).ToList();
+            if(clips.Any(x=> x == null)) Debug.LogError($"Animation clip null. Check if all references in data and controller are set.");
             if (animations.Count > 0) dict.Add(animKey.Value, animations);
         }
     }
