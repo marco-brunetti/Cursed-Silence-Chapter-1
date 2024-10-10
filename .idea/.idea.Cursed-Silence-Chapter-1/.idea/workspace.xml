@@ -6,12 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="01059b12-fdf2-4f4d-a277-b2b0ff5ad29b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/emily-sick-controller.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Imported/Characters/emily-sick/emily-sick-controller.controller" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/spider/AnimationClips/walk.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Imported/Characters/spider/AnimationClips/walk.anim" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Imported/Characters/spider/spider_controller.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Imported/Characters/spider/spider_controller.controller" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_spider.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_spider.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Tests/Combat_Test.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Tests/Combat_Test.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemySpiderData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemySpiderData.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemyEmilyData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemyEmilyData.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemySpider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemySpider.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/GraphicsSettings.asset" afterDir="false" />
@@ -40,7 +43,10 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/6d/edbba6f9/Object.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/85/8e2aed4a/Component.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/af/c0745dbe/MonoBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d2f6ab0688c146a2bdd8f650dceb213ad400/69/fbab2666/NavMeshPath.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea01e77be99618395f448b16bd7cc2bd4248bd9e5d8474964b2d97f39c5d74/System.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyNavigation.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NavMeshTest.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -180,7 +186,7 @@
       <workItem from="1728308452972" duration="4159000" />
       <workItem from="1728477587267" duration="7789000" />
       <workItem from="1728485985814" duration="20153000" />
-      <workItem from="1728564300844" duration="8788000" />
+      <workItem from="1728564300844" duration="20022000" />
     </task>
     <servers />
   </component>
@@ -215,30 +221,30 @@
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs</url>
-          <line>132</line>
-          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyPlayerTracker.cs" containingFunctionPresentation="Method 'CheckIfInVisualField'">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs</url>
+          <line>33</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyAnimation.cs" containingFunctionPresentation="Method 'Init'">
             <startOffsets>
-              <option value="5049" />
+              <option value="1161" />
             </startOffsets>
             <endOffsets>
-              <option value="5086" />
+              <option value="1183" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="28" />
+          <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs</url>
-          <line>32</line>
-          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyPlayerTracker.cs" containingFunctionPresentation="Method 'Start'">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs</url>
+          <line>40</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyAnimation.cs" containingFunctionPresentation="Method 'NavigationInit'">
             <startOffsets>
-              <option value="1041" />
+              <option value="1385" />
             </startOffsets>
             <endOffsets>
-              <option value="1048" />
+              <option value="1401" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="29" />
+          <option name="timeStamp" value="40" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

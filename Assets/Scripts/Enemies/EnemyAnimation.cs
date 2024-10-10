@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SnowHorse.Utils;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Enemies
 {
@@ -20,14 +21,25 @@ namespace Enemies
         private EnemyData data;
         private new AnimationManager animation;
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
+        private EnemyNavigation navigation;
+        private NavMeshAgent agent;
         
         public string CurrentKey => animation.CurrentKeyString;
-        public void Init(Enemy enemy, EnemyData enemyData)
+        public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
         {
             animator = GetComponent<Animator>();
             this.enemy = enemy;
+            this.agent = agent;
             data = enemyData;
+            NavigationInit(enemy);
             SetAnimationKeys(data);
+        }
+        
+        private void NavigationInit(Enemy enemy)
+        {
+            navigation = enemy.gameObject.AddComponent<EnemyNavigation>();
+            agent.speed = 0;
+            navigation.Init(agent);
         }
 
         private void SetAnimationKeys(EnemyData data)
@@ -54,22 +66,23 @@ namespace Enemies
         public void ReactStopMovement() => reactMoveSpeed = 0;
         public void ReactStop() { reactMoveSpeed = 0; enemy.ReactStop(); }
         public void BlockStop() => enemy.ReactStop();
-        public void WalkStarted(float speed) => moveSpeed = speed;
+        public void WalkStarted(float speed) => agent.speed = speed;
         #endregion
 
         public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null, float moveSpeed = 0)
         {
+            //Only use if not using navmesh
             if (lookTarget) LookAtTarget(lookTarget);
             else StopLooking();
             
             this.moveSpeed = moveSpeed;
-            if (moveTarget) MoveTowardsTarget(moveTarget);
-            else StopMoving(); 
+            if (moveTarget) navigation.FollowPath(moveTarget);//MoveTowardsTarget(moveTarget);
+            else navigation.Stop();// StopMoving(); 
         
             animation.Enable(animKeys[animKey]);
         }
 
-        private void MoveTowardsTarget(Transform targetTransform)
+        /*private void MoveTowardsTarget(Transform targetTransform)
         {
             StopMoving();
             moveTowardsTarget = StartCoroutine(MovingTowardsTarget(targetTransform));
@@ -93,7 +106,7 @@ namespace Enemies
                 moveTowardsTarget = null;
                 moveSpeed = 0;
             }
-        }
+        }*/
 
         private void LookAtTarget(Transform targetTransform, float duration = 50)
         {

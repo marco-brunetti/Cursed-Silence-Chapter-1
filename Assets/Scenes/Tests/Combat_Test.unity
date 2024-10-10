@@ -182,6 +182,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy_spider (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -192,6 +196,33 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8099542109803496280, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
   m_PrefabInstance: {fileID: 28833006}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &29635911 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+  m_PrefabInstance: {fileID: 1686292784}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &29635915
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29635911}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 1
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &43015331
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,6 +387,10 @@ PrefabInstance:
     - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
       propertyPath: m_Name
       value: enemy_spider (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -694,6 +729,7 @@ GameObject:
   - component: {fileID: 644516430}
   - component: {fileID: 644516429}
   - component: {fileID: 644516428}
+  - component: {fileID: 644516432}
   m_Layer: 0
   m_Name: floor
   m_TagString: Untagged
@@ -787,6 +823,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &644516432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 644516427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 87693e2d47acdcd46b8c34b931b4b429, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &721119244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,6 +1124,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy_spider (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1172,11 +1243,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &1204776257 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8099542109803496280, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
-  m_PrefabInstance: {fileID: 464153700712520219}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1206918071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,12 +1496,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 29635915}
   m_SourcePrefab: {fileID: 100100000, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
 --- !u!1001 &1909810505
 PrefabInstance:
@@ -1561,6 +1630,10 @@ PrefabInstance:
     - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
       propertyPath: m_Name
       value: enemy_spider (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1765,6 +1838,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy_spider (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1835,6 +1912,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: enemy_spider (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4091702967860752659, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1853,14 +1934,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 764088937700664958, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
-      propertyPath: renderers.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 764088937700664958, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
-      propertyPath: renderers.Array.data[0]
-      value: 
-      objectReference: {fileID: 1204776257}
     - target: {fileID: 3113605131990372321, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.14

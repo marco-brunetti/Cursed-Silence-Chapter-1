@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Player;
+using UnityEngine.AI;
 
 namespace Enemies
 {
@@ -16,18 +17,20 @@ namespace Enemies
         [SerializeField] protected new EnemyAnimation animation;
         [SerializeField] private List<Renderer> renderers;
 
-        protected bool canDie = true;
+        private bool canDie = true;
         protected bool isVulnerable = true;
-        protected bool isReacting;
-        protected bool hasHeavyAttack;
-        protected bool hasSpecialAttack;
-        protected bool changeNextAttack;
-        protected Transform player;
-        protected EnemyState currentState;
-        protected System.Random random;
-        protected EnemyStats stats;
-        protected EnemyPlayerTracker playerTracker;
-        protected Coroutine attack;
+        private bool isReacting;
+        private bool hasHeavyAttack;
+        private bool hasSpecialAttack;
+        private bool changeNextAttack;
+        private Transform player;
+        private EnemyState currentState;
+        private System.Random random;
+        private EnemyStats stats;
+        private Coroutine attack;
+        private EnemyPlayerTracker playerTracker;
+        private NavMeshAgent agent;
+
 
         [field: SerializeField] public EnemyData Data { get; private set; }
         public void IsVulnerable(bool enable) => isVulnerable = enable;
@@ -50,10 +53,12 @@ namespace Enemies
             StartPlayerTracking();
             stats = new EnemyStats(Data);
         }
+
+
         
         private void AnimationInit()
         {
-            animation.Init(enemy: this, enemyData: Data);
+            animation.Init(enemy: this, enemyData: Data, GetComponent<NavMeshAgent>());
             ChangeState(EnemyState.Idle);
         }
         
@@ -132,7 +137,7 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(Data.MoveAnim.name, lookTarget:player, moveTarget:player);
+            animation.SetState(Data.MoveAnim.name, moveTarget:player);
         }
         
         protected virtual void React()
