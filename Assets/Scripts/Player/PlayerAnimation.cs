@@ -33,26 +33,26 @@ public class PlayerAnimation : MonoBehaviour
 
     public void Attack()
     {
-        animation.EnableKey(AnimAttack);
+        animation.Enable(AnimAttack);
     }
 
     public void HeavyAttack()
     {
-        animation.EnableKey(AnimHeavyAttack);
+        animation.Enable(AnimHeavyAttack);
     }
 
     public void Block()
     {
-        animation.EnableKey(AnimBlock);
+        animation.Enable(AnimBlock);
     }
 
     public void Grab()
     {
-        animation.EnableKey(AnimGrab);
+        animation.Enable(AnimGrab);
     }
 
     public void Release()
     {
-        animation.EnableKey(AnimRelease);
+        animation.Enable(AnimRelease);
     }
 }

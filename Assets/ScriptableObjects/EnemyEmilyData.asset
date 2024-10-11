@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc88777887b93547afebfc12690e7e7, type: 3}
+  m_Name: EnemyEmilyData
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField: 100
+  <Poise>k__BackingField: 50
+  <LightAttackDamage>k__BackingField: 10
+  <HeavyAttackDamage>k__BackingField: 20
+  <SpecialAttackDamage>k__BackingField: 50
+  <LightAttackPoiseDecrement>k__BackingField: 10
+  <HeavyAttackPoiseDecrement>k__BackingField: 20
+  <SpecialAttackPoiseDecrement>k__BackingField: 30
+  <HeavyAttackProbability>k__BackingField: 20
+  <SpecialAttackProbability>k__BackingField: 5
+  <BlockProbability>k__BackingField: 20
+  <DetectionMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 1019
+  <IdleAnim>k__BackingField: {fileID: 7400000, guid: 58e473aaf18efc2419ef4bd9472f9787, type: 2}
+  <MoveAnim>k__BackingField: {fileID: 7400000, guid: 2cfb321a93ca42844853194ed6a37ec3, type: 2}
+  <AttackAnim>k__BackingField: {fileID: 7400000, guid: 58362fb84b430d046b1161581674daf6, type: 2}
+  <HeavyAttackAnim>k__BackingField: {fileID: 7400000, guid: 27ead518d2b73684cb4cf58ef8d626b8, type: 2}
+  <SpecialAttackAnim>k__BackingField: {fileID: 0}
+  <ReactAnim>k__BackingField: {fileID: 7400000, guid: 799a6d84434fb56449d5ebf10f273ae3, type: 2}
+  <BlockAnim>k__BackingField: {fileID: 7400000, guid: d395a48316330014e99ecbd235f08009, type: 2}
+  <DeathAnim>k__BackingField: {fileID: 7400000, guid: f84cfa72c55a9c040b6f36a9af40b47d, type: 2}
+  <AdditionalStateAnims>k__BackingField: []
+  <AlternativeClips>k__BackingField:
+  - {fileID: 7400000, guid: 1c24f471bbf175a40badd89b0433911c, type: 2}
+  <AnimatorController>k__BackingField: {fileID: 9100000, guid: 6cf31f6395247bb45b472fc47f1fccea, type: 2}
+  <OnDieDisappearSpeed>k__BackingField: 0.01

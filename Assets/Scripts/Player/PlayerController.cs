@@ -47,6 +47,7 @@ namespace Player
         public bool IsInspecting { get => _inspector.IsInspecting; }
 
         private BadTVEffect _camDistortion;
+        private GameControllerV2 gameController;
 
         private void Awake()
         {
@@ -57,6 +58,13 @@ namespace Player
             PlayerData = _data.dataObject;
 
             _camDistortion = Camera.GetComponent<BadTVEffect>();
+            gameController = GameControllerV2.Instance;
+            gameController.PlayerTransform = Player.transform;
+        }
+
+        private void Start()
+        {
+
         }
 
         private void Update()
