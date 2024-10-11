@@ -48,16 +48,22 @@ namespace Game.General
             {
                 NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
 
-                //Use for erratic movement such as a spider colony
-                if (randomizePath && GetRandomPoint(path.corners[^1], randomPathRange, out var point))
+                if (path.corners.Length > 0)
                 {
-                    agent.destination = point;
+                    //Use for erratic movement such as a spider colony
+                    if (randomizePath && GetRandomPoint(path.corners[^1], randomPathRange, out var point))
+                    {
+                        agent.destination = point;
+                    }
+                    else
+                    {
+                        agent.destination = path.corners[^1];
+                    }
                 }
                 else
                 {
-                    agent.destination = path.corners[^1];
+                    agent.isStopped = true;
                 }
-
                 yield return pathFindInterval;
             }
         }

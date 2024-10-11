@@ -8,7 +8,7 @@ using UnityEngine.AI;
 
 namespace Enemies
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    //[RequireComponent(typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private EnemyData data;

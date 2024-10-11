@@ -9,7 +9,7 @@ namespace Game.General
 
         public static void Damage(GameObject enemy, int damage, int poiseDecrement)
         {
-            DamageEnemy?.Invoke(null, new(enemy, damage, poiseDecrement));
+            DamageEnemy?.Invoke(null, new DamageEnemyEventArgs(enemy, damage, poiseDecrement));
         }
     }
 
