@@ -1,5 +1,4 @@
 using UnityEngine;
-using Enemies;
 using SnowHorse.Utils;
 
 namespace Player
@@ -88,10 +87,11 @@ namespace Player
                 Direction = _controller.Camera.forward,
                 MaxDistance = _data.AttackDistance,
                 LayerMask = _data.InteractLayer,
+                FindTag = "Enemy",
                 //Debug = true
             };
 
-            var enemy = Raycaster.Find<EnemyController>(rayData)?.HitObject;
+            var enemy = Raycaster.FindWithTag<GameObject>(rayData)?.HitObject;
 
             if (enemy)
             {
@@ -110,7 +110,7 @@ namespace Player
                     _controller.Animation.Attack();
                 }
 
-                enemy.DealDamage(damage, poiseDecrement);
+                GameEvents.Damage(enemy, damage, poiseDecrement);
             }
 
             string targetName = enemy ? enemy.name.ToUpper() : "NONE";
