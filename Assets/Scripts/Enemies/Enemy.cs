@@ -221,7 +221,7 @@ namespace Enemies
         
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
-                animation.SetState(Data.AttackAnim.name, lookTarget: player);
+                animation.SetState(Data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 yield return null;
             }
 
@@ -243,21 +243,21 @@ namespace Enemies
             
                 if (hasHeavyAttack && hasSpecialAttack)
                 {
-                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, lookTarget: player);
-                    else if (p < Data.HeavyAttackProbability + Data.SpecialAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, lookTarget: player);
+                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    else if (p < Data.HeavyAttackProbability + Data.SpecialAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 }
                 else if (hasHeavyAttack)
                 {
-                    if (p < Data.HeavyAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, lookTarget: player);
+                    if (p < Data.HeavyAttackProbability) animation.SetState(Data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 }
                 else if (hasSpecialAttack)
                 {
-                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, lookTarget: player);
+                    if(p < Data.SpecialAttackProbability) animation.SetState(Data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 }
             }
             else
             {
-                animation.SetState(Data.AttackAnim.name, lookTarget: player);
+                animation.SetState(Data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
             }
                 
             changeNextAttack = false;

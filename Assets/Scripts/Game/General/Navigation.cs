@@ -40,12 +40,9 @@ namespace Enemies
 
             while (true)
             {
-                yield return pathfindInterval;
-                
                 NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
                 agent.destination = path.corners[^1];
-                
-                yield return null;
+                yield return pathfindInterval;
             }
         }
     }

@@ -17,7 +17,6 @@ namespace Enemies
         private Vector3 lookPos;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
-        private Enemy enemy;
         private EnemyData data;
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         
@@ -29,7 +28,6 @@ namespace Enemies
         
         public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
         {
-            this.enemy = enemy;
             data = enemyData;
             Navigation = enemy.gameObject.AddComponent<Navigation>();
             Navigation.Init(agent);
@@ -55,41 +53,38 @@ namespace Enemies
 
         public void SendAnimationEvent(string eventData)
         {
-            var args = JsonConvert.DeserializeObject<AnimationEventArgs>(eventData);
-            AnimationEvent?.Invoke(this, args);
+            AnimationEvent?.Invoke(this, JsonConvert.DeserializeObject<AnimationEventArgs>(eventData));
         }
 
-        public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null)
+        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null)
         {
-            //Only use if not using navmesh
-            if (lookTarget) LookAtTarget(lookTarget);
-            else StopLooking();
-
+            StopLooking();
+            Navigation.Stop();
+            
             if (moveTarget) Navigation.FollowPath(moveTarget);
-            else Navigation.Stop();
-        
+            else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
+            
             animation.Enable(animKeys[animKey]);
         }
 
-        private void LookAtTarget(Transform targetTransform, float duration = 50)
+        private void LookAtTarget(Transform rootTransform, Transform targetTransform, float duration = 50)
         {
-            StopLooking();
-            lookAtTarget = StartCoroutine(LookingAtTarget(targetTransform, duration));
+            lookAtTarget = StartCoroutine(LookingAtTarget(rootTransform, targetTransform, duration));
         }
 
-        private IEnumerator LookingAtTarget(Transform targetTransform, float duration)
+        private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform, float duration)
         {
             lookLerpTime = 0;
-            lookPos = enemy.transform.position + enemy.transform.forward;
+            lookPos = rootTransform.position + rootTransform.forward;
 
             while (true)
             {
-                var target = GetTargetDirOnYAxis(origin: enemy.transform.position, target: targetTransform.position);
+                var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
 
                 if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
                 else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
 
-                enemy.transform.LookAt(GetTargetDirOnYAxis(origin: enemy.transform.position, target: lookPos));
+                rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));
                 yield return null;
             }
         }
@@ -130,6 +125,7 @@ namespace Enemies
         [JsonProperty("name")] public string EventName;
         [JsonProperty("float")] public float FloatValue;
         [JsonProperty("int")] public int IntValue;
-        [JsonProperty("bool")] public bool boolValue;
+        [JsonProperty("bool")] public bool BoolValue;
+        [JsonProperty("string")] public bool StringValue;
     }
 }
