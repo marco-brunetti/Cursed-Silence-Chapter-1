@@ -31,8 +31,7 @@ namespace Enemies
             {
                 spiderAlerted -= OnSpiderAlerted;
                 alertedOthers = true;
-                float delay = ((float)random.Next(3, 10)) / 10f;
-                StartCoroutine(RandomAlertStart(delay));
+                StartCoroutine(RandomAlertStart(random.Next(3, 10) / 10f));
             }
         }
 
