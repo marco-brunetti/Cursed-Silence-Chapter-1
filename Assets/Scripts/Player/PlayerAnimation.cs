@@ -1,5 +1,6 @@
 using Player;
 using System.Collections.Generic;
+using Game.General;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour

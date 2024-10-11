@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Game.General;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,17 +21,17 @@ namespace Enemies
 
         private bool canDie = true;
         private bool isVulnerable = true;
-        private bool isReacting;
+        protected bool isReacting;
         private bool hasHeavyAttack;
         private bool hasSpecialAttack;
         private bool changeNextAttack;
         
         private Transform player;
-        private EnemyState currentState;
-        private System.Random random;
+        protected EnemyState currentState;
+        protected System.Random random;
         private EnemyStats stats;
         private Coroutine attack;
-        private EnemyPlayerTracker playerTracker;
+        protected EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
         private GameControllerV2 gameController;
         
@@ -196,7 +197,7 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(data.MoveAnim.name, moveTarget:player);
+            animation.SetState(data.MoveAnim.name, moveTarget:player, moveRandomizedPath: data.MoveRandomizedPath);
         }
         
         protected virtual void React()

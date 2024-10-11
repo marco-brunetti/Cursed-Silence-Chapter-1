@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
+using Game;
+using Game.General;
 
 namespace Enemies
 {
@@ -52,12 +54,12 @@ namespace Enemies
             AnimationEvent?.Invoke(this, JsonConvert.DeserializeObject<AnimationEventArgs>(eventData));
         }
 
-        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null)
+        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool moveRandomizedPath = false)
         {
             StopLooking();
             navigation.Stop();
             
-            if (moveTarget) navigation.FollowPath(moveTarget);
+            if (moveTarget) navigation.FollowPath(moveTarget, moveRandomizedPath);
             else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
             
             animation.Enable(animKeys[animKey]);

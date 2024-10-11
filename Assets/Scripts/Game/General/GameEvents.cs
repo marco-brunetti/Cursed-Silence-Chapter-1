@@ -1,26 +1,29 @@
 using System;
 using UnityEngine;
 
-public static class GameEvents
+namespace Game.General
 {
-    public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
-
-    public static void Damage(GameObject enemy, int damage, int poiseDecrement)
+    public static class GameEvents
     {
-        DamageEnemy?.Invoke(null, new(enemy, damage, poiseDecrement));
+        public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
+
+        public static void Damage(GameObject enemy, int damage, int poiseDecrement)
+        {
+            DamageEnemy?.Invoke(null, new(enemy, damage, poiseDecrement));
+        }
     }
-}
 
-public class DamageEnemyEventArgs : EventArgs
-{
-    public readonly GameObject Enemy;
-    public readonly int Damage;
-    public readonly int PoiseDecrement;
-
-    public DamageEnemyEventArgs(GameObject enemy, int damage, in int poiseDecrement)
+    public class DamageEnemyEventArgs : EventArgs
     {
-        Enemy = enemy;
-        Damage = damage;
-        PoiseDecrement = poiseDecrement;
+        public readonly GameObject Enemy;
+        public readonly int Damage;
+        public readonly int PoiseDecrement;
+
+        public DamageEnemyEventArgs(GameObject enemy, int damage, in int poiseDecrement)
+        {
+            Enemy = enemy;
+            Damage = damage;
+            PoiseDecrement = poiseDecrement;
+        }
     }
 }

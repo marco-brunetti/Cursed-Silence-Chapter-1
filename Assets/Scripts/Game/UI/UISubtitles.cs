@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using Game.General;
 using UnityEngine;
 
 public class UISubtitles : MonoBehaviour
