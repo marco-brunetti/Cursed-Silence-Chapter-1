@@ -14,12 +14,9 @@ namespace Enemies
     {
         private float reactMoveSpeed;
         private float lookLerpTime;
-        private Vector3 lookPos;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
-        private EnemyData data;
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
-        
         private new AnimationManager animation;
 
         public Navigation Navigation { get; private set; }
@@ -28,10 +25,9 @@ namespace Enemies
         
         public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
         {
-            data = enemyData;
             Navigation = enemy.gameObject.AddComponent<Navigation>();
             Navigation.Init(agent);
-            SetAnimationKeys(data);
+            SetAnimationKeys(enemyData);
         }
 
         private void SetAnimationKeys(EnemyData data)
@@ -75,7 +71,7 @@ namespace Enemies
         private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform, float duration)
         {
             lookLerpTime = 0;
-            lookPos = rootTransform.position + rootTransform.forward;
+            var lookPos = rootTransform.position + rootTransform.forward;
 
             while (true)
             {
