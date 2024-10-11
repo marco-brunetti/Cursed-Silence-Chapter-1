@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,29 +17,23 @@ namespace Enemies
         private Vector3 lookPos;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
-        private Animator animator;
         private Enemy enemy;
         private EnemyData data;
-        private new AnimationManager animation;
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
-        private Navigation navigation;
-        private NavMeshAgent agent;
         
+        private new AnimationManager animation;
+
+        public Navigation Navigation { get; private set; }
         public string CurrentKey => animation.CurrentKeyString;
+        public static EventHandler<AnimationEventArgs> AnimationEvent;
+        
         public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
         {
-            animator = GetComponent<Animator>();
             this.enemy = enemy;
-            this.agent = agent;
             data = enemyData;
-            NavigationInit(enemy);
+            Navigation = enemy.gameObject.AddComponent<Navigation>();
+            Navigation.Init(agent);
             SetAnimationKeys(data);
-        }
-        
-        private void NavigationInit(Enemy enemy)
-        {
-            navigation = enemy.gameObject.AddComponent<Navigation>();
-            navigation.Init(agent);
         }
 
         private void SetAnimationKeys(EnemyData data)
@@ -54,18 +50,14 @@ namespace Enemies
                 else animKeys.Add(x.name, new KeyValuePair<string, int>(x.name, Animator.StringToHash(x.name)));
             }
             animList.AddRange(data.AlternativeClips.Where(x=> x != null));
-            animation = new AnimationManager(animKeys.Values.ToArray(), animator, animatorController: data.AnimatorController, animList.ToArray());
+            animation = new AnimationManager(animKeys.Values.ToArray(), GetComponent<Animator>(), animatorController: data.AnimatorController, animList.ToArray());
         }
 
-        #region Animation Events
-        public void SetVulnerable(string flag) => enemy.IsVulnerable(flag.ToLower() == "true");
-        public void ChangeNextAttackClip() => enemy.ChangeNextAttack(true);
-        public void ReactStart(float speed) { reactMoveSpeed = speed; StartCoroutine(ReactMoving()); }
-        public void ReactStopMovement() => reactMoveSpeed = 0;
-        public void ReactStop() { reactMoveSpeed = 0; enemy.ReactStop(); }
-        public void BlockStop() => enemy.ReactStop();
-        public void WalkStarted(float speed) => agent.speed = speed;
-        #endregion
+        public void SendAnimationEvent(string eventData)
+        {
+            var args = JsonConvert.DeserializeObject<AnimationEventArgs>(eventData);
+            AnimationEvent?.Invoke(this, args);
+        }
 
         public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null)
         {
@@ -73,8 +65,8 @@ namespace Enemies
             if (lookTarget) LookAtTarget(lookTarget);
             else StopLooking();
 
-            if (moveTarget) navigation.FollowPath(moveTarget);
-            else navigation.Stop();
+            if (moveTarget) Navigation.FollowPath(moveTarget);
+            else Navigation.Stop();
         
             animation.Enable(animKeys[animKey]);
         }
@@ -115,13 +107,29 @@ namespace Enemies
             return finalPos;
         }
 
+        public void StartReact(float moveSpeed)
+        {
+            reactMoveSpeed = moveSpeed;
+            StartCoroutine(ReactMoving());
+        }
+        
         private IEnumerator ReactMoving()
         {
             while (reactMoveSpeed > 0)
             {
-                enemy.transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
+                transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
                 yield return null;
             }
         }
+        
+        public void StopReact() => reactMoveSpeed = 0;
+    }
+
+    public class AnimationEventArgs : EventArgs
+    {
+        [JsonProperty("name")] public string EventName;
+        [JsonProperty("float")] public float FloatValue;
+        [JsonProperty("int")] public int IntValue;
+        [JsonProperty("bool")] public bool boolValue;
     }
 }

@@ -18,11 +18,12 @@ namespace Enemies
         [SerializeField] private List<Renderer> renderers;
 
         private bool canDie = true;
-        protected bool isVulnerable = true;
+        private bool isVulnerable = true;
         private bool isReacting;
         private bool hasHeavyAttack;
         private bool hasSpecialAttack;
         private bool changeNextAttack;
+        
         private Transform player;
         private EnemyState currentState;
         private System.Random random;
@@ -33,9 +34,6 @@ namespace Enemies
         private GameControllerV2 gameController;
 
         [field: SerializeField] public EnemyData Data { get; private set; }
-        public void IsVulnerable(bool enable) => isVulnerable = enable;
-
-        public void ChangeNextAttack(bool enable) => changeNextAttack = enable;
 
         public virtual void Awake()
         {
@@ -60,6 +58,7 @@ namespace Enemies
         private void AnimationInit()
         {
             animation.Init(enemy: this, enemyData: Data, GetComponent<NavMeshAgent>());
+            EnemyAnimation.AnimationEvent += OnAnimationEvent;
             ChangeState(EnemyState.Idle);
         }
         
@@ -86,6 +85,40 @@ namespace Enemies
                 if (isValidState && !isReacting)
                 {
                     ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, args.Damage, args.PoiseDecrement)));
+                }
+            }
+        }
+
+        public void OnAnimationEvent(object sender, AnimationEventArgs args)
+        {
+            if((EnemyAnimation)sender == animation)
+            {
+                switch (args.EventName)
+                {
+                    case "set_vulnerable_true":
+                        isVulnerable = true;
+                        break;
+                    case "set_vulnerable_false":
+                        isVulnerable = false;
+                        break;
+                    case "change_next_attack":
+                        changeNextAttack = true;
+                        break;
+                    case "react_start":
+                        animation.StartReact(args.FloatValue);
+                        break;
+                    case "react_stop_movement":
+                        animation.StopReact(); //Stops movement only, still does not change state
+                        break;
+                    case "react_stop":
+                        StopReact();
+                        break;
+                    case "block_stop":
+                        StopReact();
+                        break;
+                    case "walk_started":
+                        animation.Navigation.SetAgentSpeed(args.FloatValue);
+                        break;
                 }
             }
         }
@@ -143,8 +176,6 @@ namespace Enemies
                 //EnemyState.Escape => Data.EscapeAnim
             };
         }
-
-
 
         protected virtual void Idle()
         {
@@ -264,12 +295,6 @@ namespace Enemies
             }
         }
         
-        public void ReactStop()
-        {
-            isReacting = false;
-            StartPlayerTracking(visualConeOnly: false);
-        }
-        
         //Set materials to fade or transparent
         private IEnumerator EnemyDisappear()
         {
@@ -294,6 +319,13 @@ namespace Enemies
             {
                 Debug.Log($"No renderers to disappear in {gameObject.name}");
             }
+        }
+
+        private void StopReact()
+        {
+            isReacting = false;
+            animation.StopReact();
+            StartPlayerTracking(visualConeOnly: false);
         }
     }
     

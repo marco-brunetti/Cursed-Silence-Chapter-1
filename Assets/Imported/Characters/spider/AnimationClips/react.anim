@@ -24348,22 +24348,22 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: ReactStart
-    data: 
+    functionName: SendAnimationEvent
+    data: '{"name":"react_start","float":2}'
     objectReferenceParameter: {fileID: 0}
-    floatParameter: 2
+    floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.26666668
-    functionName: ReactStop
-    data: 
+    functionName: SendAnimationEvent
+    data: '{"name":"react_stop"}'
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.3
-    functionName: ReactStopMovement
-    data: 
+    functionName: SendAnimationEvent
+    data: '{"name":"react_stop_movement"}'
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0

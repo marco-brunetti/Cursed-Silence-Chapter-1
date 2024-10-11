@@ -17,6 +17,8 @@ namespace Enemies
             agent = navMeshAgent;
             agent.speed = 0;
         }
+        
+        public void SetAgentSpeed(float speed) => agent.speed = speed;
 
         public void FollowPath(Transform target)
         {
