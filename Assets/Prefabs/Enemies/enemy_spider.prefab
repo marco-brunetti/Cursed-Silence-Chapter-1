@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 6739027843716592202}
   m_Layer: 0
   m_Name: enemy_spider
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -264,7 +264,7 @@ Transform:
   m_GameObject: {fileID: 4091702967860752659}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.44086367, z: 0, w: 0.89757407}
-  m_LocalPosition: {x: -3.14, y: 0.25, z: 7.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b201f7c9b3a323742bc4b6ce8a71653c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 5d2ede31e7c8c274fb1e07badd574697, type: 2}
   collider: {fileID: 3043769112776888512}
   attackZone: {fileID: 1608159743319793387}
   awareZone: {fileID: 1683140043588073439}
@@ -293,7 +294,6 @@ MonoBehaviour:
   animation: {fileID: 1782973354259379239}
   renderers:
   - {fileID: 8099542109803496280}
-  <Data>k__BackingField: {fileID: 11400000, guid: 5d2ede31e7c8c274fb1e07badd574697, type: 2}
 --- !u!135 &3043769112776888512
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -313,8 +313,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.33613533
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.28
+  m_Center: {x: 0, y: 0.1, z: 0}
 --- !u!195 &6739027843716592202
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -333,7 +333,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 0.25
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4

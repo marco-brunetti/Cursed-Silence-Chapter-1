@@ -17,14 +17,16 @@ namespace Enemies
         private Detector awareZone;
         private CustomShapeDetector visualCone;
         private readonly Enemy enemy;
+        private readonly LayerMask mask;
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public EnemyPlayerTracker(Enemy enemy, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone)
+        public EnemyPlayerTracker(Enemy enemy, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone, LayerMask detectionMask)
         {
             this.enemy = enemy;
             this.attackZone = attackZone;
             this.awareZone = awareZone;
             this.visualCone = visualCone;
+            mask = detectionMask;
         }
 
         public void Start(bool visualConeOnly = false)
@@ -122,7 +124,7 @@ namespace Enemies
                     FindTag = "Player",
                     Origin = enemy.transform.position,
                     Direction = Camera.main.transform.position - enemy.transform.position,
-                    LayerMask = enemy.Data.DetectionMask,
+                    LayerMask = mask,
                     Debug = true
                 };
 

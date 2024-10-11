@@ -12,21 +12,21 @@ namespace Enemies
     //Attach to the game object that has the animator if the animation events are needed
     public class EnemyAnimation : MonoBehaviour
     {
+        private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         private float reactMoveSpeed;
         private float lookLerpTime;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
-        private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
+        private Navigation navigation;
         private new AnimationManager animation;
-
-        public Navigation Navigation { get; private set; }
+        
         public string CurrentKey => animation.CurrentKeyString;
         public static EventHandler<AnimationEventArgs> AnimationEvent;
         
         public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
         {
-            Navigation = enemy.gameObject.AddComponent<Navigation>();
-            Navigation.Init(agent);
+            navigation = enemy.gameObject.AddComponent<Navigation>();
+            navigation.Init(agent);
             SetAnimationKeys(enemyData);
         }
 
@@ -55,9 +55,9 @@ namespace Enemies
         public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null)
         {
             StopLooking();
-            Navigation.Stop();
+            navigation.Stop();
             
-            if (moveTarget) Navigation.FollowPath(moveTarget);
+            if (moveTarget) navigation.FollowPath(moveTarget);
             else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
             
             animation.Enable(animKeys[animKey]);
@@ -98,22 +98,23 @@ namespace Enemies
             return finalPos;
         }
 
-        public void StartReact(float moveSpeed)
+        public void StartReact(Transform rootTransform, float moveSpeed)
         {
             reactMoveSpeed = moveSpeed;
-            StartCoroutine(ReactMoving());
+            StartCoroutine(ReactMoving(rootTransform));
         }
         
-        private IEnumerator ReactMoving()
+        private IEnumerator ReactMoving(Transform rootTransform)
         {
             while (reactMoveSpeed > 0)
             {
-                transform.position -= transform.forward * (reactMoveSpeed * Time.deltaTime);
+                rootTransform.position -= rootTransform.forward * (reactMoveSpeed * Time.deltaTime);
                 yield return null;
             }
         }
         
         public void StopReact() => reactMoveSpeed = 0;
+        public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
     }
 
     public class AnimationEventArgs : EventArgs

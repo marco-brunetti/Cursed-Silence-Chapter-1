@@ -9,7 +9,7 @@ namespace Enemies
         private NavMeshAgent agent;
         private Coroutine followPath;
         private NavMeshPath path;
-        private WaitForSeconds pathfindInterval = new(1);
+        private readonly WaitForSeconds pathFindInterval = new(1);
 
         public void Init(NavMeshAgent navMeshAgent)
         {
@@ -42,7 +42,7 @@ namespace Enemies
             {
                 NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
                 agent.destination = path.corners[^1];
-                yield return pathfindInterval;
+                yield return pathFindInterval;
             }
         }
     }
