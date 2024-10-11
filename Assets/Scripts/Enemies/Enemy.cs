@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using Player;
 
 namespace Enemies
 {
@@ -31,6 +30,7 @@ namespace Enemies
         private Coroutine attack;
         private EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
+        private GameControllerV2 gameController;
 
         [field: SerializeField] public EnemyData Data { get; private set; }
         public void IsVulnerable(bool enable) => isVulnerable = enable;
@@ -48,7 +48,10 @@ namespace Enemies
         
         public virtual void Start()
         {
-            player = PlayerController.Instance.Player.transform;
+            gameController = GameControllerV2.Instance;
+            GameEvents.DamageEnemy += OnDamageEnemy;
+
+            player = gameController.PlayerTransform;
             AnimationInit();
             StartPlayerTracking();
             stats = new EnemyStats(Data);
@@ -72,15 +75,18 @@ namespace Enemies
             playerTracker.Stop();
         }
         
-        public void DealDamage(int damageAmount, int poiseDecrement)
+        public void OnDamageEnemy(object sender, DamageEnemyEventArgs args)
         {
-            if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
-
-            var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
-
-            if (isValidState && !isReacting)
+            if(args.Enemy == this.gameObject)
             {
-                ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, damageAmount, poiseDecrement)));
+                if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
+
+                var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
+
+                if (isValidState && !isReacting)
+                {
+                    ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, args.Damage, args.PoiseDecrement)));
+                }
             }
         }
         

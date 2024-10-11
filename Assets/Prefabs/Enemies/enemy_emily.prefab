@@ -6455,9 +6455,10 @@ GameObject:
   - component: {fileID: 2857212413535442305}
   - component: {fileID: 3456246182837194075}
   - component: {fileID: 8157727075883485053}
+  - component: {fileID: 5887812492965457791}
   m_Layer: 0
   m_Name: enemy_emily
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6523,15 +6524,34 @@ MonoBehaviour:
   awareZone: {fileID: 1654067300738085344}
   visualCone: {fileID: 327899824026079892}
   animation: {fileID: 5473916689290141561}
-  <Data>k__BackingField: {fileID: 11400000, guid: 11f06388ff5daae4e9c3a6cfb4ae755e, type: 2}
   renderers:
   - {fileID: 6779283700528413950}
   - {fileID: 7166730298423265265}
   - {fileID: 300572003101741961}
   - {fileID: 3703731412557975778}
-  particleRenderers:
-  - {fileID: 1980848608484121606}
-  - {fileID: 5134892279779244177}
+  <Data>k__BackingField: {fileID: 11400000, guid: 11f06388ff5daae4e9c3a6cfb4ae755e, type: 2}
+--- !u!195 &5887812492965457791
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4218518653637063232}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 1
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &4449811750522857222
 GameObject:
   m_ObjectHideFlags: 0

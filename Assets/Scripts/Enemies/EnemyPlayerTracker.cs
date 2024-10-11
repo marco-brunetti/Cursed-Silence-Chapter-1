@@ -1,4 +1,3 @@
-using Player;
 using SnowHorse.Utils;
 using System;
 using UnityEngine;
@@ -122,7 +121,7 @@ namespace Enemies
                 {
                     FindTag = "Player",
                     Origin = enemy.transform.position,
-                    Direction = PlayerController.Instance.Camera.transform.position - enemy.transform.position,
+                    Direction = Camera.main.transform.position - enemy.transform.position,
                     LayerMask = enemy.Data.DetectionMask,
                     Debug = true
                 };

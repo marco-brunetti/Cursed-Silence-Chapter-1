@@ -1,4 +1,4 @@
-using Player;
+//using Player;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -45,14 +45,14 @@ public class UIManager : MonoBehaviour
     {
         if(_pause == false)
         {
-            if (PlayerController.Instance != null && PlayerController.Instance.IsInspecting)
+            /*if (PlayerController.Instance != null && PlayerController.Instance.IsInspecting)
             {
                 UIData.CenterPoint.SetActive(false);
             }
             else
             {
                 UIData.CenterPoint.SetActive(true);
-            }
+            }*/
         }
     }
 

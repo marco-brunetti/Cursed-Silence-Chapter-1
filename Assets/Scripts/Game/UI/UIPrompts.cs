@@ -1,11 +1,11 @@
-using Player;
+//using Player;
 using UnityEngine;
 
 public class UIPrompts : MonoBehaviour
 {
     public void ManagePrompts(UIData UIData)
     {
-        if(PlayerController.Instance != null && PlayerController.Instance.InteractableInSight != null)
+        /*if(PlayerController.Instance != null && PlayerController.Instance.InteractableInSight != null)
         {
             Interactable interactable = PlayerController.Instance.InteractableInSight;
 
@@ -42,7 +42,7 @@ public class UIPrompts : MonoBehaviour
         else
         {
             DeactivatePrompts(UIData);
-        }
+        }*/
     }
 
     private void DeactivatePrompts(UIData uIData)
