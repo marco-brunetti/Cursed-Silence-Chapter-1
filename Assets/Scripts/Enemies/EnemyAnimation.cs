@@ -12,7 +12,6 @@ namespace Enemies
     {
         private float reactMoveSpeed;
         private float lookLerpTime;
-        private float moveSpeed;
         private Vector3 lookPos;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
@@ -38,7 +37,6 @@ namespace Enemies
         private void NavigationInit(Enemy enemy)
         {
             navigation = enemy.gameObject.AddComponent<EnemyNavigation>();
-            agent.speed = 0;
             navigation.Init(agent);
         }
 
@@ -69,44 +67,17 @@ namespace Enemies
         public void WalkStarted(float speed) => agent.speed = speed;
         #endregion
 
-        public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null, float moveSpeed = 0)
+        public void SetState(string animKey, Transform lookTarget = null, Transform moveTarget = null)
         {
             //Only use if not using navmesh
             if (lookTarget) LookAtTarget(lookTarget);
             else StopLooking();
-            
-            this.moveSpeed = moveSpeed;
-            if (moveTarget) navigation.FollowPath(moveTarget);//MoveTowardsTarget(moveTarget);
-            else navigation.Stop();// StopMoving(); 
+
+            if (moveTarget) navigation.FollowPath(moveTarget);
+            else navigation.Stop();
         
             animation.Enable(animKeys[animKey]);
         }
-
-        /*private void MoveTowardsTarget(Transform targetTransform)
-        {
-            StopMoving();
-            moveTowardsTarget = StartCoroutine(MovingTowardsTarget(targetTransform));
-        }
-
-        private IEnumerator MovingTowardsTarget(Transform targetTransform)
-        {
-            while (true)
-            {
-                var targetPosition = new Vector3(targetTransform.position.x, enemy.transform.position.y, targetTransform.position.z);
-                enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, targetPosition, moveSpeed * Time.deltaTime);
-                yield return null;
-            }
-        }
-
-        private void StopMoving()
-        {
-            if (moveTowardsTarget != null)
-            {
-                StopCoroutine(moveTowardsTarget);
-                moveTowardsTarget = null;
-                moveSpeed = 0;
-            }
-        }*/
 
         private void LookAtTarget(Transform targetTransform, float duration = 50)
         {

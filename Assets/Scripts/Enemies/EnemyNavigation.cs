@@ -6,6 +6,7 @@ namespace Enemies
 {
     public class EnemyNavigation : MonoBehaviour
     {
+        private bool isMoving = false;
         private NavMeshAgent agent;
         private Coroutine followPath;
         private NavMeshPath path;
@@ -15,18 +16,23 @@ namespace Enemies
         {
             path = new NavMeshPath();
             agent = navMeshAgent;
+            agent.speed = 0;
         }
 
         public void FollowPath(Transform target)
         {
-            Stop();
+            //Stop();
             followPath = StartCoroutine(FollowingPath(target));
         }
+
+        public void Stop() => isMoving = false;
 
         private IEnumerator FollowingPath(Transform target)
         {
             agent.isStopped = false;
-            while (true)
+            isMoving = true;
+
+            while (isMoving)
             {
                 yield return pathfindInterval;
                 
@@ -35,16 +41,10 @@ namespace Enemies
                 
                 yield return null;
             }
-        }
 
-        public void Stop()
-        {
-            if (followPath != null)
-            {
-                agent.isStopped = true;
-                StopCoroutine(followPath);
-                followPath = null;
-            }
+            agent.isStopped = true;
+            agent.speed = 0;
+            path.ClearCorners();
         }
     }
 }

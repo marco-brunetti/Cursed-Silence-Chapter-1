@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Player;
 using UnityEngine.AI;
+using Player;
 
 namespace Enemies
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
         [SerializeField] protected new Collider collider;
@@ -31,7 +32,6 @@ namespace Enemies
         private EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
 
-
         [field: SerializeField] public EnemyData Data { get; private set; }
         public void IsVulnerable(bool enable) => isVulnerable = enable;
 
@@ -54,8 +54,6 @@ namespace Enemies
             stats = new EnemyStats(Data);
         }
 
-
-        
         private void AnimationInit()
         {
             animation.Init(enemy: this, enemyData: Data, GetComponent<NavMeshAgent>());
@@ -88,6 +86,12 @@ namespace Enemies
         
         private void ChangeState(EnemyState newState)
         {
+            if(!IsValidState(newState))
+            {
+                Debug.LogError($"There is no anim for state {newState.ToString().ToUpper()} on {gameObject.name.ToUpper()}! Maintaining current state.");
+                return;
+            }
+
             isReacting = false;
             currentState = newState;
             
@@ -116,6 +120,25 @@ namespace Enemies
                     break;
             }
         }
+
+        private bool IsValidState(EnemyState newState)
+        {
+            return newState switch
+            {
+                EnemyState.Idle => Data.IdleAnim != null,
+                EnemyState.Walk => Data.MoveAnim != null,
+                EnemyState.Attack => Data.AttackAnim != null,
+                EnemyState.SpecialAttack => Data.SpecialAttackAnim != null,
+                EnemyState.React => Data.ReactAnim != null,
+                EnemyState.Block => Data.BlockAnim != null,
+                EnemyState.Dead => Data.DeathAnim != null,
+                _ => false
+                //EnemyState.Wander => Data.WanderAnim,
+                //EnemyState.Escape => Data.EscapeAnim
+            };
+        }
+
+
 
         protected virtual void Idle()
         {
