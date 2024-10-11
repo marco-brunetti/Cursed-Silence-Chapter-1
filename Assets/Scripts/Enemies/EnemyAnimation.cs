@@ -20,7 +20,7 @@ namespace Enemies
         private EnemyData data;
         private new AnimationManager animation;
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
-        private EnemyNavigation navigation;
+        private Navigation navigation;
         private NavMeshAgent agent;
         
         public string CurrentKey => animation.CurrentKeyString;
@@ -36,7 +36,7 @@ namespace Enemies
         
         private void NavigationInit(Enemy enemy)
         {
-            navigation = enemy.gameObject.AddComponent<EnemyNavigation>();
+            navigation = enemy.gameObject.AddComponent<Navigation>();
             navigation.Init(agent);
         }
 

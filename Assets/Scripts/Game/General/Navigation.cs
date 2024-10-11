@@ -4,9 +4,8 @@ using UnityEngine.AI;
 
 namespace Enemies
 {
-    public class EnemyNavigation : MonoBehaviour
+    public class Navigation : MonoBehaviour
     {
-        private bool isMoving = false;
         private NavMeshAgent agent;
         private Coroutine followPath;
         private NavMeshPath path;
@@ -21,18 +20,23 @@ namespace Enemies
 
         public void FollowPath(Transform target)
         {
-            //Stop();
+            Stop();
             followPath = StartCoroutine(FollowingPath(target));
         }
 
-        public void Stop() => isMoving = false;
+        public void Stop()
+        {
+            if (followPath != null) StopCoroutine(followPath);
+            agent.isStopped = true;
+            agent.speed = 0;
+            path.ClearCorners();
+        }
 
         private IEnumerator FollowingPath(Transform target)
         {
             agent.isStopped = false;
-            isMoving = true;
 
-            while (isMoving)
+            while (true)
             {
                 yield return pathfindInterval;
                 
@@ -41,10 +45,6 @@ namespace Enemies
                 
                 yield return null;
             }
-
-            agent.isStopped = true;
-            agent.speed = 0;
-            path.ClearCorners();
         }
     }
 }
