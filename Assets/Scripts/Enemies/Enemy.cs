@@ -57,7 +57,7 @@ namespace Enemies
 
         private void AnimationInit()
         {
-            animation.Init(enemy: this, enemyData: data, GetComponent<NavMeshAgent>());
+            animation.Init(data, GetComponent<NavMeshAgent>());
             EnemyAnimation.AnimationEvent += OnAnimationEvent;
             ChangeState(EnemyState.Idle);
         }
@@ -73,10 +73,10 @@ namespace Enemies
             EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
             playerTracker.Stop();
         }
-        
-        public void OnDamageEnemy(object sender, DamageEnemyEventArgs args)
+
+        private void OnDamageEnemy(object sender, DamageEnemyEventArgs args)
         {
-            if(args.Enemy == this.gameObject)
+            if(args.Enemy == gameObject)
             {
                 if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
 
@@ -89,37 +89,36 @@ namespace Enemies
             }
         }
 
-        public void OnAnimationEvent(object sender, AnimationEventArgs args)
+        private void OnAnimationEvent(object sender, AnimationEventArgs args)
         {
-            if((EnemyAnimation)sender == animation)
+            if ((EnemyAnimation)sender != animation) return;
+            
+            switch (args.EventName)
             {
-                switch (args.EventName)
-                {
-                    case "set_vulnerable_true":
-                        isVulnerable = true;
-                        break;
-                    case "set_vulnerable_false":
-                        isVulnerable = false;
-                        break;
-                    case "change_next_attack":
-                        changeNextAttack = true;
-                        break;
-                    case "react_start":
-                        animation.StartReact(transform, args.FloatValue);
-                        break;
-                    case "react_stop_movement":
-                        animation.StopReact(); //Stops movement only, still does not change state
-                        break;
-                    case "react_stop":
-                        StopReact();
-                        break;
-                    case "block_stop":
-                        StopReact();
-                        break;
-                    case "walk_started":
-                        animation.SetAgentSpeed(args.FloatValue);
-                        break;
-                }
+                case "set_vulnerable_true":
+                    isVulnerable = true;
+                    break;
+                case "set_vulnerable_false":
+                    isVulnerable = false;
+                    break;
+                case "change_next_attack":
+                    changeNextAttack = true;
+                    break;
+                case "react_start":
+                    animation.StartReact(transform, args.FloatValue);
+                    break;
+                case "react_stop_movement":
+                    animation.StopReact(); //Stops movement only, still does not change state
+                    break;
+                case "react_stop":
+                    StopReact();
+                    break;
+                case "block_stop":
+                    StopReact();
+                    break;
+                case "walk_started":
+                    animation.SetAgentSpeed(args.FloatValue);
+                    break;
             }
         }
         
@@ -265,33 +264,32 @@ namespace Enemies
         
         protected virtual void OnPlayerTrackerUpdated(object sender, EnemyPlayerTrackerArgs e)
         {
-            if (currentState != EnemyState.Dead && !isReacting && (EnemyPlayerTracker)sender == playerTracker)
+            if (currentState == EnemyState.Dead || isReacting || (EnemyPlayerTracker)sender != playerTracker) return;
+            
+            if (e.PlayerEnteredVisualCone)
             {
-                if (e.PlayerEnteredVisualCone)
-                {
-                    ChangeState(EnemyState.Walk);
-                    return;
-                }
+                ChangeState(EnemyState.Walk);
+                return;
+            }
 
-                if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack)
-                {
-                    ChangeState(EnemyState.Attack);
-                }
-                else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk)
-                {
-                    ChangeState(EnemyState.Walk);
-                }
-                else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle)
-                {
-                    playerTracker.Start(visualConeOnly: true);
-                    ChangeState(EnemyState.Idle);
-                }
+            if (e.IsPlayerInInnerZone && currentState != EnemyState.Attack)
+            {
+                ChangeState(EnemyState.Attack);
+            }
+            else if (e.IsPlayerInOuterZone && currentState != EnemyState.Walk)
+            {
+                ChangeState(EnemyState.Walk);
+            }
+            else if (e.IsPlayerOutsideDetectors && currentState != EnemyState.Idle)
+            {
+                playerTracker.Start(visualConeOnly: true);
+                ChangeState(EnemyState.Idle);
+            }
 
 
-                if (!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
-                {
-                    ChangeState(EnemyState.Idle); //Set in case there is a problem with the tracker
-                }
+            if (!e.IsPlayerInInnerZone && !e.IsPlayerInOuterZone && !e.PlayerEnteredVisualCone && !e.IsPlayerOutsideDetectors)
+            {
+                ChangeState(EnemyState.Idle); //Set in case there is a problem with the tracker
             }
         }
         

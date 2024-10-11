@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
-using Game;
 using Game.General;
 
 namespace Enemies
@@ -25,9 +24,9 @@ namespace Enemies
         public string CurrentKey => animation.CurrentKeyString;
         public static EventHandler<AnimationEventArgs> AnimationEvent;
         
-        public void Init(Enemy enemy, EnemyData enemyData, NavMeshAgent agent)
+        public void Init(EnemyData enemyData, NavMeshAgent agent)
         {
-            navigation = enemy.gameObject.AddComponent<Navigation>();
+            navigation = gameObject.AddComponent<Navigation>();
             navigation.Init(agent);
             SetAnimationKeys(enemyData);
         }
