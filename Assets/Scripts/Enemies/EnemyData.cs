@@ -22,11 +22,13 @@ namespace Enemies
         [field: SerializeField, Range(0, 50)] public int BlockProbability { get; private set; } = 20;
 
         [field: SerializeField, Header("Player Tracking"), Space(10)] public LayerMask DetectionMask { get; private set; }
-        [field: SerializeField, Header("NavMesh"), Space(10)] public bool MoveRandomizedPath { get; private set; } = false;
+        [field: SerializeField, Header("NavMesh"), Space(10), Tooltip("Use for erratic movement")] public bool RandomizePath { get; private set; } = false;
+        [field: SerializeField, Range(0, 5), Tooltip("Use for erratic movement")] public float RandomPathRange { get; private set; } = 0;
 
         
         [field: SerializeField, Header("Animations"), Space(10)]
-        public AnimationClip IdleAnim { get; private set; }
+        public RuntimeAnimatorController AnimatorController { get; private set; }
+        [field: SerializeField] public AnimationClip IdleAnim { get; private set; }
         [field: SerializeField] public AnimationClip MoveAnim { get; private set; }
         [field: SerializeField] public AnimationClip AttackAnim { get; private set; }
         [field: SerializeField] public AnimationClip HeavyAttackAnim { get; private set; }
@@ -36,6 +38,6 @@ namespace Enemies
         [field: SerializeField] public AnimationClip DeathAnim { get; private set; }
         [field: SerializeField] public AnimationClip[] AdditionalStateAnims { get; private set; }
         [field: SerializeField] public AnimationClip[] AlternativeClips {  get; private set; }
-        [field: SerializeField] public RuntimeAnimatorController AnimatorController { get; private set; }
+        
     }
 }

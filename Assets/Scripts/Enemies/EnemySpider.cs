@@ -9,7 +9,7 @@ namespace Enemies
         private bool alertedOthers;
         private static EventHandler spiderAlerted;
         
-        public override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             spiderAlerted += OnSpiderAlerted;

@@ -20,7 +20,7 @@ namespace Game.General
         
         public void SetAgentSpeed(float speed) => agent.speed = speed;
 
-        public void FollowPath(Transform target, bool randomizePath, float randomPathRange = 2f)
+        public void FollowPath(Transform target, bool randomizePath, float randomPathRange)
         {
             Stop();
             followPath = StartCoroutine(FollowingPath(target, randomizePath, randomPathRange));
@@ -32,6 +32,12 @@ namespace Game.General
             agent.isStopped = true;
             agent.speed = 0;
             path.ClearCorners();
+        }
+
+        public void DestroyAgent()
+        {
+            Stop();
+            Destroy(agent);
         }
 
         private IEnumerator FollowingPath(Transform target, bool randomizePath, float randomPathRange)

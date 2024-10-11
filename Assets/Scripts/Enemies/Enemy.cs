@@ -35,7 +35,7 @@ namespace Enemies
         private NavMeshAgent agent;
         private GameControllerV2 gameController;
         
-        public virtual void Awake()
+        protected virtual void Awake()
         {
             hasHeavyAttack = data.HeavyAttackAnim != null;
             hasSpecialAttack = data.SpecialAttackAnim != null;
@@ -44,7 +44,7 @@ namespace Enemies
             playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone, data.DetectionMask);
         }
         
-        public virtual void Start()
+        protected virtual void Start()
         {
             gameController = GameControllerV2.Instance;
             GameEvents.DamageEnemy += OnDamageEnemy;
@@ -93,19 +93,16 @@ namespace Enemies
         {
             if ((EnemyAnimation)sender != animation) return;
             
-            switch (args.EventName)
+            switch (args.Event)
             {
-                case "set_vulnerable_true":
-                    isVulnerable = true;
-                    break;
-                case "set_vulnerable_false":
-                    isVulnerable = false;
+                case "set_vulnerable":
+                    isVulnerable = args.Bool;
                     break;
                 case "change_next_attack":
                     changeNextAttack = true;
                     break;
                 case "react_start":
-                    animation.StartReact(transform, args.FloatValue);
+                    animation.StartReact(transform, args.Float);
                     break;
                 case "react_stop_movement":
                     animation.StopReact(); //Stops movement only, still does not change state
@@ -117,7 +114,7 @@ namespace Enemies
                     StopReact();
                     break;
                 case "walk_started":
-                    animation.SetAgentSpeed(args.FloatValue);
+                    animation.SetAgentSpeed(args.Float);
                     break;
             }
         }
@@ -153,6 +150,9 @@ namespace Enemies
                 case EnemyState.Block:
                     Block();
                     break;
+                case EnemyState.SpecialAttack:
+                case EnemyState.Escape:
+                case EnemyState.Wander:
                 default:
                     ChangeState(EnemyState.Idle);
                     break;
@@ -176,37 +176,38 @@ namespace Enemies
             };
         }
 
-        protected virtual void Idle()
+        private void Idle()
         {
             animation.SetState(data.IdleAnim.name);
         }
         
-        protected virtual void Die()
+        private void Die()
         {
+            animation.DestroyAgent();
             StopPlayerTracking();
             collider.enabled = false;
             StartCoroutine(EnemyDisappear());
             animation.SetState(data.DeathAnim.name);
         }
 
-        protected virtual void Attack()
+        private void Attack()
         {
             attack ??= StartCoroutine(AttackingPlayer());
         }
         
-        protected virtual void Move()
+        private void Move()
         {
-            animation.SetState(data.MoveAnim.name, moveTarget:player, moveRandomizedPath: data.MoveRandomizedPath);
+            animation.SetState(data.MoveAnim.name, moveTarget:player, randomizePath: data.RandomizePath);
         }
         
-        protected virtual void React()
+        private void React()
         {
             isReacting = true;
             StopPlayerTracking();
             animation.SetState(data.ReactAnim.name);
         }
         
-        protected virtual void Block()
+        private void Block()
         {
             isReacting = true;
             animation.SetState(data.BlockAnim.name);

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
@@ -50,15 +49,19 @@ namespace Enemies
 
         public void SendAnimationEvent(string eventData)
         {
-            AnimationEvent?.Invoke(this, JsonConvert.DeserializeObject<AnimationEventArgs>(eventData));
+            //Using JsonUtility as it is more performant than JsonConvert
+            var args = JsonUtility.FromJson<AnimationEventArgs>(eventData);
+            AnimationEvent?.Invoke(this, args);
         }
+        
+        
 
-        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool moveRandomizedPath = false)
+        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
         {
             StopLooking();
             navigation.Stop();
             
-            if (moveTarget) navigation.FollowPath(moveTarget, moveRandomizedPath);
+            if (moveTarget) navigation.FollowPath(moveTarget, randomizePath, randomPathRange);
             else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
             
             animation.Enable(animKeys[animKey]);
@@ -116,14 +119,13 @@ namespace Enemies
         
         public void StopReact() => reactMoveSpeed = 0;
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
+        public void DestroyAgent() => navigation.DestroyAgent();
     }
 
-    public class AnimationEventArgs : EventArgs
+    public record AnimationEventArgs
     {
-        [JsonProperty("name")] public string EventName;
-        [JsonProperty("float")] public float FloatValue;
-        [JsonProperty("int")] public int IntValue;
-        [JsonProperty("bool")] public bool BoolValue;
-        [JsonProperty("string")] public bool StringValue;
+        public string Event;
+        public float Float;
+        public bool Bool;
     }
 }
