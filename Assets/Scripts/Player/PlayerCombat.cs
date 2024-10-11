@@ -1,5 +1,5 @@
 using UnityEngine;
-using Enemies;
+using SnowHorse.Utils;
 
 namespace Player
 {
@@ -7,6 +7,11 @@ namespace Player
     {
         private PlayerController _controller;
         private PlayerData _data;
+        private CombatState _currentState;
+
+        private float currentAttackLoadTime;
+        private float currentLightAttackCooldown;
+        private bool attackQueued;
 
         private void Start()
         {
@@ -14,50 +19,118 @@ namespace Player
             _data = _controller.PlayerData;
         }
 
-
         public void Manage()
         {
-            if (Input.GetMouseButtonDown(0) && !_controller.InteractableInSight)
+            if (currentLightAttackCooldown > 0)
             {
-                Attack();
-                Cover();
+                currentLightAttackCooldown -= Time.deltaTime;
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                attackQueued = true;
+                ChangeState(CombatState.Attack);
+            }
+
+            if (Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
+
+
+            switch (_currentState)
+            {
+                case CombatState.Attack:
+                    AttackState();
+                    break;
+                case CombatState.Block:
+                    attackQueued = false;
+                    BlockState();
+                    break;
+                default:
+                    attackQueued = false;
+                    break;
             }
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void Attack()
+        public void DealDamage()
         {
-            
+            attackQueued = false;
+        }
 
-            //Add player animation
-
-            Ray ray = new()
+        private void AttackState()
+        {
+            if (attackQueued && currentLightAttackCooldown <= 0)
             {
-                origin = _controller.Camera.position,
-                direction = _controller.Camera.forward
+                currentAttackLoadTime += Time.deltaTime;
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    if (currentAttackLoadTime <= _data.LightAttackMaxTime) AttackEnemy(isHeavyAttack: false);
+                    else if (currentAttackLoadTime < _data.HeavyAttackLoadTime) Debug.Log($"Player HEAVY ATTACK CANCELLED.");
+                    else AttackEnemy(isHeavyAttack: true);
+
+                    currentLightAttackCooldown = _data.LightAttackCooldown;
+                    attackQueued = false;
+                    ChangeState(CombatState.None);
+                }
+            }
+        }
+
+        private void BlockState()
+        {
+            _controller.Animation.Block();
+        }
+
+        private void AttackEnemy(bool isHeavyAttack)
+        {
+            var rayData = new RaycastData
+            {
+                Origin = _controller.Camera.position,
+                Direction = _controller.Camera.forward,
+                MaxDistance = _data.AttackDistance,
+                LayerMask = _data.InteractLayer,
+                FindTag = "Enemy",
+                //Debug = true
             };
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _data.AttackDistance, _data.InteractLayer) && hit.collider.TryGetComponent(out EnemyController enemy))
+            var enemy = Raycaster.FindWithTag<GameObject>(rayData)?.HitObject;
+
+            if (enemy)
             {
-                enemy.DealDamage(_data.DamageAmount);
+                int damage;
+                int poiseDecrement;
+                if (isHeavyAttack)
+                {
+                    damage = _data.HeavyAttackDamage;
+                    poiseDecrement = _data.HeavyAttackPoiseDecrement;
+                    _controller.Animation.HeavyAttack();
+                }
+                else
+                {
+                    damage = _data.LightAttackDamage;
+                    poiseDecrement = _data.LightAttackPoiseDecrement;
+                    _controller.Animation.Attack();
+                }
+
+                GameEvents.Damage(enemy, damage, poiseDecrement);
             }
-            else
-            {
-                Debug.Log("Player attack nothing");
-            }
+
+            string targetName = enemy ? enemy.name.ToUpper() : "NONE";
+            if (isHeavyAttack) Debug.Log($"Player used HEAVY ATTACK against: {targetName}");
+            else Debug.Log($"Player used LIGHT ATTACK against: {targetName}");
+
+            Debug.DrawRay(rayData.Origin, rayData.Direction * rayData.MaxDistance);
         }
 
-        private void Cover()
+        private void ChangeState(CombatState newState)
         {
-            
+            currentAttackLoadTime = 0;
+            _currentState = newState;
         }
-    }
 
-    public enum PlayerCombatState
-    {
-        Idle,
-        Attack,
-        Block,
-        Stunned
+        private enum CombatState
+        {
+            Attack,
+            Block,
+            None
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Player
     {
         public static PlayerController Instance { get; private set; }
         [field: SerializeField] public PlayerInventory Inventory { get; private set; }
-
         [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
+        [field: SerializeField] public PlayerAnimation Animation { get; private set; }
         [field: SerializeField] public GameObject Player { get; private set; }
 
         [SerializeField] private Transform _groundSpawnPoint;
@@ -47,6 +47,7 @@ namespace Player
         public bool IsInspecting { get => _inspector.IsInspecting; }
 
         private BadTVEffect _camDistortion;
+        private GameControllerV2 gameController;
 
         private void Awake()
         {
@@ -54,10 +55,16 @@ namespace Player
                 Destroy(gameObject);
             else Instance = this;
 
-
             PlayerData = _data.dataObject;
 
             _camDistortion = Camera.GetComponent<BadTVEffect>();
+            gameController = GameControllerV2.Instance;
+            gameController.PlayerTransform = Player.transform;
+        }
+
+        private void Start()
+        {
+
         }
 
         private void Update()
@@ -131,7 +138,7 @@ namespace Player
 
         private void ManageCombat()
         {
-            _combat.Manage();
+            if (!InteractableInSight) _combat.Manage();
         }
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)
