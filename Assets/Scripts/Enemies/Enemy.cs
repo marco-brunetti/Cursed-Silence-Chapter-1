@@ -107,10 +107,7 @@ namespace Enemies
                 case "react_stop_movement":
                     animation.StopReact(); //Stops movement only, still does not change state
                     break;
-                case "react_stop":
-                    StopReact();
-                    break;
-                case "block_stop":
+                case "react_or_block_stop":
                     StopReact();
                     break;
                 case "walk_started":
