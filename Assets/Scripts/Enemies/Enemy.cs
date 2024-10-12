@@ -58,7 +58,7 @@ namespace Enemies
         private void AnimationInit()
         {
             animation.Init(data, GetComponent<NavMeshAgent>());
-            EnemyAnimation.AnimationEvent += OnAnimationEvent;
+            EnemyAnimation.AnimationClipEvent += OnAnimationEvent;
             ChangeState(EnemyState.Idle);
         }
         
@@ -112,6 +112,9 @@ namespace Enemies
                     break;
                 case "walk_started":
                     animation.SetAgentSpeed(args.Float);
+                    break;
+                case "set_look_speed":
+                    animation.SetLookSpeed(args.Float);
                     break;
             }
         }

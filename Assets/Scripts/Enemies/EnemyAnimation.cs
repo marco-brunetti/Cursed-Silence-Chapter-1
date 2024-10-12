@@ -15,13 +15,14 @@ namespace Enemies
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         private float reactMoveSpeed;
         private float lookLerpTime;
+        private float lookSpeed;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
         private Navigation navigation;
         private new AnimationManager animation;
         
         public string CurrentKey => animation.CurrentKeyString;
-        public static EventHandler<AnimationEventArgs> AnimationEvent;
+        public static EventHandler<AnimationEventArgs> AnimationClipEvent;
         
         public void Init(EnemyData enemyData, NavMeshAgent agent)
         {
@@ -47,11 +48,12 @@ namespace Enemies
             animation = new AnimationManager(animKeys.Values.ToArray(), GetComponent<Animator>(), animatorController: data.AnimatorController, animList.ToArray());
         }
 
-        public void SendAnimationEvent(string eventData)
+        //Set in the animation clip with a string json
+        public void AnimEvent(string eventData)
         {
             //Using JsonUtility as it is more performant than JsonConvert
             var args = JsonUtility.FromJson<AnimationEventArgs>(eventData);
-            AnimationEvent?.Invoke(this, args);
+            AnimationClipEvent?.Invoke(this, args);
         }
         
         
@@ -67,24 +69,32 @@ namespace Enemies
             animation.Enable(animKeys[animKey]);
         }
 
-        private void LookAtTarget(Transform rootTransform, Transform targetTransform, float duration = 50)
+        private void LookAtTarget(Transform rootTransform, Transform targetTransform)
         {
-            lookAtTarget = StartCoroutine(LookingAtTarget(rootTransform, targetTransform, duration));
+            lookSpeed = 0;
+            lookAtTarget = StartCoroutine(LookingAtTarget(rootTransform, targetTransform));
         }
 
-        private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform, float duration)
+        private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform)
         {
             lookLerpTime = 0;
             var lookPos = rootTransform.position + rootTransform.forward;
 
             while (true)
             {
-                var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
+                if(lookSpeed >= 0)
+                {
+                    var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
 
-                if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
-                else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
+                    var optimalDuration = 50f;
+                    var duration = optimalDuration / lookSpeed;
 
-                rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));
+                    if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
+                    else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
+
+                    rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));
+                }
+
                 yield return null;
             }
         }
@@ -120,6 +130,7 @@ namespace Enemies
         public void StopReact() => reactMoveSpeed = 0;
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
         public void DestroyAgent() => navigation.DestroyAgent();
+        public void SetLookSpeed(float speed) => lookSpeed = speed;
     }
 
     public record AnimationEventArgs
