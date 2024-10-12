@@ -297,7 +297,7 @@ namespace Enemies
         //Set materials to fade or transparent
         private IEnumerator EnemyDisappear()
         {
-            if (renderers.Count > 0)
+            if (data.OnDieDisappearSpeed > 0 && renderers.Count > 0)
             {
                 while (renderers.Count > 0)
                 {
@@ -313,10 +313,6 @@ namespace Enemies
                 }
             
                 Destroy(gameObject);
-            }
-            else
-            {
-                Debug.Log($"No renderers to disappear in {gameObject.name}");
             }
         }
 

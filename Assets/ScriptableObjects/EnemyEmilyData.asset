@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Health>k__BackingField: 100
   <Poise>k__BackingField: 50
+  <OnDieDisappearSpeed>k__BackingField: 0
   <LightAttackDamage>k__BackingField: 10
   <HeavyAttackDamage>k__BackingField: 20
   <SpecialAttackDamage>k__BackingField: 50
@@ -26,6 +27,9 @@ MonoBehaviour:
   <DetectionMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 1019
+  <RandomizePath>k__BackingField: 0
+  <RandomPathRange>k__BackingField: 0
+  <AnimatorController>k__BackingField: {fileID: 9100000, guid: 6cf31f6395247bb45b472fc47f1fccea, type: 2}
   <IdleAnim>k__BackingField: {fileID: 7400000, guid: 58e473aaf18efc2419ef4bd9472f9787, type: 2}
   <MoveAnim>k__BackingField: {fileID: 7400000, guid: 2cfb321a93ca42844853194ed6a37ec3, type: 2}
   <AttackAnim>k__BackingField: {fileID: 7400000, guid: 58362fb84b430d046b1161581674daf6, type: 2}
@@ -37,5 +41,3 @@ MonoBehaviour:
   <AdditionalStateAnims>k__BackingField: []
   <AlternativeClips>k__BackingField:
   - {fileID: 7400000, guid: 1c24f471bbf175a40badd89b0433911c, type: 2}
-  <AnimatorController>k__BackingField: {fileID: 9100000, guid: 6cf31f6395247bb45b472fc47f1fccea, type: 2}
-  <OnDieDisappearSpeed>k__BackingField: 0.01
