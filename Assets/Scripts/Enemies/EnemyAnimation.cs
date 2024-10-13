@@ -130,6 +130,7 @@ namespace Enemies
         public void StopReact() => reactMoveSpeed = 0;
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
         public void DestroyAgent() => navigation.DestroyAgent();
+        public void StopNavigation() => navigation.Stop();
         public void SetLookSpeed(float speed) => lookSpeed = speed;
     }
 

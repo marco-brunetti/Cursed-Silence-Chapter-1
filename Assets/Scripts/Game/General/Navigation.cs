@@ -28,10 +28,11 @@ namespace Game.General
 
         public void Stop()
         {
+            agent.SetDestination(agent.transform.position);
+            agent.speed = 0;
             if (followPath != null) StopCoroutine(followPath);
             agent.isStopped = true;
             agent.updatePosition = false;
-            agent.speed = 0;
             path.ClearCorners();
         }
 

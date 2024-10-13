@@ -104,8 +104,9 @@ namespace Enemies
         private IEnumerator SpecialAttackMovement()
         {
             StopPlayerTracking();
-
+            animation.StopNavigation();
             animation.SetLookSpeed(0);
+
             var initialPosition = transform.position;
             var target = transform.position + transform.forward * 7f;
 
