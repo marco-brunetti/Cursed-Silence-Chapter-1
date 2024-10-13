@@ -36,7 +36,7 @@ namespace Enemies
         [field: SerializeField] public AnimationClip ReactAnim { get; private set; }
         [field: SerializeField] public AnimationClip BlockAnim { get; private set; }
         [field: SerializeField] public AnimationClip DeathAnim { get; private set; }
-        [field: SerializeField] public AnimationClip[] AdditionalStateAnims { get; private set; }
+        [field: SerializeField, Tooltip("Add the base animation for any custom state with a custom bool")] public AnimationClip[] AdditionalStateAnims { get; private set; }
         [field: SerializeField] public AnimationClip[] AlternativeClips {  get; private set; }
         
     }

@@ -11,7 +11,7 @@ namespace Enemies
     //[RequireComponent(typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private EnemyData data;
+        [SerializeField] protected EnemyData data;
         [SerializeField] protected new Collider collider;
         [SerializeField] protected Detector attackZone;
         [SerializeField] protected Detector awareZone;
@@ -234,7 +234,7 @@ namespace Enemies
             attack = null;
         }
 
-        private void SetRandomAttack()
+        protected virtual void SetRandomAttack()
         {
             if (animation.CurrentKey == data.AttackAnim.name)
             {
