@@ -1,11 +1,15 @@
+using SnowHorse.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Enemies
 {
     public class EnemyEmily : Enemy
     {
         private string SpecialAttack2AnimKey = "special_attack_2_part_0";
+        private float specialAttackLerpTime;
+        private float specialAttackLerpTime2;
 
         protected override IEnumerator AttackingPlayer()
         {
@@ -47,12 +51,13 @@ namespace Enemies
                     //Added second special attack for Emily
                     if (p < data.SpecialAttackProbability)
                     {
-                        var sp = random.Next(0, 100);
-                        if (sp < 50) animation.SetState(data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                        else animation.SetState(SpecialAttack2AnimKey, rootTransformForLook: transform, lookTarget: player);
+                        SelectSpecialAttack();
+                    }
+                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability)
+                    {
+                        animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                     }
                         
-                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 }
                 else if (hasHeavyAttack)
                 {
@@ -60,7 +65,10 @@ namespace Enemies
                 }
                 else if (hasSpecialAttack)
                 {
-                    if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    if (p < data.SpecialAttackProbability)
+                    {
+                        SelectSpecialAttack();
+                    }
                 }
             }
             else
@@ -69,6 +77,67 @@ namespace Enemies
             }
 
             changeNextAttack = false;
+        }
+
+        private void SelectSpecialAttack()
+        {
+            var sp = random.Next(0, 100);
+            if (sp < 50) animation.SetState(data.SpecialAttackAnim.name);
+            else animation.SetState(SpecialAttack2AnimKey);
+        }
+
+
+        protected override void OnAnimationEvent(object sender, AnimationEventArgs args)
+        {
+            base.OnAnimationEvent(sender, args);
+            if ((EnemyAnimation)sender != animation) return;
+
+            switch (args.Event)
+            {
+                case "started_special_attack_movement":
+                    StartCoroutine(SpecialAttackMovement());
+                    break;
+            }
+        }
+
+        //Add custom movement for special attack animation
+        private IEnumerator SpecialAttackMovement()
+        {
+            StopPlayerTracking();
+
+            animation.SetLookSpeed(0);
+            var initialPosition = transform.position;
+            var target = transform.position + transform.forward * 5f;
+
+            //Getting this numbers manually from the animation clip
+            var runAttackClipSec = 0.67f;
+            var AttackWaitSec = 1.5f;
+            var returnClipSec = 2.83f;
+
+            var currentTime = runAttackClipSec + AttackWaitSec + returnClipSec;
+
+            while(currentTime > 0)
+            {
+                if(currentTime > AttackWaitSec + returnClipSec)
+                {
+                    transform.position = Vector3.Lerp(initialPosition, target, Interpolation.Linear(runAttackClipSec, ref specialAttackLerpTime));
+                }
+                else if(currentTime < returnClipSec)
+                {
+                    transform.position = Vector3.Lerp(target, initialPosition, Interpolation.Linear(returnClipSec, ref specialAttackLerpTime2));
+                }
+
+                Debug.DrawRay(initialPosition, target, Color.blue);
+
+
+                currentTime -= Time.deltaTime;
+                yield return null;
+            }
+
+            specialAttackLerpTime = 0;
+            specialAttackLerpTime2 = 0;
+
+            StartPlayerTracking();
         }
     }
 }

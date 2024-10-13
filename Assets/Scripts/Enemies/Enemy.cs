@@ -62,13 +62,13 @@ namespace Enemies
             ChangeState(EnemyState.Idle);
         }
         
-        private void StartPlayerTracking(bool visualConeOnly = true)
+        protected void StartPlayerTracking(bool visualConeOnly = true)
         {
             EnemyPlayerTracker.PlayerTrackerUpdated += OnPlayerTrackerUpdated;
             playerTracker.Start(visualConeOnly);
         }
         
-        private void StopPlayerTracking()
+        protected void StopPlayerTracking()
         {
             EnemyPlayerTracker.PlayerTrackerUpdated -= OnPlayerTrackerUpdated;
             playerTracker.Stop();
@@ -89,7 +89,7 @@ namespace Enemies
             }
         }
 
-        private void OnAnimationEvent(object sender, AnimationEventArgs args)
+        protected virtual void OnAnimationEvent(object sender, AnimationEventArgs args)
         {
             if ((EnemyAnimation)sender != animation) return;
             
@@ -150,7 +150,6 @@ namespace Enemies
                 case EnemyState.Block:
                     Block();
                     break;
-                case EnemyState.SpecialAttack:
                 case EnemyState.Escape:
                 case EnemyState.Wander:
                 default:
@@ -166,7 +165,6 @@ namespace Enemies
                 EnemyState.Idle => data.IdleAnim != null,
                 EnemyState.Walk => data.MoveAnim != null,
                 EnemyState.Attack => data.AttackAnim != null,
-                EnemyState.SpecialAttack => data.SpecialAttackAnim != null,
                 EnemyState.React => data.ReactAnim != null,
                 EnemyState.Block => data.BlockAnim != null,
                 EnemyState.Dead => data.DeathAnim != null,
@@ -334,7 +332,6 @@ namespace Enemies
         Idle,
         Walk,
         Attack,
-        SpecialAttack,
         React,
         Escape,
         Block,

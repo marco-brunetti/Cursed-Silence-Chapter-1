@@ -30,6 +30,7 @@ namespace Game.General
         {
             if (followPath != null) StopCoroutine(followPath);
             agent.isStopped = true;
+            agent.updatePosition = false;
             agent.speed = 0;
             path.ClearCorners();
         }
@@ -42,8 +43,10 @@ namespace Game.General
 
         private IEnumerator FollowingPath(Transform target, bool randomizePath, float randomPathRange)
         {
+            agent.Warp(agent.transform.position); //Resets agent to new position after updating position with another method
+            agent.updatePosition = true;
             agent.isStopped = false;
-
+            
             while (true)
             {
                 NavMesh.CalculatePath(transform.position, target.position, NavMesh.AllAreas, path);
