@@ -107,12 +107,12 @@ namespace Enemies
 
             animation.SetLookSpeed(0);
             var initialPosition = transform.position;
-            var target = transform.position + transform.forward * 5f;
+            var target = transform.position + transform.forward * 7f;
 
             //Getting this numbers manually from the animation clip
             var runAttackClipSec = 0.67f;
             var AttackWaitSec = 1.5f;
-            var returnClipSec = 2.83f;
+            var returnClipSec = 2.33f;
 
             var currentTime = runAttackClipSec + AttackWaitSec + returnClipSec;
 
@@ -124,7 +124,7 @@ namespace Enemies
                 }
                 else if(currentTime < returnClipSec)
                 {
-                    transform.position = Vector3.Lerp(target, initialPosition, Interpolation.Linear(returnClipSec, ref specialAttackLerpTime2));
+                    transform.position = Vector3.Lerp(target, initialPosition, Interpolation.Smooth(returnClipSec, ref specialAttackLerpTime2));
                 }
 
                 Debug.DrawRay(initialPosition, target, Color.blue);
@@ -133,6 +133,8 @@ namespace Enemies
                 currentTime -= Time.deltaTime;
                 yield return null;
             }
+
+            yield return new WaitForSecondsRealtime(0.5f); //When the model sets foot on the ground, there is a half second delay
 
             specialAttackLerpTime = 0;
             specialAttackLerpTime2 = 0;
