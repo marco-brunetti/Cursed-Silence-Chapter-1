@@ -4401,7 +4401,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!95 &1518561860
 Animator:
   serializedVersion: 5
@@ -4412,7 +4412,7 @@ Animator:
   m_GameObject: {fileID: 1518561858}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c3413a70c86e20541b57923cef660b44, type: 3}
-  m_Controller: {fileID: 9100000, guid: e7fe9b076fbeab844b517c815e16461c, type: 2}
+  m_Controller: {fileID: 9100000, guid: ed283bb20435f5f479b0b0dbbba03bbe, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4786,6 +4786,10 @@ PrefabInstance:
     - target: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_Name
       value: enemy_emily
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218518653637063232, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
