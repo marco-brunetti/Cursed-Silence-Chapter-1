@@ -8,7 +8,6 @@ using UnityEngine.AI;
 
 namespace Enemies
 {
-    //[RequireComponent(typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
         [SerializeField] protected EnemyData data;
@@ -27,7 +26,7 @@ namespace Enemies
         protected bool changeNextAttack;
         
         protected Transform player;
-        [SerializeField] protected EnemyState currentState;
+        protected EnemyState currentState;
         protected System.Random random;
         private EnemyStats stats;
         protected Coroutine attack;

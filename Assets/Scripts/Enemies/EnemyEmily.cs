@@ -16,11 +16,8 @@ namespace Enemies
         {
             var attackKeysList = new List<string> { data.AttackAnim.name };
             if (hasHeavyAttack) attackKeysList.Add(data.HeavyAttackAnim.name);
-            if (hasSpecialAttack)
-            {
-                attackKeysList.Add(data.SpecialAttackAnim.name);
-                attackKeysList.Add(SpecialAttack2Clip.name);
-            }
+            if (hasSpecialAttack) attackKeysList.AddRange(new List<string> { data.SpecialAttackAnim.name, SpecialAttack2Clip.name });
+
             attack ??= StartCoroutine(AttackingPlayer(attackKeysList));
         }
 
@@ -34,16 +31,8 @@ namespace Enemies
 
                 if (hasHeavyAttack && hasSpecialAttack)
                 {
-                    //Added second special attack for Emily
-                    if (p < data.SpecialAttackProbability)
-                    {
-                        SelectSpecialAttack();
-                    }
-                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability)
-                    {
-                        animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                    }
-                        
+                    if (p < data.SpecialAttackProbability) SelectSpecialAttack();
+                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);     
                 }
                 else if (hasHeavyAttack)
                 {
@@ -51,10 +40,7 @@ namespace Enemies
                 }
                 else if (hasSpecialAttack)
                 {
-                    if (p < data.SpecialAttackProbability)
-                    {
-                        SelectSpecialAttack();
-                    }
+                    if (p < data.SpecialAttackProbability) SelectSpecialAttack();
                 }
             }
             else
@@ -71,6 +57,7 @@ namespace Enemies
             changeNextAttack = false;
         }
 
+        //Added second special attack for Emily
         private void SelectSpecialAttack()
         {
             StopMovementFunctions();
@@ -112,27 +99,21 @@ namespace Enemies
             var AttackWaitSec = 1.5f;
             var returnClipSec = 2.33f;
 
+            //Total attack time
             var currentTime = runAttackClipSec + AttackWaitSec + returnClipSec;
 
             while(currentTime > 0)
-            {
-                if(currentTime > AttackWaitSec + returnClipSec)
-                {
-                    transform.position = Vector3.Lerp(initialPosition, target, Interpolation.Linear(runAttackClipSec, ref specialAttackLerpTime));
-                }
-                else if(currentTime < returnClipSec)
-                {
-                    transform.position = Vector3.Lerp(target, initialPosition, Interpolation.Smooth(returnClipSec, ref specialAttackLerpTime2));
-                }
-
-                Debug.DrawRay(initialPosition, target, Color.blue);
-
+            { 
+                //Go and come back
+                if(currentTime > AttackWaitSec + returnClipSec) transform.position = Vector3.Lerp(initialPosition, target, Interpolation.Linear(runAttackClipSec, ref specialAttackLerpTime));
+                else if(currentTime < returnClipSec) transform.position = Vector3.Lerp(target, initialPosition, Interpolation.Smooth(returnClipSec, ref specialAttackLerpTime2));
 
                 currentTime -= Time.deltaTime;
                 yield return null;
             }
 
-            yield return new WaitForSecondsRealtime(0.5f); //When the model sets foot on the ground, there is a half second delay
+            //When the model sets foot on the ground, there is a half second delay before clip ends
+            yield return new WaitForSecondsRealtime(0.5f); 
 
             specialAttackLerpTime = 0;
             specialAttackLerpTime2 = 0;
