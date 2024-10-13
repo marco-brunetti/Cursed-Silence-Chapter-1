@@ -22,15 +22,15 @@ namespace Enemies
         private bool canDie = true;
         private bool isVulnerable = true;
         protected bool isReacting;
-        private bool hasHeavyAttack;
-        private bool hasSpecialAttack;
-        private bool changeNextAttack;
+        protected bool hasHeavyAttack;
+        protected bool hasSpecialAttack;
+        protected bool changeNextAttack;
         
-        private Transform player;
+        protected Transform player;
         protected EnemyState currentState;
         protected System.Random random;
         private EnemyStats stats;
-        private Coroutine attack;
+        protected Coroutine attack;
         protected EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
         private GameControllerV2 gameController;
@@ -190,7 +190,7 @@ namespace Enemies
             animation.SetState(data.DeathAnim.name);
         }
 
-        private void Attack()
+        protected virtual void Attack()
         {
             attack ??= StartCoroutine(AttackingPlayer());
         }
@@ -213,7 +213,7 @@ namespace Enemies
             animation.SetState(data.BlockAnim.name);
         }
 
-        private IEnumerator AttackingPlayer()
+        protected virtual IEnumerator AttackingPlayer()
         {
             var attackKeysList = new List<string> { data.AttackAnim.name };
             if(hasHeavyAttack) attackKeysList.Add(data.HeavyAttackAnim.name);
