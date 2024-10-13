@@ -5,6 +5,7 @@ namespace Enemies
     [CreateAssetMenu(fileName = "EnemyData", menuName = "ScriptableObjects/EnemyData", order = 2)]
     public class EnemyData : ScriptableObject
     {
+        [field: SerializeField, Header("Enemy State")] public EnemyState InitialState { get; private set; }
         [field: SerializeField, Header("Resistance"), Space(10)] public int Health { get; private set; } = 100;
         [field: SerializeField, Range(0, 100)] public int Poise { get; private set; } = 50;
         [field: SerializeField] public float OnDieDisappearSpeed { get; private set; } = 1;

@@ -58,7 +58,7 @@ namespace Enemies
         {
             animation.Init(data, GetComponent<NavMeshAgent>());
             EnemyAnimation.AnimationClipEvent += OnAnimationEvent;
-            ChangeState(EnemyState.Idle);
+            ChangeState(data.InitialState);
         }
         
         protected void StartPlayerTracking(bool visualConeOnly = true)
