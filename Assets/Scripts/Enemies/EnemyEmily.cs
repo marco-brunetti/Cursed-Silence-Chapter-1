@@ -7,40 +7,26 @@ namespace Enemies
 {
     public class EnemyEmily : Enemy
     {
-        private string SpecialAttack2AnimKey = "special_attack_2_part_0";
+        [SerializeField] private AnimationClip SpecialAttack2Clip;
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
+        private bool isTrackingStopped;
 
-        protected override IEnumerator AttackingPlayer()
+        protected override void Attack()
         {
-            var attackKeysList = new List<string> { data.AttackAnim.name, };
+            var attackKeysList = new List<string> { data.AttackAnim.name };
             if (hasHeavyAttack) attackKeysList.Add(data.HeavyAttackAnim.name);
             if (hasSpecialAttack)
             {
                 attackKeysList.Add(data.SpecialAttackAnim.name);
-                attackKeysList.Add(SpecialAttack2AnimKey);
+                attackKeysList.Add(SpecialAttack2Clip.name);
             }
-                
-
-            if (!attackKeysList.Contains(animation.CurrentKey))
-            {
-                animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                yield return null;
-            }
-
-            while (attackKeysList.Contains(animation.CurrentKey))
-            {
-                if (changeNextAttack) SetRandomAttack();
-                yield return null;
-            }
-
-            attack = null;
+            attack ??= StartCoroutine(AttackingPlayer(attackKeysList));
         }
 
 
         protected override void SetRandomAttack()
         {
-
             if (animation.CurrentKey == data.AttackAnim.name)
             {
                 var p = 0;
@@ -73,6 +59,12 @@ namespace Enemies
             }
             else
             {
+                if (isTrackingStopped)
+                {
+                    StartPlayerTracking();
+                    isTrackingStopped = false;
+                }
+                    
                 animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
             }
 
@@ -81,11 +73,20 @@ namespace Enemies
 
         private void SelectSpecialAttack()
         {
+            StopMovementFunctions();
+
             var sp = random.Next(0, 100);
             if (sp < 50) animation.SetState(data.SpecialAttackAnim.name);
-            else animation.SetState(SpecialAttack2AnimKey);
+            else animation.SetState(SpecialAttack2Clip.name);
         }
 
+        private void StopMovementFunctions()
+        {
+            StopPlayerTracking();
+            animation.StopNavigation();
+            animation.SetLookSpeed(0);
+            isTrackingStopped = true;
+        }
 
         protected override void OnAnimationEvent(object sender, AnimationEventArgs args)
         {
@@ -103,10 +104,6 @@ namespace Enemies
         //Add custom movement for special attack animation
         private IEnumerator SpecialAttackMovement()
         {
-            StopPlayerTracking();
-            animation.StopNavigation();
-            animation.SetLookSpeed(0);
-
             var initialPosition = transform.position;
             var target = transform.position + transform.forward * 7f;
 
@@ -139,8 +136,6 @@ namespace Enemies
 
             specialAttackLerpTime = 0;
             specialAttackLerpTime2 = 0;
-
-            StartPlayerTracking();
         }
     }
 }

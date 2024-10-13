@@ -27,7 +27,7 @@ namespace Enemies
         protected bool changeNextAttack;
         
         protected Transform player;
-        protected EnemyState currentState;
+        [SerializeField] protected EnemyState currentState;
         protected System.Random random;
         private EnemyStats stats;
         protected Coroutine attack;
@@ -119,13 +119,14 @@ namespace Enemies
             }
         }
         
-        private void ChangeState(EnemyState newState)
+        protected virtual void ChangeState(EnemyState newState)
         {
             if(!IsValidState(newState))
             {
                 Debug.LogError($"There is no anim for state {newState.ToString().ToUpper()} on {gameObject.name.ToUpper()}! Maintaining current state.");
                 return;
             }
+
 
             isReacting = false;
             currentState = newState;
@@ -190,7 +191,10 @@ namespace Enemies
 
         protected virtual void Attack()
         {
-            attack ??= StartCoroutine(AttackingPlayer());
+            var attackKeysList = new List<string> { data.AttackAnim.name };
+            if (hasHeavyAttack) attackKeysList.Add(data.HeavyAttackAnim.name);
+            if (hasSpecialAttack) attackKeysList.Add(data.SpecialAttackAnim.name);
+            attack ??= StartCoroutine(AttackingPlayer(attackKeysList));
         }
         
         private void Move()
@@ -211,12 +215,8 @@ namespace Enemies
             animation.SetState(data.BlockAnim.name);
         }
 
-        protected virtual IEnumerator AttackingPlayer()
+        protected IEnumerator AttackingPlayer(List<string> attackKeysList)
         {
-            var attackKeysList = new List<string> { data.AttackAnim.name };
-            if(hasHeavyAttack) attackKeysList.Add(data.HeavyAttackAnim.name);
-            if(hasSpecialAttack) attackKeysList.Add(data.SpecialAttackAnim.name);
-        
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
                 animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);

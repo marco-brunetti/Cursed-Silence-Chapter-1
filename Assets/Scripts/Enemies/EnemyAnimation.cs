@@ -136,6 +136,7 @@ namespace Enemies
 
     public record AnimationEventArgs
     {
+        public string Clip;
         public string Event;
         public float Float;
         public bool Bool;
