@@ -6,6 +6,7 @@ using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 using Game.General;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Enemies
 {
@@ -71,7 +72,7 @@ namespace Enemies
 
         private void LookAtTarget(Transform rootTransform, Transform targetTransform)
         {
-            lookSpeed = 0;
+            StopLooking();
             lookAtTarget = StartCoroutine(LookingAtTarget(rootTransform, targetTransform));
         }
 
@@ -82,9 +83,13 @@ namespace Enemies
 
             while (true)
             {
-                if(lookSpeed >= 0)
+                if(lookSpeed > 0)
                 {
-                    var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
+                    Vector3 relativeTarget = (targetTransform.position - rootTransform.transform.position).normalized;
+                    //Vector3.right if you have a sprite rotated in the right direction
+                    Quaternion toQuaternion = Quaternion.FromToRotation(Vector3.forward, relativeTarget);
+                    rootTransform.transform.rotation = Quaternion.Slerp(rootTransform.transform.rotation, toQuaternion, lookSpeed * Time.deltaTime);
+                    /*var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
 
                     var optimalDuration = 50f;
                     var duration = optimalDuration / lookSpeed;
@@ -92,7 +97,9 @@ namespace Enemies
                     if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
                     else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
 
-                    rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));
+                    Vector3.Angle(lookPos, target);
+
+                    rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));*/
                 }
 
                 yield return null;
@@ -101,6 +108,7 @@ namespace Enemies
 
         private void StopLooking()
         {
+            lookSpeed = 0;
             if (lookAtTarget != null) StopCoroutine(lookAtTarget);
         }
 
@@ -131,7 +139,11 @@ namespace Enemies
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
         public void DestroyAgent() => navigation.DestroyAgent();
         public void StopNavigation() => navigation.Stop();
-        public void SetLookSpeed(float speed) => lookSpeed = speed;
+        public void SetLookSpeed(float speed)
+        {
+            lookLerpTime = 0;
+            lookSpeed = speed;
+        }   
     }
 
     public record AnimationEventArgs

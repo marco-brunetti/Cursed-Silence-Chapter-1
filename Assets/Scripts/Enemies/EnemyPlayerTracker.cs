@@ -33,18 +33,18 @@ namespace Enemies
         {
             Stop();
 
-            Detector.TagEntered += OnPlayerEnteredDetector;
+            //Detector.TagEntered += OnPlayerEnteredDetector;
             Detector.TagExited += OnPlayerExitedDetector;
-            Detector.TagDetectedStart += OnDetectorStart;
+            Detector.TagDetectedTick += OnDetectorTick;
             CustomShapeDetector.TagStaying += OnPlayerInsideVisualCone;
             ActivateZones(visualConeOnly);
         }
 
         public void Stop()
         {
-            Detector.TagEntered -= OnPlayerEnteredDetector;
+            //Detector.TagEntered -= OnPlayerEnteredDetector;
             Detector.TagExited -= OnPlayerExitedDetector;
-            Detector.TagDetectedStart -= OnDetectorStart;
+            Detector.TagDetectedTick -= OnDetectorTick;
             CustomShapeDetector.TagStaying -= OnPlayerInsideVisualCone;
             if(visualCone) visualCone.gameObject.SetActive(false);
             attackZone.gameObject.SetActive(false);
@@ -76,14 +76,11 @@ namespace Enemies
 
         private void CheckConditions(bool attackZoneDetected, bool awareZoneDetected)
         {
-            if (attackZoneDetected != inAttackZone || awareZoneDetected != inAwareZone)
-            {
-                InAttackZone = attackZoneDetected;
-                InAwareZone = awareZoneDetected && !attackZoneDetected;
-                OutsideZone = !attackZoneDetected && !awareZoneDetected;
+            InAttackZone = attackZoneDetected;
+            InAwareZone = awareZoneDetected && !attackZoneDetected;
+            OutsideZone = !attackZoneDetected && !awareZoneDetected;
 
-                PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(InAttackZone, InAwareZone, OutsideZone));
-            }
+            PlayerTrackerUpdated?.Invoke(this, new EnemyPlayerTrackerArgs(InAttackZone, InAwareZone, OutsideZone));
 
             inAttackZone = attackZoneDetected;
             inAwareZone = awareZoneDetected;
@@ -96,9 +93,10 @@ namespace Enemies
             else if (triggeredDetector == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
         }
 
-        private void OnDetectorStart(object sender, DetectorEventArgs args)
+        private void OnDetectorTick(object sender, DetectorEventArgs args)
         {
             if ((Detector)sender == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
+            else if ((Detector)sender == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
         }
 
         private void OnPlayerInsideVisualCone(object sender, EventArgs e)

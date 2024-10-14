@@ -12,6 +12,18 @@ namespace Enemies
         private float specialAttackLerpTime2;
         private bool isTrackingStopped;
 
+        protected override void Move()
+        {
+            animation.SetState(data.MoveAnim.name, lookTarget:player, rootTransformForLook: transform);
+            animation.SetLookSpeed(1f);
+        }
+
+        protected override void OnWalkStarted(float speed)
+        {
+            animation.SetState(data.MoveAnim.name, moveTarget:player);
+            animation.SetAgentSpeed(speed);
+        }
+
         protected override void Attack()
         {
             var attackKeysList = new List<string> { data.AttackAnim.name };
@@ -24,34 +36,45 @@ namespace Enemies
 
         protected override void SetRandomAttack()
         {
-            if (animation.CurrentKey == data.AttackAnim.name)
+            if (currentState == EnemyState.Attack)
             {
-                var p = 0;
-                if (hasHeavyAttack || hasSpecialAttack) p = random.Next(0, 100);
+                if (animation.CurrentKey == data.AttackAnim.name)
+                {
+                    var p = 0;
+                    if (hasHeavyAttack || hasSpecialAttack) p = random.Next(0, 100);
 
-                if (hasHeavyAttack && hasSpecialAttack)
-                {
-                    if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);     
+                    if (hasHeavyAttack && hasSpecialAttack)
+                    {
+                        if (p < data.SpecialAttackProbability) SelectSpecialAttack();
+                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);     
+                    }
+                    else if (hasHeavyAttack)
+                    {
+                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    }
+                    else if (hasSpecialAttack)
+                    {
+                        if (p < data.SpecialAttackProbability) SelectSpecialAttack();
+                    }
                 }
-                else if (hasHeavyAttack)
+                else
                 {
-                    if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                }
-                else if (hasSpecialAttack)
-                {
-                    if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                }
+                    if (isTrackingStopped)
+                    {
+                        StartPlayerTracking(visualConeOnly: false);
+                        isTrackingStopped = false;
+                    }
+                    
+                    animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                } 
             }
             else
             {
                 if (isTrackingStopped)
                 {
-                    StartPlayerTracking();
+                    StartPlayerTracking(visualConeOnly: false);
                     isTrackingStopped = false;
                 }
-                    
-                animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
             }
 
             changeNextAttack = false;
