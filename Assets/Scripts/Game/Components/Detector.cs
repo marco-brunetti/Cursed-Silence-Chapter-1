@@ -1,112 +1,59 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class Detector : MonoBehaviour
+namespace Game.Components
 {
-    public static EventHandler<DetectorEventArgs> TagDetectedTick;
-    public static EventHandler<DetectorEventArgs> TagEntered;
-    public static EventHandler<DetectorEventArgs> TagExited;
+    public class Detector : MonoBehaviour
+    {
+        public static EventHandler<DetectorEventArgs> TagStaying;
+        public static EventHandler<DetectorEventArgs> TagEntered;
+        public static EventHandler<DetectorEventArgs> TagExited;
     
-    private List<string> tags = new();
-    private List<Collider> currentColliders = new();
-    private Coroutine checkCollidersActive;
-    private WaitForSeconds interval;
-    private DetectorShape shape;
-    private Vector3 scale;
-    bool returnColliders;
+        private List<string> tags = new();
+        private float detectionInterval;
+        private float currentInterval;
 
-    public void Init(List<string> detectionTags, DetectorShape shape, Vector3 scale, float detectionInterval = 0.1f, bool returnColliders = false)
-    {
-        Stop();
-        this.returnColliders = returnColliders;
-        this.shape = shape;
-        this.scale = scale;
-        detectionTags.ForEach(x=>tags.Add(x.ToLower()));
-        interval = new WaitForSeconds(detectionInterval);
-        checkCollidersActive = StartCoroutine(CheckCollidersActive());
-    }
-
-    private List<Collider> GetColliders(List<string> detectionTags, DetectorShape shape, Vector3 scale)
-    {
-        return shape switch
+        public void Init(List<string> detectionTags, float detectionInterval = 0.1f)
         {
-            DetectorShape.Box => Physics.OverlapBox(transform.position, scale / 2)
-                .Where(x => detectionTags.Contains(x.tag.ToLower())).ToList(),
-            DetectorShape.Sphere => Physics.OverlapSphere(transform.position, scale.x / 2)
-                .Where(x => detectionTags.Contains(x.tag.ToLower())).ToList(),
-            _ => Physics.OverlapSphere(transform.position, scale.x / 2).Where(x => detectionTags.Contains(x.tag.ToLower()))
-                .ToList()
-        };
-    }
-
-    public void Stop()
-    {
-        currentColliders.Clear();
-        tags.Clear();
-        interval = null;
-        if(checkCollidersActive != null) StopCoroutine(checkCollidersActive);
-    }
-
-    public void OnTriggerTick()
-    {
-        currentColliders = GetColliders(tags, shape, scale);
-
-        foreach (var col in currentColliders)
+            tags.Clear();
+            this.detectionInterval = detectionInterval;
+            detectionTags.ForEach(x=>tags.Add(x.ToLower()));
+        }
+    
+        private void OnTriggerEnter(Collider other)
         {
-            DetectorEventArgs args = returnColliders ? new(col.tag.ToLower(), col) : new(col.tag.ToLower());
-            TagDetectedTick?.Invoke(this, args);
+            if (!tags.Contains(other.tag.ToLower())) return;
+            TagEntered?.Invoke(this, new DetectorEventArgs(other.tag, other));
+        }
+    
+        private void OnTriggerStay(Collider other)
+        {
+            currentInterval -= Time.fixedDeltaTime;
+            if (currentInterval <= 0)
+            {
+                currentInterval = detectionInterval;
+                if (!tags.Contains(other.tag.ToLower())) return;
+                TagStaying?.Invoke(this, new DetectorEventArgs(other.tag, other));
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!tags.Contains(other.tag.ToLower())) return;
+            TagExited?.Invoke(this, new DetectorEventArgs(other.tag, other));
         }
     }
 
-    /*private void OnTriggerEnter(Collider other)
+    public class DetectorEventArgs : EventArgs
     {
-        if(tags.Contains(other.tag.ToLower()))
+        public string Tag { get; private set; }
+        public Collider Collider { get; private set; }
+
+        public DetectorEventArgs(string tag = "", Collider collider = null)
         {
-            if(!currentColliders.Contains(other)) currentColliders.Add(other);
-            DetectorEventArgs args = returnColliders ? new(other.tag, other) : new(other.tag);
-            TagEntered?.Invoke(this, args);
+            Tag = tag;
+            Collider = collider;
         }
-    }*/
-
-    private void OnTriggerExit(Collider other)
-    {
-        if(tags.Contains(other.tag.ToLower()))
-        {
-            if(currentColliders.Contains(other)) currentColliders.Remove(other);
-            DetectorEventArgs args = returnColliders ? new(other.tag, other) : new(other.tag);
-            TagExited?.Invoke(this, args);
-        }
-    }
-
-    private IEnumerator CheckCollidersActive()
-    {
-        while (true)
-        {
-            OnTriggerTick();
-            yield return interval;
-        }
-    }
-}
-
-public enum DetectorShape
-{
-    Box,
-    Sphere,
-    Capsule
-}
-
-public class DetectorEventArgs : EventArgs
-{
-    public string Tag { get; private set; }
-    public Collider Collider { get; private set; }
-
-    public DetectorEventArgs(string tag = "", Collider collider = null)
-    {
-        Tag = tag;
-        Collider = collider;
     }
 }

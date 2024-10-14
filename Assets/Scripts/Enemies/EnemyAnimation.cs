@@ -15,7 +15,7 @@ namespace Enemies
     {
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         private float reactMoveSpeed;
-        private float lookLerpTime;
+        //private float lookLerpTime;
         private float lookSpeed;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
@@ -78,7 +78,7 @@ namespace Enemies
 
         private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform)
         {
-            lookLerpTime = 0;
+            //lookLerpTime = 0;
             var lookPos = rootTransform.position + rootTransform.forward;
 
             while (true)
@@ -141,7 +141,7 @@ namespace Enemies
         public void StopNavigation() => navigation.Stop();
         public void SetLookSpeed(float speed)
         {
-            lookLerpTime = 0;
+            //lookLerpTime = 0;
             lookSpeed = speed;
         }   
     }

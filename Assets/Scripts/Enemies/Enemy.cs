@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Game.Components;
 using Game.General;
 using UnityEngine;
 using UnityEngine.AI;
@@ -40,7 +41,7 @@ namespace Enemies
             hasSpecialAttack = data.SpecialAttackAnim != null;
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
-            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone, data.DetectionMask);
+            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone, data);
         }
         
         protected virtual void Start()

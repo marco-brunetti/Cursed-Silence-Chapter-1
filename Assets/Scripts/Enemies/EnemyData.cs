@@ -23,6 +23,7 @@ namespace Enemies
         [field: SerializeField, Range(0, 50)] public int BlockProbability { get; private set; } = 20;
 
         [field: SerializeField, Header("Player Tracking"), Space(10)] public LayerMask DetectionMask { get; private set; }
+        [field: SerializeField, Range(0.1f, 10)] public float DetectionInterval { get; private set; } = 1;
         [field: SerializeField, Header("NavMesh"), Space(10), Tooltip("Use for erratic movement")] public bool RandomizePath { get; private set; } = false;
         [field: SerializeField, Range(0, 5), Tooltip("Use for erratic movement")] public float RandomPathRange { get; private set; } = 0;
 

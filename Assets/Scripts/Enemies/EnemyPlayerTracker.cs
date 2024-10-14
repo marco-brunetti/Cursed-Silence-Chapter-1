@@ -1,5 +1,7 @@
 using SnowHorse.Utils;
 using System;
+using System.Collections.Generic;
+using Game.Components;
 using UnityEngine;
 
 namespace Enemies
@@ -17,16 +19,16 @@ namespace Enemies
         private Detector awareZone;
         private CustomShapeDetector visualCone;
         private readonly Enemy enemy;
-        private readonly LayerMask mask;
+        private readonly EnemyData data;
         public static EventHandler<EnemyPlayerTrackerArgs> PlayerTrackerUpdated;
 
-        public EnemyPlayerTracker(Enemy enemy, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone, LayerMask detectionMask)
+        public EnemyPlayerTracker(Enemy enemy, Detector attackZone, Detector awareZone, CustomShapeDetector visualCone, EnemyData data)
         {
             this.enemy = enemy;
             this.attackZone = attackZone;
             this.awareZone = awareZone;
             this.visualCone = visualCone;
-            mask = detectionMask;
+            this.data = data;
         }
 
         public void Start(bool visualConeOnly = false)
@@ -35,7 +37,7 @@ namespace Enemies
 
             //Detector.TagEntered += OnPlayerEnteredDetector;
             Detector.TagExited += OnPlayerExitedDetector;
-            Detector.TagDetectedTick += OnDetectorTick;
+            Detector.TagStaying += OnDetectorTick;
             CustomShapeDetector.TagStaying += OnPlayerInsideVisualCone;
             ActivateZones(visualConeOnly);
         }
@@ -44,7 +46,7 @@ namespace Enemies
         {
             //Detector.TagEntered -= OnPlayerEnteredDetector;
             Detector.TagExited -= OnPlayerExitedDetector;
-            Detector.TagDetectedTick -= OnDetectorTick;
+            Detector.TagStaying -= OnDetectorTick;
             CustomShapeDetector.TagStaying -= OnPlayerInsideVisualCone;
             if(visualCone) visualCone.gameObject.SetActive(false);
             attackZone.gameObject.SetActive(false);
@@ -67,8 +69,8 @@ namespace Enemies
             }
             else
             {
-                attackZone.Init(new() { "player" }, DetectorShape.Sphere, attackZone.transform.localScale);
-                awareZone.Init(new() { "player" }, DetectorShape.Sphere, awareZone.transform.localScale);
+                attackZone.Init(new List<string> { "player" }, data.DetectionInterval);
+                awareZone.Init(new List<string> { "player" }, data.DetectionInterval);
             }
         }
 
@@ -95,6 +97,7 @@ namespace Enemies
 
         private void OnDetectorTick(object sender, DetectorEventArgs args)
         {
+            Debug.Log("Detector Tick");
             if ((Detector)sender == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
             else if ((Detector)sender == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
         }
@@ -122,7 +125,7 @@ namespace Enemies
                     FindTag = "Player",
                     Origin = enemy.transform.position,
                     Direction = Camera.main.transform.position - enemy.transform.position,
-                    LayerMask = mask,
+                    LayerMask = data.DetectionMask,
                     Debug = true
                 };
 

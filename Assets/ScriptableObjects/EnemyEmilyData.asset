@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc88777887b93547afebfc12690e7e7, type: 3}
   m_Name: EnemyEmilyData
   m_EditorClassIdentifier: 
-  <InitialState>k__BackingField: 0
+  <InitialEnemyState>k__BackingField: 0
   <Health>k__BackingField: 100
   <Poise>k__BackingField: 50
   <OnDieDisappearSpeed>k__BackingField: 0
@@ -28,6 +28,7 @@ MonoBehaviour:
   <DetectionMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 1019
+  <DetectionInterval>k__BackingField: 0.2
   <RandomizePath>k__BackingField: 0
   <RandomPathRange>k__BackingField: 0
   <AnimatorController>k__BackingField: {fileID: 9100000, guid: e7fe9b076fbeab844b517c815e16461c, type: 2}
