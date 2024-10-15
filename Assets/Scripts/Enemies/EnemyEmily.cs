@@ -20,8 +20,12 @@ namespace Enemies
 
         protected override void OnWalkStarted(float speed)
         {
-            animation.SetState(data.MoveAnim.name, moveTarget:player);
-            animation.SetAgentSpeed(speed);
+            if (currentState == EnemyState.Walk) //Add any other state that contains walk clip
+            {
+                animation.SetState(data.MoveAnim.name, moveTarget: player);
+                animation.SetAgentSpeed(speed);
+            }
+                
         }
 
         protected override void Attack()
@@ -33,48 +37,26 @@ namespace Enemies
             attack ??= StartCoroutine(AttackingPlayer(attackKeysList));
         }
 
-
         protected override void SetRandomAttack()
         {
             if (currentState == EnemyState.Attack)
             {
                 if (animation.CurrentKey == data.AttackAnim.name)
                 {
-                    var p = 0;
-                    if (hasHeavyAttack || hasSpecialAttack) p = random.Next(0, 100);
+                    var p = random.Next(0, 100);
 
-                    if (hasHeavyAttack && hasSpecialAttack)
-                    {
-                        if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);     
-                    }
-                    else if (hasHeavyAttack)
-                    {
-                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                    }
-                    else if (hasSpecialAttack)
-                    {
-                        if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                    }
+                    if (p < data.SpecialAttackProbability) SelectSpecialAttack();
+                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 }
                 else
                 {
-                    if (isTrackingStopped)
-                    {
-                        StartPlayerTracking(visualConeOnly: false);
-                        isTrackingStopped = false;
-                    }
-                    
+                    RestartTracking();
                     animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
                 } 
             }
             else
             {
-                if (isTrackingStopped)
-                {
-                    StartPlayerTracking(visualConeOnly: false);
-                    isTrackingStopped = false;
-                }
+                RestartTracking();
             }
 
             changeNextAttack = false;
@@ -98,17 +80,20 @@ namespace Enemies
             isTrackingStopped = true;
         }
 
+        private void RestartTracking()
+        {
+            if (isTrackingStopped)
+            {
+                StartPlayerTracking(visualConeOnly: false);
+                isTrackingStopped = false;
+            }
+        }
+
         protected override void OnAnimationEvent(object sender, AnimationEventArgs args)
         {
-            base.OnAnimationEvent(sender, args);
             if ((EnemyAnimation)sender != animation) return;
-
-            switch (args.Event)
-            {
-                case "started_special_attack_movement":
-                    StartCoroutine(SpecialAttackMovement());
-                    break;
-            }
+            base.OnAnimationEvent(sender, args);
+            if (args.Event == "started_special_attack_movement") StartCoroutine(SpecialAttackMovement());
         }
 
         //Add custom movement for special attack animation

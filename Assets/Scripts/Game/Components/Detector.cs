@@ -29,12 +29,19 @@ namespace Game.Components
     
         private void OnTriggerStay(Collider other)
         {
-            currentInterval -= Time.fixedDeltaTime;
             if (currentInterval <= 0)
             {
-                currentInterval = detectionInterval;
                 if (!tags.Contains(other.tag.ToLower())) return;
                 TagStaying?.Invoke(this, new DetectorEventArgs(other.tag, other));
+                currentInterval = detectionInterval;
+            }
+        }
+
+        private void Update()
+        {
+            if(currentInterval > 0)
+            {
+                currentInterval -= Time.deltaTime;
             }
         }
 

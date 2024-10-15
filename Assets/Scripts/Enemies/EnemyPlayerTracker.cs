@@ -97,9 +97,9 @@ namespace Enemies
 
         private void OnDetectorTick(object sender, DetectorEventArgs args)
         {
-            Debug.Log("Detector Tick");
-            if ((Detector)sender == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
-            else if ((Detector)sender == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
+            var detector = (Detector)sender;
+            if (detector == attackZone) CheckConditions(attackZoneDetected: true, inAwareZone);
+            else if (detector == awareZone) CheckConditions(inAttackZone, awareZoneDetected: true);
         }
 
         private void OnPlayerInsideVisualCone(object sender, EventArgs e)

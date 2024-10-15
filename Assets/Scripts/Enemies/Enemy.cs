@@ -325,7 +325,10 @@ namespace Enemies
 
         protected virtual void OnWalkStarted(float speed)
         {
-            animation.SetAgentSpeed(speed);
+            if(currentState == EnemyState.Walk)
+            {
+                animation.SetAgentSpeed(speed); //Add any other state that contains walk clip
+            }
         }
 
         private void OnDestroy()

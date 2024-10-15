@@ -9,13 +9,14 @@ namespace Game.General
         private NavMeshAgent agent;
         private Coroutine followPath;
         private NavMeshPath path;
-        private readonly WaitForSeconds pathFindInterval = new(1);
-        
-        public void Init(NavMeshAgent navMeshAgent)
+        private WaitForSeconds pathFindInterval;
+
+        public void Init(NavMeshAgent navMeshAgent, int updateInterval)
         {
             path = new NavMeshPath();
             agent = navMeshAgent;
             agent.speed = 0;
+            pathFindInterval = new(updateInterval);
         }
         
         public void SetAgentSpeed(float speed) => agent.speed = speed;

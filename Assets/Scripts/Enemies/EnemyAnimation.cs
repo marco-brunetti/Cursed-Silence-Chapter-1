@@ -28,7 +28,7 @@ namespace Enemies
         public void Init(EnemyData enemyData, NavMeshAgent agent)
         {
             navigation = gameObject.AddComponent<Navigation>();
-            navigation.Init(agent);
+            navigation.Init(agent, enemyData.PathFindInterval);
             SetAnimationKeys(enemyData);
         }
 
