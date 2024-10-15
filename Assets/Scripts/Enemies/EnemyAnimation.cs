@@ -21,6 +21,7 @@ namespace Enemies
         private Coroutine moveTowardsTarget;
         private Navigation navigation;
         private new AnimationManager animation;
+        private Dictionary<EnemyState, List<string>> stateAnims = new();
         
         public string CurrentKey => animation.CurrentKeyString;
         public static EventHandler<AnimationEventArgs> AnimationClipEvent;
@@ -47,7 +48,34 @@ namespace Enemies
             }
             animList.AddRange(data.AlternativeClips.Where(x=> x != null));
             animation = new AnimationManager(animKeys.Values.ToArray(), GetComponent<Animator>(), animatorController: data.AnimatorController, animList.ToArray());
+            
+            SetStateAnimations(data);
         }
+
+        private void SetStateAnimations(EnemyData data)
+        {
+            var attackAnims = new List<AnimationClip> { data.AttackAnim, data.HeavyAttackAnim, data.SpecialAttackAnim };
+            var moveAnims = new List<AnimationClip> { data.MoveAnim };
+            var idleAnims = new List<AnimationClip> { data.IdleAnim };
+            var deadAnims = new List<AnimationClip> { data.DeathAnim };
+            var blockAnims = new List<AnimationClip> { data.BlockAnim };
+            var reactAnims = new List<AnimationClip> { data.ReactAnim };
+
+            stateAnims.TryAdd(EnemyState.Attack, attackAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Walk, moveAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Idle, idleAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Dead, deadAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Block, blockAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.React, reactAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Wander, moveAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+            stateAnims.TryAdd(EnemyState.Escape, moveAnims.Where(x=> x != null).Select(x=> x.name).ToList());
+        }
+        
+        public void AddStateAnimations(EnemyState state, string animKey)
+        {
+            if (!stateAnims[state].Contains(animKey)) stateAnims[state].Add(animKey);
+        }
+        
 
         //Set in the animation clip with a string json
         public void AnimEvent(string eventData)
@@ -56,18 +84,24 @@ namespace Enemies
             var args = JsonUtility.FromJson<AnimationEventArgs>(eventData);
             AnimationClipEvent?.Invoke(this, args);
         }
-        
-        
 
-        public void SetState(string animKey, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
+        public void SetState(string animKey, EnemyState currentState, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
         {
-            StopLooking();
-            navigation.Stop();
+            //We check if the current state corresponds to the anim key, to prevent accidental changes
+            if (stateAnims[currentState].Contains(animKey))
+            {
+                StopLooking();
+                navigation.Stop();
             
-            if (moveTarget) navigation.FollowPath(moveTarget, randomizePath, randomPathRange);
-            else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
+                if (moveTarget) navigation.FollowPath(moveTarget, randomizePath, randomPathRange);
+                else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
             
-            animation.Enable(animKeys[animKey]);
+                animation.Enable(animKeys[animKey]);
+            }
+            else
+            {
+                Debug.LogError($"Invalid anim key {animKey} for state {currentState}.");
+            }
         }
 
         private void LookAtTarget(Transform rootTransform, Transform targetTransform)
@@ -79,15 +113,22 @@ namespace Enemies
         private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform)
         {
             //lookLerpTime = 0;
-            var lookPos = rootTransform.position + rootTransform.forward;
+            
+            
 
             while (true)
             {
                 if(lookSpeed > 0)
                 {
-                    Vector3 relativeTarget = (targetTransform.position - rootTransform.transform.position).normalized;
+                    var direction = targetTransform.position - rootTransform.position;
+                    var step = lookSpeed * Time.deltaTime;
+                    var newRotation = Vector3.RotateTowards(rootTransform.forward, direction, step, 0.0f);
+                    rootTransform.rotation = Quaternion.LookRotation(newRotation);
+                    
+                    
+                    /*Vector3 relativeTarget = (targetTransform.position - rootTransform.transform.position).normalized;
                     //Vector3.right if you have a sprite rotated in the right direction
-                    Quaternion toQuaternion = Quaternion.FromToRotation(Vector3.forward, relativeTarget);
+                    Quaternion toQuaternion = Quaternion.FromToRotation(Vector3.up, relativeTarget);
                     rootTransform.transform.rotation = Quaternion.Slerp(rootTransform.transform.rotation, toQuaternion, lookSpeed * Time.deltaTime);
                     /*var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
 

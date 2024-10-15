@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Components
 {
-    public class Detector : MonoBehaviour
+    public class TriggerStayDetector : MonoBehaviour
     {
         public static EventHandler<DetectorEventArgs> TagStaying;
         public static EventHandler<DetectorEventArgs> TagEntered;
@@ -49,18 +49,6 @@ namespace Game.Components
         {
             if (!tags.Contains(other.tag.ToLower())) return;
             TagExited?.Invoke(this, new DetectorEventArgs(other.tag, other));
-        }
-    }
-
-    public class DetectorEventArgs : EventArgs
-    {
-        public string Tag { get; private set; }
-        public Collider Collider { get; private set; }
-
-        public DetectorEventArgs(string tag = "", Collider collider = null)
-        {
-            Tag = tag;
-            Collider = collider;
         }
     }
 }

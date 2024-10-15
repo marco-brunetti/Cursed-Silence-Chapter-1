@@ -50,6 +50,8 @@ namespace Player
         private BadTVEffect _camDistortion;
         private GameControllerV2 gameController;
 
+        public EventHandler SetPlayerTransform; 
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -61,11 +63,6 @@ namespace Player
             _camDistortion = Camera.GetComponent<BadTVEffect>();
             gameController = GameControllerV2.Instance;
             gameController.PlayerTransform = Player.transform;
-        }
-
-        private void Start()
-        {
-
         }
 
         private void Update()

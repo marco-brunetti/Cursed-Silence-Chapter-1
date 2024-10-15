@@ -12,9 +12,15 @@ namespace Enemies
         private float specialAttackLerpTime2;
         private bool isTrackingStopped;
 
+        protected override void Start()
+        {
+            base.Start();
+            animation.AddStateAnimations(EnemyState.Attack, SpecialAttack2Clip.name);
+        }
+        
         protected override void Move()
         {
-            animation.SetState(data.MoveAnim.name, lookTarget:player, rootTransformForLook: transform);
+            animation.SetState(data.MoveAnim.name, currentState, lookTarget:player, rootTransformForLook: transform);
             animation.SetLookSpeed(1f);
         }
 
@@ -22,7 +28,7 @@ namespace Enemies
         {
             if (currentState == EnemyState.Walk) //Add any other state that contains walk clip
             {
-                animation.SetState(data.MoveAnim.name, moveTarget: player);
+                animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
             }
                 
@@ -46,12 +52,12 @@ namespace Enemies
                     var p = random.Next(0, 100);
 
                     if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 }
                 else
                 {
                     RestartTracking();
-                    animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    if(currentState == EnemyState.Attack) animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 } 
             }
             else
@@ -68,8 +74,8 @@ namespace Enemies
             StopMovementFunctions();
 
             var sp = random.Next(0, 100);
-            if (sp < 50) animation.SetState(data.SpecialAttackAnim.name);
-            else animation.SetState(SpecialAttack2Clip.name);
+            if (sp < 50) animation.SetState(data.SpecialAttackAnim.name, currentState);
+            else animation.SetState(SpecialAttack2Clip.name, currentState);
         }
 
         private void StopMovementFunctions()

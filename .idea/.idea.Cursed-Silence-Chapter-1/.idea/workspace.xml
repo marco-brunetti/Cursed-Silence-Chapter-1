@@ -6,16 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="01059b12-fdf2-4f4d-a277-b2b0ff5ad29b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Cursed-Silence-Chapter-1/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Animations/ImportedAnimationsAssembly.asmdef" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Imported/Animations/ImportedAnimationsAssembly.asmdef.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_emily.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_emily.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_spider.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Enemies/enemy_spider.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Tests/Combat_Test.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Tests/Combat_Test.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemyEmilyData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemyEmilyData.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemySpiderData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ScriptableObjects/EnemySpiderData.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/Enemy.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyEmily.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyEmily.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Components/Detector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Components/Detector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Components/CustomShapeDetector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Components/CustomShapeDetector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Components/Detector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Components/TriggerStayDetector.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Components/Detector.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Components/TriggerStayDetector.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/General/GameControllerV2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/General/GameControllerV2.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player/PlayerController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +36,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0f283c2d3e2a4a76ad37e993147a530427800/c1/228f8dd3/Animator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51fded79cd284d4d911c5949aff4cb2146ac00/25/dace89c3/KeyValuePair`2.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51fded79cd284d4d911c5949aff4cb2146ac00/2f/c691edfd/Delegate.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51fded79cd284d4d911c5949aff4cb2146ac00/4a/ddb044b1/Random.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51fded79cd284d4d911c5949aff4cb2146ac00/df/ab14e4d6/Nullable`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5eedb62f02374b28a8c230cf350117fc1fe00/2a/b0d00133/Physics.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/11/604e1c7b/Transform.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/13/8d5acd6e/Mathf.cs" root0="FORCE_HIGHLIGHTING" />
@@ -39,6 +46,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/85/8e2aed4a/Component.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/9c/f152cb08/Random.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/af/c0745dbe/MonoBehaviour.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/834804db60ae4eb981294088cf979056175e00/c3/e6bc8f6b/Ray.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d2f6ab0688c146a2bdd8f650dceb213ad400/69/fbab2666/NavMeshPath.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ea01e77be99618395f448b16bd7cc2bd4248bd9e5d8474964b2d97f39c5d74/System.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -134,10 +142,10 @@
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="20144">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="10920">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="20144" />
+      <option name="pid" value="10920" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -185,6 +193,8 @@
       <workItem from="1728665484062" duration="9426000" />
       <workItem from="1728678447929" duration="2765000" />
       <workItem from="1728942340295" duration="2302000" />
+      <workItem from="1728994959103" duration="1324000" />
+      <workItem from="1728996307461" duration="13548000" />
     </task>
     <servers />
   </component>
@@ -206,17 +216,17 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyPlayerTracker.cs</url>
-          <line>122</line>
-          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyPlayerTracker.cs" containingFunctionPresentation="Method 'CheckIfInVisualField'">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Enemies/EnemyAnimation.cs</url>
+          <line>151</line>
+          <properties documentPath="C:\repositorios\Cursed-Silence-Chapter-1\Assets\Scripts\Enemies\EnemyAnimation.cs" containingFunctionPresentation="Method 'StopLooking'">
             <startOffsets>
-              <option value="4635" />
+              <option value="7135" />
             </startOffsets>
             <endOffsets>
-              <option value="4972" />
+              <option value="7149" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -7,17 +7,12 @@ namespace Game.General
     {
         [NonSerialized] public Transform PlayerTransform;
         public static GameControllerV2 Instance;
+        
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(this);
-        }
-
-
-        public void DamageEnemy(GameObject enemy, int damage, int poiseDecrement)
-        {
-
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Components;
 using Game.General;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,8 +12,6 @@ namespace Enemies
     {
         [SerializeField] protected EnemyData data;
         [SerializeField] protected new Collider collider;
-        [SerializeField] protected Detector attackZone;
-        [SerializeField] protected Detector awareZone;
         [SerializeField] protected CustomShapeDetector visualCone;
         [SerializeField] protected new EnemyAnimation animation;
         [SerializeField] private List<Renderer> renderers;
@@ -34,6 +31,7 @@ namespace Enemies
         protected EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
         private GameControllerV2 gameController;
+        private float defaultRotateSpeed = 5;
         
         protected virtual void Awake()
         {
@@ -41,15 +39,15 @@ namespace Enemies
             hasSpecialAttack = data.SpecialAttackAnim != null;
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
-            playerTracker = new EnemyPlayerTracker(this, attackZone, awareZone, visualCone, data);
+            
         }
         
         protected virtual void Start()
         {
             gameController = GameControllerV2.Instance;
             GameEvents.DamageEnemy += OnDamageEnemy;
-
             player = gameController.PlayerTransform;
+            playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
             StartPlayerTracking();
             stats = new EnemyStats(data);
@@ -177,7 +175,7 @@ namespace Enemies
 
         private void Idle()
         {
-            animation.SetState(data.IdleAnim.name);
+            animation.SetState(data.IdleAnim.name, currentState);
         }
         
         private void Die()
@@ -186,7 +184,7 @@ namespace Enemies
             StopPlayerTracking();
             collider.enabled = false;
             StartCoroutine(EnemyDisappear());
-            animation.SetState(data.DeathAnim.name);
+            animation.SetState(data.DeathAnim.name, currentState);
         }
 
         protected virtual void Attack()
@@ -199,33 +197,34 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(data.MoveAnim.name, moveTarget:player, randomizePath: data.RandomizePath);
+            animation.SetState(data.MoveAnim.name, currentState, moveTarget:player, randomizePath: data.RandomizePath);
         }
         
         private void React()
         {
             isReacting = true;
             StopPlayerTracking();
-            animation.SetState(data.ReactAnim.name);
+            animation.SetState(data.ReactAnim.name, currentState);
         }
         
         private void Block()
         {
             isReacting = true;
-            animation.SetState(data.BlockAnim.name);
+            animation.SetState(data.BlockAnim.name, currentState);
         }
 
         protected IEnumerator AttackingPlayer(List<string> attackKeysList)
         {
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
-                animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 yield return null;
             }
 
             while (currentState == EnemyState.Attack)
             {
                 if (changeNextAttack) SetRandomAttack();
+                animation.SetLookSpeed(defaultRotateSpeed);
                 yield return null;
             }
 
@@ -243,21 +242,21 @@ namespace Enemies
 
                     if (hasHeavyAttack && hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
-                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                     }
                     else if (hasHeavyAttack)
                     {
-                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                     }
                     else if (hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                     }
                 }
                 else
                 {
-                    animation.SetState(data.AttackAnim.name, rootTransformForLook: transform, lookTarget: player);
+                    animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 }
             }
             changeNextAttack = false;
