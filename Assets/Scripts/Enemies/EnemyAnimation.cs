@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.AI;
 using Game.General;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Enemies
 {
@@ -15,7 +13,6 @@ namespace Enemies
     {
         private readonly Dictionary<string, KeyValuePair<string,int>> animKeys = new();
         private float reactMoveSpeed;
-        //private float lookLerpTime;
         private float lookSpeed;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
@@ -75,7 +72,6 @@ namespace Enemies
         {
             if (!stateAnims[state].Contains(animKey)) stateAnims[state].Add(animKey);
         }
-        
 
         //Set in the animation clip with a string json
         public void AnimEvent(string eventData)
@@ -85,7 +81,7 @@ namespace Enemies
             AnimationClipEvent?.Invoke(this, args);
         }
 
-        public void SetState(string animKey, EnemyState currentState, Transform rootTransformForLook = null, Transform lookTarget = null, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
+        public void SetState(string animKey, EnemyState currentState, Transform rootTransformForLook = null, Transform lookTarget = null, float lookTargetSpeed = 5, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
         {
             //We check if the current state corresponds to the anim key, to prevent accidental changes
             if (stateAnims[currentState].Contains(animKey))
@@ -94,7 +90,7 @@ namespace Enemies
                 navigation.Stop();
             
                 if (moveTarget) navigation.FollowPath(moveTarget, randomizePath, randomPathRange);
-                else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget);
+                else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget, lookTargetSpeed);
             
                 animation.Enable(animKeys[animKey]);
             }
@@ -104,18 +100,15 @@ namespace Enemies
             }
         }
 
-        private void LookAtTarget(Transform rootTransform, Transform targetTransform)
+        private void LookAtTarget(Transform rootTransform, Transform targetTransform, float lookTargetSpeed)
         {
             StopLooking();
+            lookSpeed = lookTargetSpeed;
             lookAtTarget = StartCoroutine(LookingAtTarget(rootTransform, targetTransform));
         }
 
         private IEnumerator LookingAtTarget(Transform rootTransform, Transform targetTransform)
         {
-            //lookLerpTime = 0;
-            
-            
-
             while (true)
             {
                 if(lookSpeed > 0)
@@ -124,23 +117,6 @@ namespace Enemies
                     var step = lookSpeed * Time.deltaTime;
                     var newRotation = Vector3.RotateTowards(rootTransform.forward, direction, step, 0.0f);
                     rootTransform.rotation = Quaternion.LookRotation(newRotation);
-                    
-                    
-                    /*Vector3 relativeTarget = (targetTransform.position - rootTransform.transform.position).normalized;
-                    //Vector3.right if you have a sprite rotated in the right direction
-                    Quaternion toQuaternion = Quaternion.FromToRotation(Vector3.up, relativeTarget);
-                    rootTransform.transform.rotation = Quaternion.Slerp(rootTransform.transform.rotation, toQuaternion, lookSpeed * Time.deltaTime);
-                    /*var target = GetTargetDirOnYAxis(origin: rootTransform.position, target: targetTransform.position);
-
-                    var optimalDuration = 50f;
-                    var duration = optimalDuration / lookSpeed;
-
-                    if ((target - lookPos).magnitude < 0.01f) lookLerpTime = 0;
-                    else lookPos = Vector3.Slerp(lookPos, target, Interpolation.Linear(duration, ref lookLerpTime));
-
-                    Vector3.Angle(lookPos, target);
-
-                    rootTransform.LookAt(GetTargetDirOnYAxis(origin: rootTransform.position, target: lookPos));*/
                 }
 
                 yield return null;
@@ -151,14 +127,6 @@ namespace Enemies
         {
             lookSpeed = 0;
             if (lookAtTarget != null) StopCoroutine(lookAtTarget);
-        }
-
-        //Get direction with correct vector length
-        private Vector3 GetTargetDirOnYAxis(Vector3 origin, Vector3 target, bool debug = false, Color? color = null)
-        {
-            var finalPos = origin + (new Vector3(target.x, origin.y, target.z) - origin).normalized;
-            if (debug && color != null) Debug.DrawLine(origin, finalPos, (Color)color);
-            return finalPos;
         }
 
         public void StartReact(Transform rootTransform, float moveSpeed)
@@ -178,13 +146,9 @@ namespace Enemies
         
         public void StopReact() => reactMoveSpeed = 0;
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
-        public void DestroyAgent() => navigation.DestroyAgent();
         public void StopNavigation() => navigation.Stop();
-        public void SetLookSpeed(float speed)
-        {
-            //lookLerpTime = 0;
-            lookSpeed = speed;
-        }   
+        public void DestroyAgent() => navigation.DestroyAgent();
+        public void SetLookSpeed(float speed) => lookSpeed = speed;
     }
 
     public record AnimationEventArgs

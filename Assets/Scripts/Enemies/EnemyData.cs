@@ -27,7 +27,7 @@ namespace Enemies
         [field: SerializeField] public float MaxAttackDistance { get; private set; }
         [field: SerializeField] public float MaxAwareDistance { get; private set; }
 
-        [field: SerializeField, Header("NavMesh"), Space(10), Range(1, 5)] public int PathFindInterval { get; private set; } = 1;
+        [field: SerializeField, Header("NavMesh"), Space(10), Range(0.3f, 5)] public float PathFindInterval { get; private set; } = 1;
         [field: SerializeField, Tooltip("Use for erratic movement")] public bool RandomizePath { get; private set; } = false;
         [field: SerializeField, Range(0, 5), Tooltip("Use for erratic movement")] public float RandomPathRange { get; private set; } = 0;
         

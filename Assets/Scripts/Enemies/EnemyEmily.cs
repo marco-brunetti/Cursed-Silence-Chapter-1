@@ -11,6 +11,7 @@ namespace Enemies
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
         private bool isTrackingStopped;
+        private float defaultLookSpeed = 5;
 
         protected override void Start()
         {
@@ -21,7 +22,7 @@ namespace Enemies
         protected override void Move()
         {
             animation.SetState(data.MoveAnim.name, currentState, lookTarget:player, rootTransformForLook: transform);
-            animation.SetLookSpeed(1f);
+            animation.SetLookSpeed(defaultLookSpeed);
         }
 
         protected override void OnWalkStarted(float speed)

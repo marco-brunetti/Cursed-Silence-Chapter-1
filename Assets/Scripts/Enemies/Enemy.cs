@@ -31,7 +31,6 @@ namespace Enemies
         protected EnemyPlayerTracker playerTracker;
         private NavMeshAgent agent;
         private GameControllerV2 gameController;
-        private float defaultRotateSpeed = 5;
         
         protected virtual void Awake()
         {
@@ -224,7 +223,6 @@ namespace Enemies
             while (currentState == EnemyState.Attack)
             {
                 if (changeNextAttack) SetRandomAttack();
-                animation.SetLookSpeed(defaultRotateSpeed);
                 yield return null;
             }
 

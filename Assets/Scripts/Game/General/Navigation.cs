@@ -10,8 +10,9 @@ namespace Game.General
         private Coroutine followPath;
         private NavMeshPath path;
         private WaitForSeconds pathFindInterval;
+        private bool randomizePath;
 
-        public void Init(NavMeshAgent navMeshAgent, int updateInterval)
+        public void Init(NavMeshAgent navMeshAgent, float updateInterval)
         {
             path = new NavMeshPath();
             agent = navMeshAgent;
@@ -24,7 +25,8 @@ namespace Game.General
         public void FollowPath(Transform target, bool randomizePath, float randomPathRange)
         {
             Stop();
-            followPath = StartCoroutine(FollowingPath(target, randomizePath, randomPathRange));
+            this.randomizePath = randomizePath;
+            followPath = StartCoroutine(FollowingPath(target, randomPathRange));
         }
 
         public void Stop()
@@ -33,7 +35,7 @@ namespace Game.General
             agent.speed = 0;
             if (followPath != null) StopCoroutine(followPath);
             agent.isStopped = true;
-            agent.updatePosition = false;
+            //agent.updatePosition = false;
             path.ClearCorners();
         }
 
@@ -43,7 +45,7 @@ namespace Game.General
             Destroy(agent);
         }
 
-        private IEnumerator FollowingPath(Transform target, bool randomizePath, float randomPathRange)
+        private IEnumerator FollowingPath(Transform target, float randomPathRange)
         {
             agent.Warp(agent.transform.position); //Resets agent to new position after updating position with another method
             agent.updatePosition = true;
