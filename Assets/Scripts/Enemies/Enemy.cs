@@ -17,7 +17,7 @@ namespace Enemies
         [SerializeField] private List<Renderer> renderers;
 
         private bool canDie = true;
-        private bool isVulnerable = true;
+        [SerializeField] protected bool isVulnerable = true;
         protected bool isReacting;
         protected bool hasHeavyAttack;
         protected bool hasSpecialAttack;
@@ -99,6 +99,7 @@ namespace Enemies
                     changeNextAttack = true;
                     break;
                 case "react_start":
+                    isVulnerable = false;
                     animation.StartReact(transform, args.Float);
                     break;
                 case "react_stop_movement":

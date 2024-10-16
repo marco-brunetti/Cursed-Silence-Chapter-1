@@ -2,21 +2,34 @@ using SnowHorse.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Codice.Client.Common.Servers.RecentlyUsedServers;
 
 namespace Enemies
 {
     public class EnemyEmily : Enemy
     {
         [SerializeField] private AnimationClip SpecialAttack2Clip;
+        [SerializeField] private Color immortalColor;
+        [SerializeField] private Color mortalColor;
+        [SerializeField] private Color emissionColor;
+        [SerializeField] private List<Renderer> skinRenderers;
+
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
         private bool isTrackingStopped;
         private float defaultLookSpeed = 5;
 
+        bool currentVulnerable;
+        float colorChangeDuration = 0.5f;
+        float currentLerpTime;
+
         protected override void Start()
         {
             base.Start();
             animation.AddStateAnimations(EnemyState.Attack, SpecialAttack2Clip.name);
+            skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? mortalColor : immortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
+            currentVulnerable = isVulnerable;
+            currentLerpTime = colorChangeDuration;
         }
         
         protected override void Move()
@@ -27,7 +40,8 @@ namespace Enemies
 
         protected override void OnWalkStarted(float speed)
         {
-            if (currentState == EnemyState.Walk) //Add any other state that contains walk clip
+            //Add any other state that contains walk clip
+            if (currentState == EnemyState.Walk) 
             {
                 animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
@@ -132,6 +146,18 @@ namespace Enemies
 
             specialAttackLerpTime = 0;
             specialAttackLerpTime2 = 0;
+        }
+
+        private void Update()
+        {
+            if (currentVulnerable != isVulnerable) currentLerpTime = colorChangeDuration - currentLerpTime;
+
+            if (Mathf.Approximately(currentLerpTime, colorChangeDuration)) return;
+
+            var percent = isVulnerable ? Interpolation.Linear(colorChangeDuration, ref currentLerpTime) : Interpolation.InverseLinear(colorChangeDuration, ref currentLerpTime);
+            var matColor = Color.Lerp(immortalColor, mortalColor, percent);
+            skinRenderers.ForEach(x => { var mat = x.material; mat.color = matColor; x.material = mat; });
+            currentVulnerable = isVulnerable;
         }
     }
 }

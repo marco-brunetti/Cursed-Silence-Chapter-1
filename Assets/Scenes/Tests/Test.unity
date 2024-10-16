@@ -122,6 +122,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!137 &92117213 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3703731412557975778, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+  m_PrefabInstance: {fileID: 1581512228}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &132802330
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -841,6 +846,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a037dfd58c346d449e02e0d6b7adc81, type: 3}
+--- !u!137 &1419051122 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7166730298423265265, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+  m_PrefabInstance: {fileID: 1581512228}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1439812009
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -950,6 +960,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3703731412557975778, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 38e6bce432c8ff04a8ef3128d2402ca8, type: 2}
     - target: {fileID: 4059277292854182571, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.35
@@ -978,6 +992,126 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 0.8
       objectReference: {fileID: 0}
+    - target: {fileID: 7166730298423265265, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 38e6bce432c8ff04a8ef3128d2402ca8, type: 2}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: isVulnerable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalColor.b
+      value: 0.54509807
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalColor.g
+      value: 0.68235296
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalColor.r
+      value: 0.9254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: emissionColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: emissionColor.b
+      value: 0.08627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: emissionColor.g
+      value: 0.10980392
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: emissionColor.r
+      value: 0.15294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalColor.a
+      value: 0.3137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmissionColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmissionColor.b
+      value: 0.08627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmissionColor.g
+      value: 0.10980392
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmissionColor.r
+      value: 0.15294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmmissionColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmmissionColor.b
+      value: 0.25490198
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmmissionColor.g
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: mortalEmmissionColor.r
+      value: 0.46274513
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmissionColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmissionColor.b
+      value: 0.08627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmissionColor.g
+      value: 0.10980392
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmissionColor.r
+      value: 0.15294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmmissionColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmmissionColor.b
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmmissionColor.g
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: immortalEmmissionColor.r
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: skinRenderers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: skinRenderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 1419051122}
+    - target: {fileID: 8157727075883485053, guid: 2bdaf66c1c60ae245a23233202ea3005, type: 3}
+      propertyPath: skinRenderers.Array.data[1]
+      value: 
+      objectReference: {fileID: 92117213}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

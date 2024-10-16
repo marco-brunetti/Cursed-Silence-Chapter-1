@@ -8,6 +8,14 @@ namespace SnowHorse.Utils
     {
         //Refer to article for lerp methods: https://chicounity3d.wordpress.com/2014/05/23/how-to-lerp-like-a-pro/
 
+        //Inverse linear interpolation between two values
+        public static float InverseLinear(float duration, ref float currentLerpTime, bool unscaledTime = false)
+        {
+            float t = CalculateLinearInterpolation(duration, ref currentLerpTime, unscaledTime);
+
+            return 1 - t;
+        }
+
         //Linear interpolation between two values
         public static float Linear(float duration, ref float currentLerpTime, bool unscaledTime = false) 
         {
