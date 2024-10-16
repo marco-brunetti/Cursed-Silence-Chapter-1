@@ -10,27 +10,27 @@ namespace Enemies
 {
     public class Enemy : MonoBehaviour
     {
+        [SerializeField] private List<Renderer> renderers;
         [SerializeField] protected EnemyData data;
         [SerializeField] protected new Collider collider;
-        [SerializeField] protected CustomShapeDetector visualCone;
         [SerializeField] protected new EnemyAnimation animation;
-        [SerializeField] private List<Renderer> renderers;
+        [SerializeField] protected CustomShapeDetector visualCone;
 
         private bool canDie = true;
-        [SerializeField] protected bool isVulnerable = true;
+        private EnemyStats stats;
+        private NavMeshAgent agent;
+        private GameControllerV2 gameController;
+
+        protected bool isVulnerable;
         protected bool isReacting;
         protected bool hasHeavyAttack;
         protected bool hasSpecialAttack;
         protected bool changeNextAttack;
-        
         protected Transform player;
-        [SerializeField] protected EnemyState currentState;
+        protected EnemyState currentState;
         protected System.Random random;
-        private EnemyStats stats;
         protected Coroutine attack;
         protected EnemyPlayerTracker playerTracker;
-        private NavMeshAgent agent;
-        private GameControllerV2 gameController;
         
         protected virtual void Awake()
         {
@@ -38,7 +38,6 @@ namespace Enemies
             hasSpecialAttack = data.SpecialAttackAnim != null;
             collider.enabled = true;
             random = new System.Random(Guid.NewGuid().GetHashCode());
-            
         }
         
         protected virtual void Start()

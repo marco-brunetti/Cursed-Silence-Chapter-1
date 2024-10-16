@@ -20,7 +20,7 @@ namespace Enemies
         private float defaultLookSpeed = 5;
 
         bool currentVulnerable;
-        float colorChangeDuration = 0.5f;
+        float colorChangeDuration = 0.15f;
         float currentLerpTime;
 
         protected override void Start()
