@@ -53,7 +53,7 @@ namespace Enemies
 
         private void AnimationInit()
         {
-            animation.Init(data, GetComponent<NavMeshAgent>());
+            animation.Init(data, GetComponent<CustomNavMeshAgent>());
             EnemyAnimation.AnimationClipEvent += OnAnimationEvent;
             ChangeState(data.InitialEnemyState);
         }
@@ -72,7 +72,7 @@ namespace Enemies
 
         private void OnDamageEnemy(object sender, DamageEnemyEventArgs args)
         {
-            if(args.Enemy == gameObject)
+            if(isVulnerable && args.Enemy == gameObject)
             {
                 if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
 

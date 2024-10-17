@@ -96,7 +96,7 @@ namespace Enemies
         private void StopMovementFunctions()
         {
             StopPlayerTracking();
-            animation.StopNavigation();
+            animation.StopNavigation(stopAgentCompletely:true);
             animation.SetLookSpeed(0);
             isTrackingStopped = true;
         }

@@ -23,7 +23,7 @@ namespace Enemies
         public string CurrentKey => animation.CurrentKeyString;
         public static EventHandler<AnimationEventArgs> AnimationClipEvent;
         
-        public void Init(EnemyData enemyData, NavMeshAgent agent)
+        public void Init(EnemyData enemyData, CustomNavMeshAgent agent)
         {
             navigation = gameObject.AddComponent<Navigation>();
             navigation.Init(agent, enemyData.PathFindInterval);
@@ -146,7 +146,7 @@ namespace Enemies
         
         public void StopReact() => reactMoveSpeed = 0;
         public void SetAgentSpeed(float speed) => navigation.SetAgentSpeed(speed);
-        public void StopNavigation() => navigation.Stop();
+        public void StopNavigation(bool stopAgentCompletely = false) => navigation.Stop(stopAgentCompletely);
         public void DestroyAgent() => navigation.DestroyAgent();
         public void SetLookSpeed(float speed) => lookSpeed = speed;
     }
