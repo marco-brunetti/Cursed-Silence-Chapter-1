@@ -53,7 +53,7 @@ namespace Enemies
 
         private void AnimationInit()
         {
-            animation.Init(data, GetComponent<CustomNavMeshAgent>());
+            animation.Init(data, GetComponent<NavMeshAgent>());
             EnemyAnimation.AnimationClipEvent += OnAnimationEvent;
             ChangeState(data.InitialEnemyState);
         }

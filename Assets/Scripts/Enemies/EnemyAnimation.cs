@@ -23,7 +23,7 @@ namespace Enemies
         public string CurrentKey => animation.CurrentKeyString;
         public static EventHandler<AnimationEventArgs> AnimationClipEvent;
         
-        public void Init(EnemyData enemyData, CustomNavMeshAgent agent)
+        public void Init(EnemyData enemyData, NavMeshAgent agent)
         {
             navigation = gameObject.AddComponent<Navigation>();
             navigation.Init(agent, enemyData.PathFindInterval);
