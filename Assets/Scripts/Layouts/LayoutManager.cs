@@ -51,7 +51,7 @@ namespace Layouts
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void ActivateLayout(Transform previousLayout, LayoutType nextType, Vector3 position, Quaternion rotation)
+        public void ActivateLayout(LevelLayout previousLayout, LayoutType nextType, Vector3 position, Quaternion rotation)
         {
             if (currentIndex >= loadedMap.Count)
             {
@@ -61,7 +61,7 @@ namespace Layouts
 
             if (GetLayout(nextType, out var layout))
             {
-                if (previousLayout) layout.transform.parent = previousLayout;
+                if (previousLayout) layout.transform.parent = previousLayout.transform;
                 layout.transform.SetLocalPositionAndRotation(position, rotation);
                 layout.transform.parent = null;
                 layout.gameObject.SetActive(true);
@@ -70,7 +70,7 @@ namespace Layouts
                 var mapLayout = loadedMap[i];
                 var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
 
-                layout.Setup(i, mapLayout.nextTypes, isEndOfZone, decorators: null);
+                layout.Setup(i, mapLayout.nextTypes, isEndOfZone, previousLayout?.NextLayoutOffsets, decorators: null);
                 if (i == 0) layout.EntranceDoorEnabled(true);
                 layout.ItemList = mapLayout.items;
                 itemManager.FillItems(layout);

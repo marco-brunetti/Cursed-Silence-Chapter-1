@@ -40,7 +40,6 @@ public class CustomShapeDetector : MonoBehaviour
     {
         if(other.CompareTag(detectionTag))
         {
-            ColliderStaying?.Invoke(this, other);
             TagStaying?.Invoke(this, EventArgs.Empty);
         }
     }
