@@ -1,9 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class SnowHorseLogo : MonoBehaviour
@@ -11,6 +7,7 @@ public class SnowHorseLogo : MonoBehaviour
     [SerializeField] private float _delay = 0.5f;
     [SerializeField] private VideoPlayer _videoPlayer;
     [SerializeField] private VideoClip _videoClip;
+    [SerializeField] private GameObject _mainMenuObject;
 
 
     private void Awake()
@@ -27,8 +24,11 @@ public class SnowHorseLogo : MonoBehaviour
     IEnumerator PlayVideoLogo()
     {
         yield return new WaitForSeconds(_delay);
+        
         _videoPlayer.Play();
         yield return new WaitForSeconds((float) _videoClip.length);
-        SceneManager.LoadScene("Main_Menu");
+        _mainMenuObject.SetActive(true);
+        _videoPlayer.gameObject.SetActive(false);
+        //SceneManager.LoadScene("Main_Menu");
     }
 }
