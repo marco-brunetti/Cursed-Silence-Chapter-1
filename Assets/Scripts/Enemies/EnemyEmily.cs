@@ -16,6 +16,7 @@ namespace Enemies
         private bool isTrackingStopped;
         private bool currentVulnerable;
         private bool justExitedAttackState;
+        private bool setTransparentMode;
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
         private float defaultLookSpeed = 5;
@@ -48,9 +49,14 @@ namespace Enemies
         {
             base.Start();
             animation.AddStateAnimations(EnemyState.Attack, SpecialAttack2Clip.name);
-            skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? skinMortalColor : skinImmortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
+            setTransparentMode = true;
             currentVulnerable = isVulnerable;
             skinColorLerpTime = colorChangeDuration;
+            colorLerpTime = colorChangeDuration;
+            SetMaterialRenderMode(hairRenderer, transparentColor, 0);
+            SetMaterialRenderMode(clothesRenderer, transparentColor, 0);
+
+            skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? skinMortalColor : skinImmortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
         }
         
         protected override void Move()
@@ -66,6 +72,7 @@ namespace Enemies
             {
                 animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
+                setTransparentMode = true;
             }
         }
 
@@ -76,6 +83,7 @@ namespace Enemies
             if (hasSpecialAttack) attackKeysList.AddRange(new List<string> { data.SpecialAttackAnim.name, SpecialAttack2Clip.name });
 
             attack ??= StartCoroutine(AttackingPlayer(attackKeysList));
+            setTransparentMode = false;
         }
 
         protected override void SetRandomAttack()
@@ -170,24 +178,22 @@ namespace Enemies
 
         private void Update()
         {
-            SetColors();
+            SetMaterialColors();
         }
 
-        
-
-        private void SetColors()
+        private void SetMaterialColors()
         {
             Color clothesColor;
             Color hairColor;
             Color skinColor;
 
-            if(currentState != EnemyState.Attack && justExitedAttackState)
+            if(setTransparentMode && justExitedAttackState)
             {
                 currentSkinColor = skinRenderers[0].material.color;
                 colorLerpTime = 0;
                 justExitedAttackState = false;
             }
-            else if(currentState == EnemyState.Attack && !justExitedAttackState)
+            else if(!setTransparentMode && !justExitedAttackState)
             {
                 currentSkinColor = skinImmortalColor;
                 colorLerpTime = 0;
@@ -195,34 +201,33 @@ namespace Enemies
                 justExitedAttackState = true;
             }
 
-            var percent = currentState == EnemyState.Attack ? Interpolation.Linear(colorChangeDuration, ref colorLerpTime)
-                                                            : Interpolation.InverseLinear(colorChangeDuration, ref colorLerpTime);
+            var percent = setTransparentMode ? Interpolation.InverseLinear(colorChangeDuration, ref colorLerpTime)
+                                                : Interpolation.Linear(colorChangeDuration, ref colorLerpTime);
 
             
             clothesColor = Color.Lerp(transparentColor, defaultClothesColor, percent);
             hairColor = Color.Lerp(transparentColor, defaultHairColor, percent);
 
-            SetMaterial(hairRenderer, hairColor, percent);
-            SetMaterial(clothesRenderer, clothesColor, percent);
+            SetMaterialRenderMode(hairRenderer, hairColor, percent);
+            SetMaterialRenderMode(clothesRenderer, clothesColor, percent);
 
-            if(currentState != EnemyState.Attack || currentState == EnemyState.Attack && percent < 1)
+            if(setTransparentMode || currentState == EnemyState.Attack && percent < 1)
             {
-                skinColor = Color.Lerp(transparentColor, currentSkinColor, percent);
+                skinColor = Color.Lerp(transparentColor, currentSkinColor, setTransparentMode ? 0 : percent); //Making the skin disappear before the clothes for obvious reasons
                 skinRenderers.ForEach(x => { var mat = x.material; mat.color = skinColor; x.material = mat; });
             }
 
             SetSkinColor();
         }
 
-        private void SetMaterial(Renderer renderer, Color color, float lerpPercent)
+        private void SetMaterialRenderMode(Renderer renderer, Color color, float lerpPercent)
         {
             var mat = renderer.material;
-            if(lerpPercent == 1) MaterialExtensions.ToOpaqueMode(mat);
+            if(Mathf.Approximately(lerpPercent, 1)) MaterialExtensions.ToOpaqueMode(mat);
             else MaterialExtensions.ToFadeMode(mat);
             mat.color = color;
-            hairRenderer.material = mat;
+            renderer.material = mat;
         }
-
 
         private void SetSkinColor()
         {
