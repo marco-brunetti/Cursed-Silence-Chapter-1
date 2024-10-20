@@ -2,7 +2,6 @@ using SnowHorse.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Codice.Client.Common.Servers.RecentlyUsedServers;
 
 namespace Enemies
 {
