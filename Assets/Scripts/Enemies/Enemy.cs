@@ -10,7 +10,7 @@ namespace Enemies
 {
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private List<Renderer> renderers;
+        [SerializeField] protected List<Renderer> renderers;
         [SerializeField] protected EnemyData data;
         [SerializeField] protected new Collider collider;
         [SerializeField] protected new EnemyAnimation animation;

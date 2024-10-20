@@ -10,17 +10,26 @@ namespace Enemies
         [SerializeField] private AnimationClip SpecialAttack2Clip;
 
         [SerializeField] private List<Renderer> skinRenderers;
+        [SerializeField] private Renderer clothesRenderer;
+        [SerializeField] private Renderer hairRenderer;
 
         private bool isTrackingStopped;
         private bool currentVulnerable;
+        private bool justExitedAttackState;
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
         private float defaultLookSpeed = 5;
         private float colorChangeDuration = 0.15f;
-        private float currentLerpTime;
+        private float colorLerpTime;
+        private float skinColorLerpTime;
         private Color skinImmortalColor;
         private Color skinMortalColor;
         private Color emissionColor;
+        private Color transparentColor;
+        private Color defaultClothesColor;
+        private Color defaultHairColor;
+
+        private Color currentSkinColor;
 
         protected override void Awake()
         {
@@ -30,6 +39,9 @@ namespace Enemies
             skinMortalColor = data.Colors[1];
             emissionColor = data.Colors[2];
 
+            transparentColor = data.Colors[3];
+            defaultHairColor = data.Colors[4];
+            defaultClothesColor = data.Colors[5];
         }
 
         protected override void Start()
@@ -38,7 +50,7 @@ namespace Enemies
             animation.AddStateAnimations(EnemyState.Attack, SpecialAttack2Clip.name);
             skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? skinMortalColor : skinImmortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
             currentVulnerable = isVulnerable;
-            currentLerpTime = colorChangeDuration;
+            skinColorLerpTime = colorChangeDuration;
         }
         
         protected override void Move()
@@ -49,13 +61,12 @@ namespace Enemies
 
         protected override void OnWalkStarted(float speed)
         {
-            //Add any other state that contains walk clip
+            //TODO: Add any other state that contains walk clip
             if (currentState == EnemyState.Walk) 
             {
                 animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
             }
-                
         }
 
         protected override void Attack()
@@ -159,13 +170,72 @@ namespace Enemies
 
         private void Update()
         {
-            if (currentVulnerable != isVulnerable) currentLerpTime = colorChangeDuration - currentLerpTime;
+            SetColors();
+        }
 
-            if (Mathf.Approximately(currentLerpTime, colorChangeDuration)) return;
+        
 
-            var percent = isVulnerable ? Interpolation.Linear(colorChangeDuration, ref currentLerpTime) : Interpolation.InverseLinear(colorChangeDuration, ref currentLerpTime);
-            var matColor = Color.Lerp(skinImmortalColor, skinMortalColor, percent);
-            skinRenderers.ForEach(x => { var mat = x.material; mat.color = matColor; x.material = mat; });
+        private void SetColors()
+        {
+            Color clothesColor;
+            Color hairColor;
+            Color skinColor;
+
+            if(currentState != EnemyState.Attack && justExitedAttackState)
+            {
+                currentSkinColor = skinRenderers[0].material.color;
+                colorLerpTime = 0;
+                justExitedAttackState = false;
+            }
+            else if(currentState == EnemyState.Attack && !justExitedAttackState)
+            {
+                currentSkinColor = skinImmortalColor;
+                colorLerpTime = 0;
+                skinColorLerpTime = colorChangeDuration;
+                justExitedAttackState = true;
+            }
+
+            var percent = currentState == EnemyState.Attack ? Interpolation.Linear(colorChangeDuration, ref colorLerpTime)
+                                                            : Interpolation.InverseLinear(colorChangeDuration, ref colorLerpTime);
+
+            
+            clothesColor = Color.Lerp(transparentColor, defaultClothesColor, percent);
+            hairColor = Color.Lerp(transparentColor, defaultHairColor, percent);
+
+            SetMaterial(hairRenderer, hairColor, percent);
+            SetMaterial(clothesRenderer, clothesColor, percent);
+
+            if(currentState != EnemyState.Attack || currentState == EnemyState.Attack && percent < 1)
+            {
+                skinColor = Color.Lerp(transparentColor, currentSkinColor, percent);
+                skinRenderers.ForEach(x => { var mat = x.material; mat.color = skinColor; x.material = mat; });
+            }
+
+            SetSkinColor();
+        }
+
+        private void SetMaterial(Renderer renderer, Color color, float lerpPercent)
+        {
+            var mat = renderer.material;
+            if(lerpPercent == 1) MaterialExtensions.ToOpaqueMode(mat);
+            else MaterialExtensions.ToFadeMode(mat);
+            mat.color = color;
+            hairRenderer.material = mat;
+        }
+
+
+        private void SetSkinColor()
+        {
+            if(currentState == EnemyState.Attack)
+            {
+                if (currentVulnerable != isVulnerable) skinColorLerpTime = colorChangeDuration - skinColorLerpTime;
+                if (Mathf.Approximately(skinColorLerpTime, colorChangeDuration)) return;
+
+                var percent = isVulnerable ? Interpolation.Linear(colorChangeDuration, ref skinColorLerpTime) : Interpolation.InverseLinear(colorChangeDuration, ref skinColorLerpTime);
+                currentSkinColor = Color.Lerp(skinImmortalColor, skinMortalColor, percent);
+                skinRenderers.ForEach(x => { var mat = x.material; mat.color = currentSkinColor; x.material = mat; });
+            }
+
             currentVulnerable = isVulnerable;
         }
     }
