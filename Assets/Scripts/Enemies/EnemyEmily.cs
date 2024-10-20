@@ -8,25 +8,35 @@ namespace Enemies
     public class EnemyEmily : Enemy
     {
         [SerializeField] private AnimationClip SpecialAttack2Clip;
-        [SerializeField] private Color immortalColor;
-        [SerializeField] private Color mortalColor;
-        [SerializeField] private Color emissionColor;
+
         [SerializeField] private List<Renderer> skinRenderers;
 
+        private bool isTrackingStopped;
+        private bool currentVulnerable;
         private float specialAttackLerpTime;
         private float specialAttackLerpTime2;
-        private bool isTrackingStopped;
         private float defaultLookSpeed = 5;
+        private float colorChangeDuration = 0.15f;
+        private float currentLerpTime;
+        private Color skinImmortalColor;
+        private Color skinMortalColor;
+        private Color emissionColor;
 
-        bool currentVulnerable;
-        float colorChangeDuration = 0.15f;
-        float currentLerpTime;
+        protected override void Awake()
+        {
+            base.Awake();
+
+            skinImmortalColor = data.Colors[0];
+            skinMortalColor = data.Colors[1];
+            emissionColor = data.Colors[2];
+
+        }
 
         protected override void Start()
         {
             base.Start();
             animation.AddStateAnimations(EnemyState.Attack, SpecialAttack2Clip.name);
-            skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? mortalColor : immortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
+            skinRenderers.ForEach(x => { var mat = x.material; mat.color = isVulnerable ? skinMortalColor : skinImmortalColor; mat.SetVector("_EmissionColor", emissionColor); x.material = mat; });
             currentVulnerable = isVulnerable;
             currentLerpTime = colorChangeDuration;
         }
@@ -154,7 +164,7 @@ namespace Enemies
             if (Mathf.Approximately(currentLerpTime, colorChangeDuration)) return;
 
             var percent = isVulnerable ? Interpolation.Linear(colorChangeDuration, ref currentLerpTime) : Interpolation.InverseLinear(colorChangeDuration, ref currentLerpTime);
-            var matColor = Color.Lerp(immortalColor, mortalColor, percent);
+            var matColor = Color.Lerp(skinImmortalColor, skinMortalColor, percent);
             skinRenderers.ForEach(x => { var mat = x.material; mat.color = matColor; x.material = mat; });
             currentVulnerable = isVulnerable;
         }
