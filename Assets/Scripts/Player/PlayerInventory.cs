@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Game.General;
+//using Game.General;
 using UnityEngine;
 
 namespace Player
@@ -16,7 +16,7 @@ namespace Player
 
             PlayerController.Instance.InspectablesSource.pitch = 1;
             PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip,
-                0.2f * GameController.Instance.GlobalVolume);
+                0.2f /** GameController.Instance.GlobalVolume*/);
      
             item.transform.SetParent(PlayerController.Instance.InventoryHolder);
             item.transform.localPosition = Vector3.zero;

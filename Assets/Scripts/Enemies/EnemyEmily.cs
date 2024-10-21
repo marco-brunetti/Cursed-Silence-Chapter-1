@@ -237,8 +237,8 @@ namespace Enemies
         private void SetMaterialRenderMode(Renderer renderer, Color color, float lerpPercent)
         {
             var mat = renderer.material;
-            if(Mathf.Approximately(lerpPercent, 1)) MaterialExtensions.ToOpaqueMode(mat);
-            else MaterialExtensions.ToFadeMode(mat);
+            if(Mathf.Approximately(lerpPercent, 1)) MaterialRenderMode.Opaque(mat);
+            else MaterialRenderMode.Fade(mat);
             mat.color = color;
             renderer.material = mat;
         }

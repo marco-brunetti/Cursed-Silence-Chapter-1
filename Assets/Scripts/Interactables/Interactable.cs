@@ -4,10 +4,10 @@ using UnityEngine;
 using Interactables.Behaviours;
 using Player;
 
-public class Interactable : MonoBehaviour
+public class Interactable : MonoBehaviour, IInteractable
 {
-    public Vector3 InspectableInitialRotation;
-    public Vector3 InspectablePosition;
+    public Vector3 InspectableInitialRotation { get; private set; }
+    public Vector3 InspectablePosition { get; private set; }
     public bool RotateX;
     public bool RotateY;
     public bool FreezePlayerRotation;
@@ -17,10 +17,9 @@ public class Interactable : MonoBehaviour
     public bool InspectableOnly { get; private set; }
     private List<IBehaviour> InteractionBehaviours = new();
     private List<IBehaviour> InspectionBehaviours = new();
-
     public bool DeactivateBehaviours;
+    public List<GameObject> RequiredInventoryItems { get; private set; } = new();
 
-    [NonSerialized] public List<GameObject> RequiredInventoryItems = new();
 
     private void Awake()
     {

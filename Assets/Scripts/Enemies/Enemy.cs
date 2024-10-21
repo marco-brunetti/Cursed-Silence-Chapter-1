@@ -43,7 +43,7 @@ namespace Enemies
         protected virtual void Start()
         {
             gameController = GameControllerV2.Instance;
-            GameEvents.DamageEnemy += OnDamageEnemy;
+            EventsManager.DamageEnemy += OnDamageEnemy;
             player = gameController.PlayerTransform;
             playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
@@ -334,7 +334,7 @@ namespace Enemies
 
         private void OnDestroy()
         {
-            GameEvents.DamageEnemy -= OnDamageEnemy;
+            EventsManager.DamageEnemy -= OnDamageEnemy;
         }
     }
     

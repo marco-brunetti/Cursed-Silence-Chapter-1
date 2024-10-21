@@ -111,7 +111,7 @@ namespace Player
                     _controller.Animation.Attack();
                 }
 
-                GameEvents.Damage(enemy, damage, poiseDecrement);
+                EventsManager.Damage(enemy, damage, poiseDecrement);
             }
 
             string targetName = enemy ? enemy.name.ToUpper() : "NONE";

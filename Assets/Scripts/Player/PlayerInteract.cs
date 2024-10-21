@@ -1,4 +1,4 @@
-using Game.General;
+//using Game.General;
 using SnowHorse.Utils;
 using UnityEngine;
 
@@ -19,7 +19,7 @@ namespace Player
             {
                 _playerController.InteractableInSight = null;
             }
-            else if (!GameController.Instance.IsInDream && 
+            else if (/*!GameController.Instance.IsInDream && */
             (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
             {
                 var rayData = new RaycastData
@@ -31,14 +31,14 @@ namespace Player
                     //Debug = true
                 };
 
-                var interactable = Raycaster.Find<Interactable>(rayData)?.HitObject;
+                var interactable = Raycaster.Find<IInteractable>(rayData)?.HitObject;
 
-                if(interactable) ManageInteraction(interactable, inspector);
+                if(interactable != null) ManageInteraction(interactable, inspector);
                 else _playerController.InteractableInSight = null;
             }
         }
 
-        private void ManageInteraction(Interactable interactable, PlayerInspect inspector)
+        private void ManageInteraction(IInteractable interactable, PlayerInspect inspector)
         {
             _playerController.InteractableInSight = interactable;
 
@@ -57,7 +57,7 @@ namespace Player
                 else
                 {
                     interactable.Interact(_playerController, false, true);
-                    inspector.StartInspection(interactable.transform);
+                    inspector.StartInspection(interactable.gameObject.transform);
                 }
             }
         }
