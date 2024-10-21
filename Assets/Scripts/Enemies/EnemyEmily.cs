@@ -7,11 +7,18 @@ namespace Enemies
 {
     public class EnemyEmily : Enemy
     {
+        [Header("Animation")]
         [SerializeField] private AnimationClip SpecialAttack2Clip;
 
+        [Header("Renderers")]
         [SerializeField] private List<Renderer> skinRenderers;
         [SerializeField] private Renderer clothesRenderer;
         [SerializeField] private Renderer hairRenderer;
+
+        [Header("Effects")]
+        [SerializeField] private GameObject appearEffect;
+        [SerializeField] private GameObject disappearEffect;
+        [SerializeField] private GameObject specialAttackChargeEffect;
 
         private bool isTrackingStopped;
         private bool currentVulnerable;
@@ -29,7 +36,6 @@ namespace Enemies
         private Color transparentColor;
         private Color defaultClothesColor;
         private Color defaultHairColor;
-
         private Color currentSkinColor;
 
         protected override void Awake()
@@ -143,6 +149,7 @@ namespace Enemies
             if ((EnemyAnimation)sender != animation) return;
             base.OnAnimationEvent(sender, args);
             if (args.Event == "started_special_attack_movement") StartCoroutine(SpecialAttackMovement());
+            else if(args.Event == "activate_special_attack_charge_effect") specialAttackChargeEffect.SetActive(true);
         }
 
         //Add custom movement for special attack animation
@@ -174,11 +181,15 @@ namespace Enemies
 
             specialAttackLerpTime = 0;
             specialAttackLerpTime2 = 0;
+            specialAttackChargeEffect.SetActive(false);
         }
 
         private void Update()
         {
             SetMaterialColors();
+            SetFightMusicVolume();
+            disappearEffect.SetActive(setTransparentMode);
+            appearEffect.SetActive(!setTransparentMode);
         }
 
         private void SetMaterialColors()
@@ -242,6 +253,14 @@ namespace Enemies
             }
 
             currentVulnerable = isVulnerable;
+        }
+
+        private void SetFightMusicVolume()
+        {
+            if(currentState == EnemyState.Idle || currentState == EnemyState.Dead || currentState == EnemyState.Escape || currentState == EnemyState.Wander) 
+            {
+                
+            }
         }
     }
 }

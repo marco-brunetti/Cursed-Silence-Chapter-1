@@ -21,7 +21,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
         PlayerFootsteps(playerData, playerInput);
         PlayerHeartbeat(playerData);
         PlayerBreath(playerData);
-        AmbienceSound();
+        //AmbienceSound();
     }
 
 

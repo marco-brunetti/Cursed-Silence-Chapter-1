@@ -19,7 +19,7 @@ namespace Enemies
         private bool canDie = true;
         private EnemyStats stats;
         private NavMeshAgent agent;
-        private GameControllerV2 gameController;
+        protected GameControllerV2 gameController;
 
         protected bool isVulnerable;
         protected bool isReacting;
@@ -124,9 +124,13 @@ namespace Enemies
                 return;
             }
 
-
             isReacting = false;
             currentState = newState;
+
+            List<EnemyState> activeStates = new() { EnemyState.Attack, EnemyState.React, EnemyState.Block, EnemyState.Walk };
+
+            if(activeStates.Contains(currentState)) gameController.AddActiveEnemy(gameObject);
+            else gameController.RemoveActiveEnemy(gameObject);
             
             switch (currentState)
             {
@@ -179,7 +183,7 @@ namespace Enemies
         
         private void Die()
         {
-            animation.DestroyAgent();
+            animation.StopNavigation();
             StopPlayerTracking();
             collider.enabled = false;
             StartCoroutine(EnemyDisappear());
