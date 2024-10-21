@@ -25,7 +25,7 @@ namespace Player
         [SerializeField] private PlayerCombat _combat;
         [SerializeField] private PostProcessVolume _postProcessVolume;
 
-        [NonSerialized] public Interactable InteractableInSight;
+        [NonSerialized] public IInteractable InteractableInSight;
         [NonSerialized] public bool FreezePlayerMovement;
         [NonSerialized] public bool FreezePlayerRotation;
         [NonSerialized] public bool IsOutside;
@@ -136,7 +136,7 @@ namespace Player
 
         private void ManageCombat()
         {
-            if (!InteractableInSight) _combat.Manage();
+            if (InteractableInSight != null) _combat.Manage();
         }
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)

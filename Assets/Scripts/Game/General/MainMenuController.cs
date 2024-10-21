@@ -8,10 +8,8 @@ namespace Game.General
     {
         [SerializeField] private VideoPlayer videoPlayer;
         [SerializeField] private GameObject mainMenuObject;
-    
-        private readonly WaitForSeconds initialWait = new(0.5f);
-        private WaitForSeconds clipDurationWait;
-        private VideoClip videoClip;
+        [SerializeField] private float initialWait = 0.5f;
+        [SerializeField] private float endingWait = 1f;
 
         private void Awake()
         {
@@ -21,16 +19,20 @@ namespace Game.General
 
         private void Start()
         {
+            videoPlayer.Prepare();
             StartCoroutine(PlayVideoLogo());
-            videoClip = videoPlayer.clip;
-            clipDurationWait = new WaitForSeconds((float)videoClip.length);
         }
 
         private IEnumerator PlayVideoLogo()
         {
-            yield return initialWait;
+            yield return new WaitUntil(() => videoPlayer.isPrepared);
+
+            yield return new WaitForSeconds(initialWait);
+            
             videoPlayer.Play();
-            yield return clipDurationWait;
+
+            yield return new WaitForSeconds((float)videoPlayer.clip.length + endingWait);
+
             mainMenuObject.SetActive(true);
             videoPlayer.gameObject.SetActive(false);
             
