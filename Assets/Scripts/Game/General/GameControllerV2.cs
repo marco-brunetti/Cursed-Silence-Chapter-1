@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Layouts;
 
 namespace Game.General
 {
@@ -8,25 +9,22 @@ namespace Game.General
     {
         private List<GameObject> activeEnemies = new();
         [NonSerialized] public Transform PlayerTransform;
-        public CurrentLayoutStyle CurrentLayoutStyle { get; private set; } = CurrentLayoutStyle.Style0;
+        private string currentLayoutStyle = "style0";
         public static GameControllerV2 Instance;
-        
-        public static EventHandler EnemiesActive;
-        public static EventHandler EnemiesInactive;
-
-        public static EventHandler<CurrentLayoutStyle> LayoutStyleChanged;
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(this);
+
+            LayoutManager.LayoutStyleChanged += OnLayoutStyleChanged;
         }
 
         public void AddActiveEnemy(GameObject enemy)
         {
             if(!activeEnemies.Contains(enemy))
             {
-                if(activeEnemies.Count == 0) EnemiesActive?.Invoke(null, null);
+                if(activeEnemies.Count == 0) SetCurrentMusic("fight");
                 activeEnemies.Add(enemy);
             }
         }
@@ -34,23 +32,19 @@ namespace Game.General
         public void RemoveActiveEnemy(GameObject enemy)
         {
             if(activeEnemies.Contains(enemy)) activeEnemies.Remove(enemy);
-            if(activeEnemies.Count == 0) EnemiesInactive?.Invoke(null, null);
+            if(activeEnemies.Count == 0) SetCurrentMusic(currentLayoutStyle);
         }
 
-        public void SetCurrentStyle(CurrentLayoutStyle style)
+        public void OnLayoutStyleChanged(object sender, string style)
         {
-            if(CurrentLayoutStyle == style) return;
-            CurrentLayoutStyle = style;
-            LayoutStyleChanged?.Invoke(null, style);
+            if(string.Equals(currentLayoutStyle, style)) return;
+            currentLayoutStyle = style;
+            SetCurrentMusic(style);
+        }
+
+        public void SetCurrentMusic(string style)
+        {
+            AudioManager.Instance.ActivateMixerMusic(style);
         }
     }
-}
-
-public enum CurrentLayoutStyle
-{
-    Style0,
-    Style1,
-    Style2,
-    Style3,
-    Style4
 }
