@@ -1,6 +1,6 @@
 using Player;
 using System.Collections.Generic;
-using Game.General;
+using SnowHorse.Systems;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
