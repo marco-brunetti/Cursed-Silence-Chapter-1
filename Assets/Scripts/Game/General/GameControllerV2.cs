@@ -45,7 +45,7 @@ namespace Game.General
 
         public void SetCurrentMusic(string style)
         {
-            AudioManager.Instance.ActivateMixerMusic(style);
+            AudioManager.Instance.PlayMusic(style);
         }
     }
 }
