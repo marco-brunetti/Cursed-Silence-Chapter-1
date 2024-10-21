@@ -1,4 +1,5 @@
 using UnityEngine;
+using Interactables.Behaviours;
 
 public class OnTriggerExitBehaviour : MonoBehaviour
 {

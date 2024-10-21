@@ -1,157 +1,63 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Game.General;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour
+namespace Player
 {
-    private GameObject _selectedItem;
-    private List<GameObject> _inventory;
-    private PlayerData _playerData;
-
-    private int _selectedItemIndex;
-
-    private void Start()
+    public class PlayerInventory : MonoBehaviour
     {
-        _inventory = new List<GameObject>() { null };
-        _playerData = PlayerController.Instance.PlayerData;
-    }
+        private HashSet<InventoryItem> _inventory = new();
+        private PlayerData _playerData;
 
-    public void Manage()
-    {
-        if (Input.mouseScrollDelta.y != 0)
+        public void Add(InventoryItem item)
         {
-            ItemSelect();
+            if(!_playerData) _playerData = PlayerController.Instance.PlayerData;
+
+            PlayerController.Instance.InspectablesSource.pitch = 1;
+            PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip,
+                0.2f * GameController.Instance.GlobalVolume);
+     
+            item.transform.SetParent(PlayerController.Instance.InventoryHolder);
+            item.transform.localPosition = Vector3.zero;
+            item.gameObject.SetActive(false);
+            
+            _inventory.Add(item);
         }
 
-        //Prevents inventory errors
-        if (_selectedItemIndex > _inventory.Count)
+        public bool Contains(InventoryItem item, bool removeItem, bool destroyItem)
         {
-            _selectedItemIndex = 0;
-            _selectedItem = _inventory[0];
-        }
-        else if (_selectedItem != _inventory[_selectedItemIndex])
-        {
-            _selectedItem = _inventory[_selectedItemIndex];
-        }
-    }
+            if(!item) return false;
+            
+            var isInInventory = _inventory.Contains(item);
 
-    private void ItemSelect()
-    {
-        int inventoryCapacity = _inventory.Count - 1;
-
-        if(inventoryCapacity > 0)
-        {
-            if (Input.mouseScrollDelta.y > 0)
+            if (isInInventory && removeItem)
             {
-                _selectedItemIndex = (_selectedItemIndex < inventoryCapacity) ? ++_selectedItemIndex : 0;
-
+                _inventory.Remove(item);
+                if(destroyItem) Destroy(item.gameObject);
             }
-            else if (Input.mouseScrollDelta.y < 0)
+            
+            return isInInventory;
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        public T Find<T>(bool removeItem, bool destroyItem) where T : Component
+        {
+            T component = null;
+            _inventory.FirstOrDefault(x=>x.TryGetComponent(out component));
+
+            if (component && removeItem)
             {
-                _selectedItemIndex = (_selectedItemIndex > 0) ? --_selectedItemIndex : inventoryCapacity;
+                _inventory.Remove(component.GetComponent<InventoryItem>());
+                if(destroyItem) Destroy(component.gameObject);
             }
+
+            return component;
         }
 
-        _selectedItem = _inventory[_selectedItemIndex];
-
-        for (int i = 0; i < _inventory.Count; i++)
+        public void ShowInUI(List<InventoryItem> requiredItems)
         {
-            if (_inventory[i] != null)
-            {
-                if (_inventory[i] == _selectedItem)
-                {
-                    _selectedItem.SetActive(true);
-                }
-                else
-                {
-                    _inventory[i].SetActive(false);
-                }
-            }
+            
         }
-    }
-
-    public void Add(Transform interactable, Vector3 positionInInventory, Vector3 rotationInInventory, Vector3 scaleInInventory)
-    {
-        //PlayerData playerData = PlayerController.Instance.PlayerData;
-        _playerData.InspectablesSource.pitch = 1;
-        _playerData.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
-
-        if (_selectedItem != null)
-        {
-            _selectedItem.SetActive(false);
-        }
-
-        GameObject inventoryObject = PrepareItemForInventory(interactable, positionInInventory, rotationInInventory, scaleInInventory);
-
-        _inventory.Add(inventoryObject);
-
-        _selectedItem = inventoryObject;
-        _selectedItemIndex = _inventory.Count - 1;
-    }
-
-    private GameObject PrepareItemForInventory(Transform interactable, Vector3 positionInInventory, Vector3 rotationInInventory, Vector3 scaleInInventory)
-    {
-        if (interactable.TryGetComponent(out Collider interactableCollider))
-        {
-            interactableCollider.enabled = false;
-        }
-
-        if (interactable.TryGetComponent(out Renderer interactableRenderer))
-        {
-            interactableRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            interactableRenderer.receiveShadows = false;
-        }
-
-        interactable.gameObject.layer = LayerMask.NameToLayer("Inventory");
-        interactable.SetParent(_playerData.InventoryHolder);
-        interactable.localPosition = positionInInventory;
-        interactable.localRotation = Quaternion.Euler(rotationInInventory);
-
-        if (scaleInInventory != Vector3.zero)
-        {
-            interactable.localScale = scaleInInventory;
-        }
-
-        ChangeItemLayer(interactable.gameObject, "Inventory");
-
-        //Refreshes camera, solving a layer change bug
-        _playerData.InventoryCamera.SetActive(false);
-        _playerData.InventoryCamera.SetActive(true);
-
-        return interactable.gameObject;
-    }
-
-    public void Remove(GameObject interactable, bool deactivateObject = true)
-    {
-        ChangeItemLayer(interactable.gameObject, "Default");
-
-        if (deactivateObject)
-        {
-            _inventory[_selectedItemIndex].SetActive(false);
-        }
-
-        _inventory.Remove(interactable);
-        _selectedItemIndex = _inventory.Count - 1;
-        if(_selectedItemIndex > 0) _inventory[_inventory.Count - 1].SetActive(true);
-    }
-
-    private void ChangeItemLayer(GameObject item, string layer)
-    {
-        item.layer = LayerMask.NameToLayer(layer);
-
-        foreach (Transform child in item.GetComponentInChildren<Transform>(true))
-        {
-            child.gameObject.layer = LayerMask.NameToLayer(layer);
-
-            foreach (Transform nestedChild in child.GetComponentInChildren<Transform>(true))
-            {
-                nestedChild.gameObject.layer = LayerMask.NameToLayer(layer);
-            }
-        }
-    }
-
-    public GameObject SelectedItem()
-    {
-        return _selectedItem;
     }
 }
