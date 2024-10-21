@@ -1,3 +1,4 @@
+using Game.General;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Player;
@@ -20,7 +21,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
         PlayerFootsteps(playerData, playerInput);
         PlayerHeartbeat(playerData);
         PlayerBreath(playerData);
-        AmbienceSound();
+        //AmbienceSound();
     }
 
 

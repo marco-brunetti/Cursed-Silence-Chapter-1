@@ -1,5 +1,6 @@
 using SnowHorse.Utils;
 using System.Collections;
+using Game.General;
 using UnityEngine;
 
 public class UICanvasControl : MonoBehaviour

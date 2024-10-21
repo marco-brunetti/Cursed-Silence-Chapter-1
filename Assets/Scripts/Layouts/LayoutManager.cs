@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Game.General;
 
 namespace Layouts
 {
@@ -20,6 +21,8 @@ namespace Layouts
         private LevelLayout mainLevel;
         private HashSet<LevelLayout> layoutPool = new();
         private Queue<LevelLayout> deactivateQueue = new();
+
+        private GameControllerV2 gameController;
 
         public static LayoutManager Instance { get; private set; }
 
@@ -46,12 +49,17 @@ namespace Layouts
                 loadedMap.Add(layoutData);
             }
 
+            gameController = GameControllerV2.Instance;
+        }
+
+        private void Start()
+        {
             var currentMapLayout = loadedMap[currentIndex];
             ActivateLayout(null, currentMapLayout.type, Vector3.zero, Quaternion.Euler(Vector3.zero));
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void ActivateLayout(Transform previousLayout, LayoutType nextType, Vector3 position, Quaternion rotation)
+        public void ActivateLayout(LevelLayout previousLayout, LayoutType nextType, Vector3 position, Quaternion rotation)
         {
             if (currentIndex >= loadedMap.Count)
             {
@@ -61,7 +69,7 @@ namespace Layouts
 
             if (GetLayout(nextType, out var layout))
             {
-                if (previousLayout) layout.transform.parent = previousLayout;
+                if (previousLayout) layout.transform.parent = previousLayout.transform;
                 layout.transform.SetLocalPositionAndRotation(position, rotation);
                 layout.transform.parent = null;
                 layout.gameObject.SetActive(true);
@@ -69,8 +77,8 @@ namespace Layouts
                 var i = currentIndex;
                 var mapLayout = loadedMap[i];
                 var isEndOfZone = i < (loadedMap.Count - 1) && mapLayout.zone != loadedMap[i + 1].zone;
-
-                layout.Setup(i, mapLayout.nextTypes, isEndOfZone, decorators: null);
+                SetCurrentStyle(layout.Type);
+                layout.Setup(i, mapLayout.nextTypes, isEndOfZone, previousLayout?.NextLayoutOffsets, decorators: null);
                 if (i == 0) layout.EntranceDoorEnabled(true);
                 layout.ItemList = mapLayout.items;
                 itemManager.FillItems(layout);
@@ -132,6 +140,56 @@ namespace Layouts
             {
                 deactivateQueue.Enqueue(layout);
             }
+        }
+
+        private void SetCurrentStyle(LayoutType type)
+        {
+            CurrentLayoutStyle gameStyle;
+            
+            switch (type)
+            {
+                case LayoutType.MainLevelStyle0:
+                    gameStyle = CurrentLayoutStyle.Style0;
+                    break;
+                case LayoutType.StraightHallwayStyle1:
+                case LayoutType.THallwayStyle1:
+                case LayoutType.LeftLHallwayStyle1:
+                case LayoutType.RightLHallwayStyle1:
+                case LayoutType.SmallOfficeStyle1:
+                case LayoutType.FoodStackStyle1:
+                case LayoutType.PaintingRoomStyle1:
+                case LayoutType.PlayingRoomStyle1:
+                    gameStyle = CurrentLayoutStyle.Style1;
+                    break;
+                case LayoutType.StraightHallwayStyle2:
+                case LayoutType.THallwayStyle2:
+                case LayoutType.LeftLHallwayStyle2:
+                case LayoutType.RightLHallwayStyle2:
+                case LayoutType.BedroomStyle2:
+                case LayoutType.TinyHouseVintageStyle2:
+                case LayoutType.PlayingRoomStyle2:
+                    gameStyle = CurrentLayoutStyle.Style2;
+                    break;
+                case LayoutType.StraightHallwayStyle3:
+                case LayoutType.THallwayStyle3:
+                case LayoutType.LeftLHallwayStyle3:
+                case LayoutType.RightLHallwayStyle3:
+                case LayoutType.BathroomStyle3:
+                case LayoutType.ShedStyle3:
+                    gameStyle = CurrentLayoutStyle.Style3;
+                    break;
+                case LayoutType.StraightHallwayStyle4:
+                case LayoutType.THallwayStyle4:
+                case LayoutType.TinyCellStyle4:
+                    gameStyle = CurrentLayoutStyle.Style4;
+                    break;
+                default:
+                    gameStyle = CurrentLayoutStyle.Style0;
+                    break;
+            }
+
+            gameController.SetCurrentStyle(gameStyle);
+
         }
     }
 }

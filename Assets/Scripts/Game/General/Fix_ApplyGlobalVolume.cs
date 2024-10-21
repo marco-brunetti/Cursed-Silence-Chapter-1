@@ -1,35 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Fix_ApplyGlobalVolume : MonoBehaviour
+namespace Game.General
 {
-    [SerializeField] private AudioSource[] _audioSources;
-    [SerializeField] private float[] _volumes;
-
-    private float _currentGlobalVolume;
-
-    // Start is called before the first frame update
-    void Start()
+    public class Fix_ApplyGlobalVolume : MonoBehaviour
     {
-        _currentGlobalVolume = GameController.Instance.GlobalVolume;
+        [SerializeField] private AudioSource[] _audioSources;
+        [SerializeField] private float[] _volumes;
 
-        for (int i = 0; i < _audioSources.Length; i++)
-        {
-            _audioSources[i].volume = _volumes[i] * _currentGlobalVolume;
-        }
-    }
+        private float _currentGlobalVolume;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(_currentGlobalVolume != GameController.Instance.GlobalVolume)
+        // Start is called before the first frame update
+        void Start()
         {
             _currentGlobalVolume = GameController.Instance.GlobalVolume;
 
-            for(int i = 0; i < _audioSources.Length; i++)
+            for (int i = 0; i < _audioSources.Length; i++)
             {
                 _audioSources[i].volume = _volumes[i] * _currentGlobalVolume;
+            }
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if(_currentGlobalVolume != GameController.Instance.GlobalVolume)
+            {
+                _currentGlobalVolume = GameController.Instance.GlobalVolume;
+
+                for(int i = 0; i < _audioSources.Length; i++)
+                {
+                    _audioSources[i].volume = _volumes[i] * _currentGlobalVolume;
+                }
             }
         }
     }
