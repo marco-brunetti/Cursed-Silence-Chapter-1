@@ -16,7 +16,7 @@ namespace Enemies
         private float lookSpeed;
         private Coroutine lookAtTarget;
         private Coroutine moveTowardsTarget;
-        private Navigation navigation;
+        private NavigationManager navigation;
         private new AnimationManager animation;
         private Dictionary<EnemyState, List<string>> stateAnims = new();
         
@@ -25,7 +25,7 @@ namespace Enemies
         
         public void Init(EnemyData enemyData, NavMeshAgent agent)
         {
-            navigation = gameObject.AddComponent<Navigation>();
+            navigation = gameObject.AddComponent<NavigationManager>();
             navigation.Init(agent, enemyData.PathFindInterval);
             SetAnimationKeys(enemyData);
         }

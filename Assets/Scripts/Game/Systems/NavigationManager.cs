@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace Game.General
 {
-    public class Navigation : MonoBehaviour
+    public class NavigationManager : MonoBehaviour
     {
         private NavMeshAgent agent;
         private Coroutine followPath;
