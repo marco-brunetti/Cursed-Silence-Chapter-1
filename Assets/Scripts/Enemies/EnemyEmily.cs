@@ -187,9 +187,12 @@ namespace Enemies
         private void Update()
         {
             SetMaterialColors();
-            SetFightMusicVolume();
-            disappearEffect.SetActive(setTransparentMode);
-            appearEffect.SetActive(!setTransparentMode);
+
+            if(currentState != EnemyState.Idle && currentState != EnemyState.Dead && currentState != EnemyState.Wander)
+            {
+                disappearEffect.SetActive(setTransparentMode);
+                appearEffect.SetActive(!setTransparentMode);
+            }
         }
 
         private void SetMaterialColors()
@@ -253,14 +256,6 @@ namespace Enemies
             }
 
             currentVulnerable = isVulnerable;
-        }
-
-        private void SetFightMusicVolume()
-        {
-            if(currentState == EnemyState.Idle || currentState == EnemyState.Dead || currentState == EnemyState.Escape || currentState == EnemyState.Wander) 
-            {
-                
-            }
         }
     }
 }

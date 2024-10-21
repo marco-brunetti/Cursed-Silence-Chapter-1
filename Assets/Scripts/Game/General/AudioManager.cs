@@ -32,7 +32,7 @@ public class AudioManager : MonoBehaviour
 
     private void OnEnemiesActive(object sender, EventArgs e)
     {
-        ActivateMusicStyle("FightSnapshot", null);
+        ActivateMusicStyle("FightSnapshot", null, time: 1f);
     }
 
     private void OnEnemiesInactive(object sender, EventArgs e)
@@ -67,7 +67,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void ActivateMusicStyle(string snapshot, AudioSource source)
+    private void ActivateMusicStyle(string snapshot, AudioSource source, float time = 0f)
     {
         if(source)
         {
@@ -75,26 +75,6 @@ public class AudioManager : MonoBehaviour
             source.Play();
         }
 
-        musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot(snapshot) }, weights: new[] { 1f }, timeToReach: blendTime);
-    }
-
-
-    private IEnumerator ModifyFightMusicVolume(AudioSource source, float targetVolume, float duration)
-    {
-        float startVolume = source.volume;
-        float timeElapsed = 0f;
-        var percent = 0f;
-
-        while (percent < 1)
-        {
-            percent = Interpolation.Exponential(duration, ref timeElapsed);
-
-            source.volume = Mathf.Lerp(startVolume, targetVolume, percent);
-
-            yield return new WaitForSeconds(Time.deltaTime);
-            yield return null;
-        }
-
-        modifyFightMusicVolume = null;
+        musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot(snapshot) }, weights: new[] { 1f }, timeToReach: time == 0f ? blendTime : time);
     }
 }
