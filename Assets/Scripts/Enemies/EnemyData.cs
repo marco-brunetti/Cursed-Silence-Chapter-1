@@ -43,6 +43,8 @@ namespace Enemies
         [field: SerializeField] public AnimationClip DeathAnim { get; private set; }
         [field: SerializeField, Tooltip("Add the base animation for any custom state with a custom bool")] public AnimationClip[] AdditionalStateAnims { get; private set; }
         [field: SerializeField] public AnimationClip[] AlternativeClips {  get; private set; }
-        
+
+
+        [field: SerializeField, Header("Custom colors"), Space(10)] public Color[] Colors { get; private set; }
     }
 }
