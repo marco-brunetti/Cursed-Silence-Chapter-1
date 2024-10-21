@@ -31,14 +31,14 @@ namespace Player
                     //Debug = true
                 };
 
-                var interactable = Raycaster.Find<Interactable>(rayData)?.HitObject;
+                var interactable = Raycaster.Find<IInteractable>(rayData)?.HitObject;
 
-                if(interactable) ManageInteraction(interactable, inspector);
+                if(interactable != null) ManageInteraction(interactable, inspector);
                 else _playerController.InteractableInSight = null;
             }
         }
 
-        private void ManageInteraction(Interactable interactable, PlayerInspect inspector)
+        private void ManageInteraction(IInteractable interactable, PlayerInspect inspector)
         {
             _playerController.InteractableInSight = interactable;
 
@@ -57,7 +57,7 @@ namespace Player
                 else
                 {
                     interactable.Interact(_playerController, false, true);
-                    inspector.StartInspection(interactable.transform);
+                    inspector.StartInspection(interactable.gameObject.transform);
                 }
             }
         }

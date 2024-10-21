@@ -20,7 +20,7 @@ namespace Player
         private bool[] _rotateXY;
 
         private Transform _interactable;
-        private Interactable _interactableComponent;
+        private IInteractable _interactableComponent;
         private Transform _previousParent;
 
         private Vector3[] _previousPositionAndRotation;
@@ -65,7 +65,7 @@ namespace Player
             }
 
             interactable.GetComponent<Collider>().enabled = false;
-            _interactableComponent = interactable.GetComponent<Interactable>();
+            _interactableComponent = interactable.GetComponent<IInteractable>();
             _interactable = interactable;
 
             _rotateXY = _interactableComponent.RotateXY();
