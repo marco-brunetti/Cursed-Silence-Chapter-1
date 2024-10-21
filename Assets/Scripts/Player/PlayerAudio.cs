@@ -1,4 +1,4 @@
-using Game.General;
+//using Game.General;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Player;
@@ -45,7 +45,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
                         : playerData.GrassFootstepClipsVolume * 0.4f;
 
                     _footstepsSource.PlayOneShot(playerData.GrassFootstepClips[i],
-                        volume * GameController.Instance.GlobalVolume);
+                        volume /** GameController.Instance.GlobalVolume*/);
                     currentFootstepIndex = i;
                 }
                 else
@@ -60,7 +60,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
                         : playerData.WoodFootstepClipsVolume * 0.4f;
 
                     _footstepsSource.PlayOneShot(playerData.WoodFootstepClips[i],
-                        volume * GameController.Instance.GlobalVolume);
+                        volume /** GameController.Instance.GlobalVolume*/);
                     currentFootstepIndex = i;
                 }
 
@@ -83,7 +83,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
                 float volume = playerData.PlayerHeartbeatClipsVolume * currentStressLevel;
 
                 _heartbeatSource.PlayOneShot(playerData.PlayerHeartbeatClips[_currentHeartbeatIndex],
-                    volume * GameController.Instance.GlobalVolume);
+                    volume /** GameController.Instance.GlobalVolume*/);
 
                 //Heartbeat rate isn't equal; the first beat and the second are close together, the second and third are not. So we check if i is even to decide wait time.
                 if (_currentHeartbeatIndex == 0 || _currentHeartbeatIndex == 2 || _currentHeartbeatIndex == 4)
@@ -114,7 +114,7 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
                     0.8f + (currentStressLevel /
                             12.5f); //Minimum pitch is 0.8; To get to maximum of 1, sum 0.2 when maximum stress level of 2.5f;
                 _breathSource.PlayOneShot(playerData.PlayerBreathClips[_currentBreathIndex],
-                    volume * GameController.Instance.GlobalVolume);
+                    volume /** GameController.Instance.GlobalVolume*/);
 
                 if (_currentBreathIndex == 0 || _currentBreathIndex == 2 || _currentBreathIndex == 4)
                     _breathingTimer += playerData.BreathingMinimumRate / currentStressLevel;
@@ -132,9 +132,9 @@ public class PlayerAudio : MonoBehaviour, IPlayerAudio
         }
     }
 
-    private void AmbienceSound()
+    /*private void AmbienceSound()
     {
         if (PlayerController.Instance.IsOutside) GameController.Instance.ActivateAmbienceSounds(true);
         else GameController.Instance.ActivateAmbienceSounds(false);
-    }
+    }*/
 }

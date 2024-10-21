@@ -1,6 +1,6 @@
-public static class MaterialExtensions
+public static class MaterialRenderMode
 {
-    public static void ToOpaqueMode(UnityEngine.Material material)
+    public static void Opaque(UnityEngine.Material material)
     {
         material.SetOverrideTag("RenderType", "");
         material.SetInt("_SrcBlend", (int) UnityEngine.Rendering.BlendMode.One);
@@ -12,7 +12,7 @@ public static class MaterialExtensions
         material.renderQueue = -1;
     }
    
-    public static void ToFadeMode(UnityEngine.Material material)
+    public static void Fade(UnityEngine.Material material)
     {
         material.SetOverrideTag("RenderType", "Transparent");
         material.SetInt("_SrcBlend", (int) UnityEngine.Rendering.BlendMode.SrcAlpha);

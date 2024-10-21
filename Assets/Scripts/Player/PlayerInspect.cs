@@ -1,5 +1,5 @@
 using System.Collections;
-using Game.General;
+//using Game.General;
 using UnityEngine;
 
 namespace Player
@@ -20,7 +20,7 @@ namespace Player
         private bool[] _rotateXY;
 
         private Transform _interactable;
-        private Interactable _interactableComponent;
+        private IInteractable _interactableComponent;
         private Transform _previousParent;
 
         private Vector3[] _previousPositionAndRotation;
@@ -65,7 +65,7 @@ namespace Player
             }
 
             interactable.GetComponent<Collider>().enabled = false;
-            _interactableComponent = interactable.GetComponent<Interactable>();
+            _interactableComponent = interactable.GetComponent<IInteractable>();
             _interactable = interactable;
 
             _rotateXY = _interactableComponent.RotateXY();
@@ -81,7 +81,7 @@ namespace Player
 
             playerController.InspectablesSource.pitch = 1;
             playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip,
-                0.2f * GameController.Instance.GlobalVolume);
+                0.2f /** GameController.Instance.GlobalVolume*/);
 
             playerController.FreezePlayerMovement = true;
             playerController.FreezePlayerRotation = true;
@@ -162,7 +162,7 @@ namespace Player
                     {
                         playerController.InspectablesSource.pitch = 0.9f;
                         playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip,
-                            0.2f * GameController.Instance.GlobalVolume);
+                            0.2f /** GameController.Instance.GlobalVolume*/);
                     }
 
                     Vector3 targetPosition = _previousPositionAndRotation[0];

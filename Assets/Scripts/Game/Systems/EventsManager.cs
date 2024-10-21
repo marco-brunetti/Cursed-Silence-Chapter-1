@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.General
 {
-    public static class GameEvents
+    public static class EventsManager
     {
         public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
 

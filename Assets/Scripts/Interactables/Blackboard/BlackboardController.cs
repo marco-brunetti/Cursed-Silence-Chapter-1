@@ -100,7 +100,7 @@ namespace Interactables.Behaviours
         {
             var newItemInSight = _playerController.InteractableInSight;
 
-            if (newItemInSight)
+            if (newItemInSight != null)
             {
                 if (_currentItemInSight)
                 {
@@ -118,7 +118,7 @@ namespace Interactables.Behaviours
 
                 if (BlackboardItems.Contains(newItemInSight.gameObject))
                 {
-                    _currentItemInSight = newItemInSight.GetComponent<BlackboardItem>();
+                    _currentItemInSight = newItemInSight.gameObject.GetComponent<BlackboardItem>();
                     _currentItemInSight.Glow(true);
                 }
             }
