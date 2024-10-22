@@ -1,5 +1,5 @@
-using Game.General;
 using UnityEngine;
+using SnowHorse.Systems;
 using SnowHorse.Utils;
 
 namespace Player

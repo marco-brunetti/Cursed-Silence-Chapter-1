@@ -1,5 +1,4 @@
 using System.Collections;
-using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -22,7 +21,6 @@ namespace Interactables.Behaviours
         [FormerlySerializedAs("_deactivateAfterTrigger")] [SerializeField] private bool deactivateAfterTrigger;
         [FormerlySerializedAs("_randomize")] [SerializeField] private bool randomize;
 
-
         private bool _isActive = true;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
@@ -31,11 +29,11 @@ namespace Interactables.Behaviours
             {
                 if (SubtitleIndex.Length != subtitleDuration.Length)
                 {
-                    WarningTool.Print("Check subtitle index and duration arrays!", gameObject);
+                    Debug.Log($"Check subtitle index and duration arrays! gameObject:{gameObject}");
                 }
                 else if (triggerOnReturn == false && triggerOnInspection == false && triggerOnInteraction == false)
                 {
-                    WarningTool.Print("Please set subtitle trigger type!", gameObject);
+                    Debug.Log($"Please set subtitle trigger type! gameObject:{gameObject}");
                 }
                 else
                 {
@@ -69,7 +67,7 @@ namespace Interactables.Behaviours
                 UIManager.Instance.Subtitles.Display(SubtitleIndex[0], subtitleDuration[0]);
                 if (subtitleDuration[0] == 0)
                 {
-                    WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
+                    Debug.Log($"Make sure subtitle durations are greater than zero! gameObject: {gameObject}");
                 }
             }
             else
@@ -80,7 +78,7 @@ namespace Interactables.Behaviours
                     UIManager.Instance.Subtitles.Display(SubtitleIndex[i], subtitleDuration[i]);
                     if (subtitleDuration[i] == 0)
                     {
-                        WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
+                        Debug.Log($"Make sure subtitle durations are greater than zero! gameObject: {gameObject}");
                     }
 
                     yield return null;
@@ -92,7 +90,7 @@ namespace Interactables.Behaviours
                         UIManager.Instance.Subtitles.Display(SubtitleIndex[i], subtitleDuration[i]);
                         if (subtitleDuration[i] == 0)
                         {
-                            WarningTool.Print("Make sure subtitle durations are greater than zero!", gameObject);
+                            Debug.Log($"Make sure subtitle durations are greater than zero! gameObject: {gameObject}");
                         }
 
                         yield return new WaitForSecondsRealtime(subtitleDuration[i] + 0.5f);

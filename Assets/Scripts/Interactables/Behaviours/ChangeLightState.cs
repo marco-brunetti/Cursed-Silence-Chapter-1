@@ -24,7 +24,7 @@ namespace Interactables.Behaviours
             }
             else if(onInteraction == false && onInspection == false)
             {
-                WarningTool.Print("Make sure to set activation type!", gameObject);
+                Debug.Log($"{gameObject.name} onInteraction: {onInteraction} onInspection: {onInspection}");
             }
         }
 

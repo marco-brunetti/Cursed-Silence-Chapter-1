@@ -1,80 +1,48 @@
-using System;
-using System.Collections;
-using Game.General;
-using SnowHorse.Utils;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+namespace SnowHorse.Systems
 {
-    [SerializeField] private AudioMixer musicMixer;
-    [SerializeField] private float blendTime = 3f;
-    [SerializeField] private AudioSource fightMusicSource;
-    [SerializeField] private AudioSource style1MusicSource;
-    [SerializeField] private AudioSource style2MusicSource;
-    [SerializeField] private AudioSource style3MusicSource;
-    [SerializeField] private AudioSource style4MusicSource;
-
-    private GameControllerV2 gameController;
-    public static AudioManager Instance;
-    private Coroutine modifyFightMusicVolume;
-
-    private void Awake()
+    public class AudioManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(this);
+        [SerializeField] private AudioMixer musicMixer;
+        [SerializeField] private float defaultBlendTime = 3f;
+        [SerializeField] private AudioSource[] musicSources;
+        [SerializeField] private AudioSource playerSource;
 
-        gameController = GameControllerV2.Instance;
-        GameControllerV2.EnemiesActive += OnEnemiesActive;
-        GameControllerV2.EnemiesInactive += OnEnemiesInactive;
-        GameControllerV2.LayoutStyleChanged += OnLayoutStyleChanged;
-    }
+        public static AudioManager Instance;
 
-    private void OnEnemiesActive(object sender, EventArgs e)
-    {
-        ActivateMusicStyle("FightSnapshot", null, time: 1f);
-    }
-
-    private void OnEnemiesInactive(object sender, EventArgs e)
-    {
-        ActivateLayoutMusic(gameController.CurrentLayoutStyle);
-    }
-
-    private void OnLayoutStyleChanged(object sender, CurrentLayoutStyle e)
-    {
-        ActivateLayoutMusic(e);
-    }
-
-    public void ActivateLayoutMusic(CurrentLayoutStyle style)
-    {
-        switch(style)
+        private void Awake()
         {
-            case CurrentLayoutStyle.Style0:
-                ActivateMusicStyle("Style0Snapshot", null);
-                break;
-            case CurrentLayoutStyle.Style1:
-                ActivateMusicStyle("Style1Snapshot", style1MusicSource);
-                break;
-            case CurrentLayoutStyle.Style2:
-                ActivateMusicStyle("Style2Snapshot", style2MusicSource);
-                break;
-            case CurrentLayoutStyle.Style3:
-                ActivateMusicStyle("Style3Snapshot", style3MusicSource);
-                break;
-            case CurrentLayoutStyle.Style4:
-                ActivateMusicStyle("Style4Snapshot", style4MusicSource);
-                break;
-        }
-    }
-
-    private void ActivateMusicStyle(string snapshot, AudioSource source, float time = 0f)
-    {
-        if(source)
-        {
-            source.Stop();
-            source.Play();
+            if (Instance == null) Instance = this;
+            else Destroy(this);
         }
 
-        musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot(snapshot) }, weights: new[] { 1f }, timeToReach: time == 0f ? blendTime : time);
+        public void PlayMusic(string snapshotName, float blendTime = 0f)
+        {
+            var source = musicSources.FirstOrDefault(x => string.Equals($"{snapshotName}_audio_source", x.gameObject.name));
+
+            if (source)
+            {
+                source.Stop();
+                source.Play();
+            }
+
+            musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot($"{snapshotName}Snapshot") }, weights: new[] { 1f }, timeToReach: blendTime == 0f ? defaultBlendTime : blendTime);
+        }
+
+        public void PlayAudio(string id, AudioClip clip, float volume = 1f, float pitch = 1)
+        {
+            switch(id)
+            {
+                case "player":
+                    playerSource.pitch = pitch;
+                    playerSource.PlayOneShot(clip, volume);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
