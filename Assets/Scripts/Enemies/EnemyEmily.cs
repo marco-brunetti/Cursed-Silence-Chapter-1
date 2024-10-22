@@ -67,8 +67,13 @@ namespace Enemies
         
         protected override void Move()
         {
-            animation.SetState(data.MoveAnim.name, currentState, lookTarget:player, rootTransformForLook: transform);
-            animation.SetLookSpeed(defaultLookSpeed);
+			var isValidState = animation.TrySetState(data.MoveAnim.name, currentState, lookTarget: player, rootTransformForLook: transform);
+
+			if(isValidState)
+			{
+				animation.SetLookSpeed(defaultLookSpeed);
+				setTransparentMode = true;
+			}
         }
 
         protected override void OnWalkStarted(float speed)
@@ -78,7 +83,7 @@ namespace Enemies
             {
 				speed += speed * (random.Next(1, 100)) / 100;
 
-                animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
+                animation.TrySetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
                 setTransparentMode = true;
             }
@@ -103,12 +108,12 @@ namespace Enemies
                     var p = random.Next(0, 100);
 
                     if (p < data.SpecialAttackProbability) SelectSpecialAttack();
-                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                    else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.TrySetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 }
                 else
                 {
                     RestartTracking();
-                    if(currentState == EnemyState.Attack) animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                    if(currentState == EnemyState.Attack) animation.TrySetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 } 
             }
             else
@@ -125,8 +130,8 @@ namespace Enemies
             StopMovementFunctions();
 
             var sp = random.Next(0, 100);
-            if (sp < 50) animation.SetState(data.SpecialAttackAnim.name, currentState);
-            else animation.SetState(SpecialAttack2Clip.name, currentState);
+            if (sp < 50) animation.TrySetState(data.SpecialAttackAnim.name, currentState);
+            else animation.TrySetState(SpecialAttack2Clip.name, currentState);
         }
 
         private void StopMovementFunctions()

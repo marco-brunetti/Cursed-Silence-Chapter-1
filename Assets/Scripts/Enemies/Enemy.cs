@@ -177,7 +177,7 @@ namespace Enemies
 
         private void Idle()
         {
-            animation.SetState(data.IdleAnim.name, currentState);
+            animation.TrySetState(data.IdleAnim.name, currentState);
         }
         
         private void Die()
@@ -186,7 +186,7 @@ namespace Enemies
             StopPlayerTracking();
             collider.enabled = false;
             StartCoroutine(EnemyDisappear());
-            animation.SetState(data.DeathAnim.name, currentState);
+            animation.TrySetState(data.DeathAnim.name, currentState);
         }
 
         protected virtual void Attack()
@@ -199,27 +199,27 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.SetState(data.MoveAnim.name, currentState, moveTarget:player, randomizePath: data.RandomizePath);
+            animation.TrySetState(data.MoveAnim.name, currentState, moveTarget:player, randomizePath: data.RandomizePath);
         }
         
         private void React()
         {
             isReacting = true;
             StopPlayerTracking();
-            animation.SetState(data.ReactAnim.name, currentState);
+            animation.TrySetState(data.ReactAnim.name, currentState);
         }
         
         private void Block()
         {
             isReacting = true;
-            animation.SetState(data.BlockAnim.name, currentState);
+            animation.TrySetState(data.BlockAnim.name, currentState);
         }
 
         protected IEnumerator AttackingPlayer(List<string> attackKeysList)
         {
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
-                animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                animation.TrySetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                 yield return null;
             }
 
@@ -243,21 +243,21 @@ namespace Enemies
 
                     if (hasHeavyAttack && hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
-                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                        if (p < data.SpecialAttackProbability) animation.TrySetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.TrySetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                     else if (hasHeavyAttack)
                     {
-                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                        if (p < data.HeavyAttackProbability) animation.TrySetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                     else if (hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                        if (p < data.SpecialAttackProbability) animation.TrySetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                 }
                 else
                 {
-                    animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                    animation.TrySetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
                 }
             }
             changeNextAttack = false;

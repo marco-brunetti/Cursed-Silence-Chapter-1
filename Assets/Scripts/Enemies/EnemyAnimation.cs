@@ -81,7 +81,7 @@ namespace Enemies
             AnimationClipEvent?.Invoke(this, args);
         }
 
-        public void SetState(string animKey, EnemyState currentState, Transform rootTransformForLook = null, Transform lookTarget = null, float lookTargetSpeed = 5, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
+        public bool TrySetState(string animKey, EnemyState currentState, Transform rootTransformForLook = null, Transform lookTarget = null, float lookTargetSpeed = 5, Transform moveTarget = null, bool randomizePath = false, float randomPathRange = 2f)
         {
             //We check if the current state corresponds to the anim key, to prevent accidental changes
             if (stateAnims[currentState].Contains(animKey))
@@ -93,10 +93,12 @@ namespace Enemies
                 else if (lookTarget) LookAtTarget(rootTransformForLook, lookTarget, lookTargetSpeed);
             
                 animation.Enable(animKeys[animKey]);
+				return true;
             }
             else
             {
                 Debug.LogError($"Invalid anim key {animKey} for state {currentState}.");
+				return false;
             }
         }
 
