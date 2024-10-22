@@ -11,7 +11,7 @@ namespace SnowHorse.Utils
             if (result != null && result.HitObject.CompareTag(data.FindTag)) return GetComponent<T>(result);
             return null;
         }
-        
+
         public static RaycastResult<T> Find<T>(RaycastData data)
         {
             data.Ray ??= new Ray(origin: data.Origin, direction: data.Direction);
@@ -31,34 +31,34 @@ namespace SnowHorse.Utils
 
         private static RaycastResult<T> GetComponent<T>(RaycastResult<GameObject> result)
         {
-            if(typeof(T) == typeof(GameObject)) return (RaycastResult<T>)(object)result;
+            if (typeof(T) == typeof(GameObject)) return (RaycastResult<T>)(object)result;
             if (result.HitObject.TryGetComponent(out T obj)) return new RaycastResult<T>(obj, result.HitPoint);
             return null;
         }
 
         private static RaycastResult<GameObject> Cast3D(RaycastData data)
-		{
+        {
             Physics.Raycast((Ray)data.Ray, out RaycastHit hit, data.MaxDistance, data.LayerMask.value);
             var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
             return result;
-		}
+        }
 
-		private static RaycastResult<GameObject> Cast2D(RaycastData data)
-		{
+        private static RaycastResult<GameObject> Cast2D(RaycastData data)
+        {
             var hit = Physics2D.GetRayIntersection((Ray)data.Ray, data.MaxDistance, data.LayerMask.value);
             var result = hit.collider ? new RaycastResult<GameObject>(hit.collider.gameObject, hit.point) : null;
             return result;
-		}
+        }
 
-		private static void DebugRaycast(RaycastData data, RaycastResult<GameObject> result)
-		{
-            if(!data.Debug) return;
+        private static void DebugRaycast(RaycastData data, RaycastResult<GameObject> result)
+        {
+            if (!data.Debug) return;
             var ray = (Ray)data.Ray;
             var distance = (result != null) ? Vector3.Distance((Vector3)result.HitPoint, ray.origin) : data.MaxDistance;
             Debug.DrawRay(ray.origin, ray.direction * distance, color: (result != null) ? data.HitDebugColor : data.NonHitDebugColor);
         }
-	}
-    
+    }
+
     public class RaycastData
     {
         public Ray? Ray = null;
@@ -84,11 +84,11 @@ namespace SnowHorse.Utils
             HitPoint = hitPoint;
         }
     }
-}
 
-public enum CastType
-{
-	Cast2D,
-	Cast3D,
-	Mixed
+    public enum CastType
+    {
+        Cast2D,
+        Cast3D,
+        Mixed
+    }
 }
