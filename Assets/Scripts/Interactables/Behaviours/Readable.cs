@@ -33,7 +33,7 @@ namespace Interactables.Behaviours
 
                 if(message == "" || message == null)
                 {
-                    WarningTool.Print("Please check readable text!", gameObject);
+                    Debug.Log($"Please check readable text! gameObject: {gameObject}");
                 }
 
                 readable.Display(message);

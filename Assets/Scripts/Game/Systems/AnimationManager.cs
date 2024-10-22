@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Game.General
+namespace SnowHorse.Systems
 {
     public class AnimationManager
     {
@@ -48,7 +48,6 @@ namespace Game.General
             ChangeClip(key);
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         private void ChangeClip(KeyValuePair<string, int> animKey)
         {
             if (!dict.TryGetValue(animKey.Value, out var anim))

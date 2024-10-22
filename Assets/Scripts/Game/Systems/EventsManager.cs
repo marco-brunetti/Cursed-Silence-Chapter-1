@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Game.General
+namespace SnowHorse.Systems
 {
     public static class EventsManager
     {
