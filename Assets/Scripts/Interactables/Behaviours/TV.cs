@@ -1,5 +1,4 @@
 using System.Collections;
-using Game.General;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,7 +17,7 @@ namespace Interactables.Behaviours
         {
             if(!_isPlaying && isInteracting || !_isPlaying && isInspecting)
             {
-                tvSource.volume = volume * GameController.Instance.GlobalVolume;
+                //tvSource.volume = volume * GameController.Instance.GlobalVolume;
                 StartCoroutine(ManangeVideoPlayback());
             }
         }

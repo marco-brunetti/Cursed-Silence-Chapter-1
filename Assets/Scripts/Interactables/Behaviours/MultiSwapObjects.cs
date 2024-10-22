@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Game.General;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -51,7 +50,7 @@ namespace Interactables.Behaviours
                     {
                         PlayerData playerData = PlayerController.Instance.PlayerData;
                         playerController.InspectablesSource.pitch = 0.9f;
-                        playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
+                        //playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip, 0.2f * GameController.Instance.GlobalVolume);
 
                         requiredObjects.Remove(requiredObjects[i]);
 

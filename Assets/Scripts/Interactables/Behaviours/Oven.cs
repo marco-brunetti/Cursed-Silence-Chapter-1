@@ -1,5 +1,4 @@
 using System.Collections;
-using Game.General;
 using Player;
 using SnowHorse.Utils;
 using UnityEngine;
@@ -83,7 +82,7 @@ namespace Interactables.Behaviours
 
         private void CookingStatus(bool cookingStatus, AudioClip cookingStatusClip)
         {
-            audioSource.PlayOneShot(cookingStatusClip, volume * GameController.Instance.GlobalVolume);
+            //audioSource.PlayOneShot(cookingStatusClip, volume * GameController.Instance.GlobalVolume);
 
             for (int i = 0; i < doorColliders.Length; i++)
             {

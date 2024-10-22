@@ -1,4 +1,3 @@
-using Game.General;
 using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,12 +17,12 @@ namespace Interactables.Behaviours
 
         private void Start()
         {
-            radioSource.volume = volume * GameController.Instance.GlobalVolume;
+            //radioSource.volume = volume * GameController.Instance.GlobalVolume;
         }
 
         void Update()
         {
-            if(GameController.Instance != null)
+            /*if(GameController.Instance != null)
             {
                 float percentage;
 
@@ -71,7 +70,7 @@ namespace Interactables.Behaviours
                         radioSource.spatialBlend = percentage;
                     }
                 }    
-            }
+            }*/
         }
     }
 }

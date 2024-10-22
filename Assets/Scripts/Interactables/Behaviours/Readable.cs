@@ -1,5 +1,3 @@
-using Game.General;
-using SnowHorse.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,20 +7,23 @@ namespace Interactables.Behaviours
     {
         [FormerlySerializedAs("_message")] [SerializeField, TextArea(20, 20)] private string message;
         [FormerlySerializedAs("_spanishMessage")] [SerializeField, TextArea(20, 20)] private string spanishMessage;
+
+        private string currentLanguage;
+
+        public void SetCurrentLanguage(string language)=> currentLanguage = language;
+
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
             UIReadable readable = UIManager.Instance.Readable;
-            GameController gameController = GameController.Instance;
-
             if(isInspecting)
             {
                 string message;
 
-                if(gameController.SelectedLanguage == Language.English)
+                if(currentLanguage == "english")
                 {
                     message = this.message;
                 }
-                else if(gameController.SelectedLanguage == Language.Spanish)
+                else if(currentLanguage == "spanish")
                 {
                     message = spanishMessage;
                 }

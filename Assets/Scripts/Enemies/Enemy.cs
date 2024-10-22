@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Game.General;
-using SnowHorse.Systems;
 using UnityEngine;
 using UnityEngine.AI;
+using SnowHorse.Systems;
+using SnowHorse.Components;
 
 namespace Enemies
 {
@@ -20,7 +20,6 @@ namespace Enemies
         private bool canDie = true;
         private EnemyStats stats;
         private NavMeshAgent agent;
-        protected GameControllerV2 gameController;
 
         protected bool isVulnerable;
         protected bool isReacting;
@@ -32,9 +31,16 @@ namespace Enemies
         protected System.Random random;
         protected Coroutine attack;
         protected EnemyPlayerTracker playerTracker;
+
+        public static EventHandler<Enemy> EnemyAwake;
+        public static EventHandler<GameObject> AddActiveEnemy;
+        public static EventHandler<GameObject> RemoveActiveEnemy;
+
+        public void SetPlayerTransform(Transform playerTransform) => player = playerTransform;
         
         protected virtual void Awake()
         {
+            EnemyAwake?.Invoke(this, this);
             hasHeavyAttack = data.HeavyAttackAnim != null;
             hasSpecialAttack = data.SpecialAttackAnim != null;
             collider.enabled = true;
@@ -43,9 +49,7 @@ namespace Enemies
         
         protected virtual void Start()
         {
-            gameController = GameControllerV2.Instance;
             EventsManager.DamageEnemy += OnDamageEnemy;
-            player = gameController.PlayerTransform;
             playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
             StartPlayerTracking();
@@ -130,8 +134,8 @@ namespace Enemies
 
             List<EnemyState> activeStates = new() { EnemyState.Attack, EnemyState.React, EnemyState.Block, EnemyState.Walk };
 
-            if(activeStates.Contains(currentState)) gameController.AddActiveEnemy(gameObject);
-            else gameController.RemoveActiveEnemy(gameObject);
+            if(activeStates.Contains(currentState)) AddActiveEnemy?.Invoke(this, gameObject);
+            else RemoveActiveEnemy?.Invoke(this, gameObject);
             
             switch (currentState)
             {
