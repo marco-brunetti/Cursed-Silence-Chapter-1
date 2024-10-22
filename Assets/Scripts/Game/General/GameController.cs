@@ -161,7 +161,8 @@ namespace Game.General
             if(UIManager.Instance != null)
             {
                 UIManager.Instance.Subtitles.ParseText();
-                UIManager.Instance.Language.SetLanguage(SelectedLanguage);
+                var lang = SelectedLanguage == Language.English ? "english" : "spanish";
+                UIManager.Instance.Language.SetLanguage(lang);
             }
         }
 

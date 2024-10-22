@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Components
+namespace SnowHorse.Components
 {
     public class TriggerStayDetector : MonoBehaviour
     {
         public static EventHandler<DetectorEventArgs> TagStaying;
         public static EventHandler<DetectorEventArgs> TagEntered;
         public static EventHandler<DetectorEventArgs> TagExited;
-    
+
         private List<string> tags = new();
         private float detectionInterval;
         private float currentInterval;
@@ -18,15 +18,15 @@ namespace Game.Components
         {
             tags.Clear();
             this.detectionInterval = detectionInterval;
-            detectionTags.ForEach(x=>tags.Add(x.ToLower()));
+            detectionTags.ForEach(x => tags.Add(x.ToLower()));
         }
-    
+
         private void OnTriggerEnter(Collider other)
         {
             if (!tags.Contains(other.tag.ToLower())) return;
             TagEntered?.Invoke(this, new DetectorEventArgs(other.tag, other));
         }
-    
+
         private void OnTriggerStay(Collider other)
         {
             if (currentInterval <= 0)
@@ -39,7 +39,7 @@ namespace Game.Components
 
         private void Update()
         {
-            if(currentInterval > 0)
+            if (currentInterval > 0)
             {
                 currentInterval -= Time.deltaTime;
             }

@@ -1,6 +1,5 @@
 using Cinemachine;
 using System;
-using Game.General;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
@@ -38,7 +37,6 @@ namespace Player
         public Transform InventoryHolder;
         public Transform InspectorParent;
 
-
         public AudioSource InspectablesSource;
         public CharacterController Character;
         public PlayerData PlayerData { get; private set; }
@@ -46,11 +44,12 @@ namespace Player
         public bool IsSprinting { get; private set; }
         public bool IsDistorted { get; private set; }
         public bool IsInspecting { get => _inspector.IsInspecting; }
-
         private BadTVEffect _camDistortion;
-        private GameControllerV2 gameController;
+        public static EventHandler<Transform> SetPlayerTransform; 
 
-        public EventHandler SetPlayerTransform; 
+        private bool pause;
+
+        public void Pause(bool isPause)=> pause = isPause;
 
         private void Awake()
         {
@@ -61,15 +60,15 @@ namespace Player
             PlayerData = _data.dataObject;
 
             _camDistortion = Camera.GetComponent<BadTVEffect>();
-            gameController = GameControllerV2.Instance;
-            gameController.PlayerTransform = Player.transform;
+
+            SetPlayerTransform?.Invoke(this, Player.transform);
         }
 
         private void Update()
         {
             Rotate();
 
-            if (GameController.Instance && GameController.Instance.Pause)
+            if (pause)
             {
                 Time.timeScale = 0;
             }
@@ -99,7 +98,7 @@ namespace Player
 
         private void Rotate()
         {
-            _rotator.Rotate(PlayerData, _input, FreezePlayerRotation);
+            _rotator.Rotate(PlayerData, _input, FreezePlayerRotation, pause);
         }
 
         private void Move()
