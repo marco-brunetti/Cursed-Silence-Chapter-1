@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Game.Components
+namespace SnowHorse.Components
 {
     public class OverlapDetector : MonoBehaviour
     {
@@ -22,11 +22,11 @@ namespace Game.Components
         public void Init(List<string> detectionTags, float detectionRadius, LayerMask detectionMask, float detectionInterval)
         {
             Reset();
-            detectionTags.ForEach(x=>tags.Add(x.ToLower()));
+            detectionTags.ForEach(x => tags.Add(x.ToLower()));
             radius = detectionRadius;
             interval = detectionInterval;
             mask = detectionMask;
-            
+
             sphereCheck = StartCoroutine(SphereCheck());
         }
 
@@ -34,19 +34,19 @@ namespace Game.Components
         {
             tags.Clear();
             currentColliders.Clear();
-            if(sphereCheck != null) StopCoroutine(sphereCheck);
+            if (sphereCheck != null) StopCoroutine(sphereCheck);
         }
 
         private IEnumerator SphereCheck()
         {
             while (true)
             {
-                currentColliders = Physics.OverlapSphere(transform.position, radius, mask).Where(x=> tags.Contains(x.tag.ToLower())).ToList();
-                if(currentColliders.Count > 0) TagStaying?.Invoke(this, new DetectorEventArgs("", null));
+                currentColliders = Physics.OverlapSphere(transform.position, radius, mask).Where(x => tags.Contains(x.tag.ToLower())).ToList();
+                if (currentColliders.Count > 0) TagStaying?.Invoke(this, new DetectorEventArgs("", null));
                 yield return new WaitForSeconds(interval);
             }
         }
-    
+
         private void OnTriggerEnter(Collider other)
         {
             if (!tags.Contains(other.tag.ToLower())) return;

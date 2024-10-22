@@ -1,6 +1,5 @@
 using SnowHorse.Utils;
 using System.Collections;
-using Game.General;
 using UnityEngine;
 
 public class UICanvasControl : MonoBehaviour
@@ -15,7 +14,7 @@ public class UICanvasControl : MonoBehaviour
 
     public void ManageCanvases(UIData uIData, bool pause)
     {
-        if(pause || UIManager.Instance.HideUI || GameController.Instance.IsInDream)
+        if(pause || UIManager.Instance.HideUI)// || GameController.Instance.IsInDream)
         {
             uIData.PlayerCanvas.SetActive(false);
         }

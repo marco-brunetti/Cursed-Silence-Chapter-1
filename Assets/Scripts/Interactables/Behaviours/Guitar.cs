@@ -1,4 +1,3 @@
-using Game.General;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -24,7 +23,7 @@ namespace Interactables.Behaviours
                     _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
                 }
 
-                guitarStrumSource.PlayOneShot(guitarStrumClips[_currentStrumIndex], volume * GameController.Instance.GlobalVolume);
+                //guitarStrumSource.PlayOneShot(guitarStrumClips[_currentStrumIndex], volume * GameController.Instance.GlobalVolume);
             }
         }
 

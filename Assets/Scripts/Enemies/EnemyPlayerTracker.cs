@@ -2,6 +2,7 @@ using SnowHorse.Utils;
 using System;
 using System.Collections;
 using UnityEngine;
+using SnowHorse.Components;
 
 namespace Enemies
 {

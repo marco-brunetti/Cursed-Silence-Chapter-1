@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Layouts;
 using SnowHorse.Systems;
+using Layouts;
+using Enemies;
+using Player;
 
 namespace Game.General
 {
@@ -11,17 +13,39 @@ namespace Game.General
         private List<GameObject> activeEnemies = new();
         [NonSerialized] public Transform PlayerTransform;
         private string currentLayoutStyle = "style0";
-        public static GameControllerV2 Instance;
+        private Transform playerTransform;
+        private List<Enemy> enemyWaitingList = new();
 
         private void Awake()
         {
-            if (Instance == null) Instance = this;
-            else Destroy(this);
-
             LayoutManager.LayoutStyleChanged += OnLayoutStyleChanged;
+            PlayerController.SetPlayerTransform += OnSetPlayerTransform;
+            Enemy.EnemyAwake += OnEnemyAwake;
+            Enemy.AddActiveEnemy += OnAddActiveEnemy;
+            Enemy.RemoveActiveEnemy += OnRemoveActiveEnemy;
         }
 
-        public void AddActiveEnemy(GameObject enemy)
+        private void OnLayoutStyleChanged(object sender, string style)
+        {
+            if(string.Equals(currentLayoutStyle, style)) return;
+            currentLayoutStyle = style;
+            SetCurrentMusic(style);
+        }
+
+        private void OnSetPlayerTransform(object sender, Transform transform)
+        {
+            PlayerTransform = transform;
+            if(enemyWaitingList.Count > 0) enemyWaitingList.ForEach(enemy => enemy.SetPlayerTransform(transform));
+            enemyWaitingList.Clear();
+        }
+
+        private void OnEnemyAwake(object sender, Enemy enemy)
+        {
+            if(playerTransform) enemy.SetPlayerTransform(playerTransform);
+            else if(!enemyWaitingList.Contains(enemy)) enemyWaitingList.Add(enemy);
+        }
+
+        private void OnAddActiveEnemy(object sender, GameObject enemy)
         {
             if(!activeEnemies.Contains(enemy))
             {
@@ -30,20 +54,13 @@ namespace Game.General
             }
         }
 
-        public void RemoveActiveEnemy(GameObject enemy)
+        private void OnRemoveActiveEnemy(object sender, GameObject enemy)
         {
             if(activeEnemies.Contains(enemy)) activeEnemies.Remove(enemy);
             if(activeEnemies.Count == 0) SetCurrentMusic(currentLayoutStyle);
         }
 
-        public void OnLayoutStyleChanged(object sender, string style)
-        {
-            if(string.Equals(currentLayoutStyle, style)) return;
-            currentLayoutStyle = style;
-            SetCurrentMusic(style);
-        }
-
-        public void SetCurrentMusic(string style)
+        private void SetCurrentMusic(string style)
         {
             AudioManager.Instance.PlayMusic(style);
         }

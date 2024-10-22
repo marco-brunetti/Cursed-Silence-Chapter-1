@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Game.General;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,7 +43,7 @@ namespace Interactables.Behaviours
 
                 _isInteracting = false;
 
-                GameController.Instance.ShowCursor = false;
+                //GameController.Instance.ShowCursor = false;
                 UIManager.Instance.HideUI = false;
             }
         }
@@ -52,7 +51,7 @@ namespace Interactables.Behaviours
         private IEnumerator ActivateCanvas(bool enable)
         {
             yield return new WaitForSecondsRealtime(0.4f);
-            GameController.Instance.ShowCursor = enable;
+            //GameController.Instance.ShowCursor = enable;
             _canvas.SetActive(enable);
         }
 

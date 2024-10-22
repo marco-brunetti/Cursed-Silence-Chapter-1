@@ -1,5 +1,4 @@
 using System.Collections;
-using Game.General;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -61,11 +60,11 @@ namespace Interactables.Behaviours
 
             if (delay != 0) yield return new WaitForSecondsRealtime(delay);
 
-            if(activateDarkMask) UIManager.Instance.ActivateDarkMask(true);
+            //if(activateDarkMask) UIManager.Instance.ActivateDarkMask(true);
 
             playerController.IsTeleporting = true;
 
-            if (teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(teleportClip, teleportClipVolume);
+            //if (teleportClip) GameController.Instance.GeneralAudioSource.PlayOneShot(teleportClip, teleportClipVolume);
 
             var player = playerController.Player;
             var playerData = playerController.PlayerData;
@@ -80,13 +79,13 @@ namespace Interactables.Behaviours
             if (activateDarkMask)
             {
                 yield return new WaitForSecondsRealtime(blackMaskDuration);
-                UIManager.Instance.ActivateDarkMask(false);
+                //UIManager.Instance.ActivateDarkMask(false);
             } 
             else yield return new WaitForEndOfFrame();
 
             _isTeleporting = false;
             playerController.IsTeleporting = false;
-            GameController.Instance.IsInDream = toDream;
+            //GameController.Instance.IsInDream = toDream;
         }
 
         private IEnumerator BounceDelay(GameObject player, PlayerData playerData, BadTVEffect tvDistortion)
