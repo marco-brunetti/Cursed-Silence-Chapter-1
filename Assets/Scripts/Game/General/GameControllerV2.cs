@@ -10,7 +10,7 @@ namespace Game.General
 {
     public class GameControllerV2 : MonoBehaviour
     {
-        private List<GameObject> activeEnemies = new();
+        private List<Enemy> activeEnemies = new();
         [NonSerialized] public Transform PlayerTransform;
         private string currentLayoutStyle = "style0";
         private Transform playerTransform;
@@ -20,6 +20,7 @@ namespace Game.General
         {
             LayoutManager.LayoutStyleChanged += OnLayoutStyleChanged;
             PlayerController.SetPlayerTransform += OnSetPlayerTransform;
+            PlayerCombat.DamageEnemy += OnDamageEnemy;
             Enemy.EnemyAwake += OnEnemyAwake;
             Enemy.AddActiveEnemy += OnAddActiveEnemy;
             Enemy.RemoveActiveEnemy += OnRemoveActiveEnemy;
@@ -45,7 +46,7 @@ namespace Game.General
             else if(!enemyWaitingList.Contains(enemy)) enemyWaitingList.Add(enemy);
         }
 
-        private void OnAddActiveEnemy(object sender, GameObject enemy)
+        private void OnAddActiveEnemy(object sender, Enemy enemy)
         {
             if(!activeEnemies.Contains(enemy))
             {
@@ -54,10 +55,19 @@ namespace Game.General
             }
         }
 
-        private void OnRemoveActiveEnemy(object sender, GameObject enemy)
+        private void OnRemoveActiveEnemy(object sender, Enemy enemy)
         {
             if(activeEnemies.Contains(enemy)) activeEnemies.Remove(enemy);
             if(activeEnemies.Count == 0) SetCurrentMusic(currentLayoutStyle);
+        }
+
+        private void OnDamageEnemy(object sender, DamageEnemyEventArgs e)
+        {
+            var enemy = e.Enemy.GetComponent<Enemy>();
+            if(activeEnemies.Contains(enemy))
+            {
+                enemy.Damage(e.Damage, e.PoiseDecrement);
+            }
         }
 
         private void SetCurrentMusic(string style)

@@ -33,8 +33,8 @@ namespace Enemies
         protected EnemyPlayerTracker playerTracker;
 
         public static EventHandler<Enemy> EnemyAwake;
-        public static EventHandler<GameObject> AddActiveEnemy;
-        public static EventHandler<GameObject> RemoveActiveEnemy;
+        public static EventHandler<Enemy> AddActiveEnemy;
+        public static EventHandler<Enemy> RemoveActiveEnemy;
 
         public void SetPlayerTransform(Transform playerTransform) => player = playerTransform;
         
@@ -49,7 +49,6 @@ namespace Enemies
         
         protected virtual void Start()
         {
-            EventsManager.DamageEnemy += OnDamageEnemy;
             playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
             StartPlayerTracking();
@@ -75,18 +74,13 @@ namespace Enemies
             playerTracker.Stop();
         }
 
-        private void OnDamageEnemy(object sender, DamageEnemyEventArgs args)
+        public void Damage(int damage, int poiseDecrement)
         {
-            if(isVulnerable && args.Enemy == gameObject)
+            if(isVulnerable)
             {
                 if (currentState == EnemyState.Idle) playerTracker.Start(visualConeOnly: false);
-
                 var isValidState = currentState != EnemyState.Dead && currentState != EnemyState.Escape;
-
-                if (isValidState && !isReacting)
-                {
-                    ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, args.Damage, args.PoiseDecrement)));
-                }
+                if (isValidState && !isReacting) ChangeState(stats.ReceivedAttack(new EnemyAttackedStateData(currentState, canDie, isVulnerable, damage, poiseDecrement)));
             }
         }
 
@@ -134,8 +128,8 @@ namespace Enemies
 
             List<EnemyState> activeStates = new() { EnemyState.Attack, EnemyState.React, EnemyState.Block, EnemyState.Walk };
 
-            if(activeStates.Contains(currentState)) AddActiveEnemy?.Invoke(this, gameObject);
-            else RemoveActiveEnemy?.Invoke(this, gameObject);
+            if(activeStates.Contains(currentState)) AddActiveEnemy?.Invoke(this, this);
+            else RemoveActiveEnemy?.Invoke(this, this);
             
             switch (currentState)
             {
@@ -335,11 +329,6 @@ namespace Enemies
             {
                 animation.SetAgentSpeed(speed); //Add any other state that contains walk clip
             }
-        }
-
-        private void OnDestroy()
-        {
-            EventsManager.DamageEnemy -= OnDamageEnemy;
         }
     }
     

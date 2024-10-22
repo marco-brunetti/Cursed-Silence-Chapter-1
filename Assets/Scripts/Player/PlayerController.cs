@@ -135,7 +135,7 @@ namespace Player
 
         private void ManageCombat()
         {
-            if (InteractableInSight != null) _combat.Manage();
+            if (InteractableInSight == null) _combat.Manage();
         }
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)

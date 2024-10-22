@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using SnowHorse.Systems;
 using SnowHorse.Utils;
@@ -13,6 +14,8 @@ namespace Player
         private float currentAttackLoadTime;
         private float currentLightAttackCooldown;
         private bool attackQueued;
+
+        public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
 
         private void Start()
         {
@@ -111,7 +114,7 @@ namespace Player
                     _controller.Animation.Attack();
                 }
 
-                EventsManager.Damage(enemy, damage, poiseDecrement);
+                DamageEnemy.Invoke(this, new(enemy, damage, poiseDecrement));
             }
 
             string targetName = enemy ? enemy.name.ToUpper() : "NONE";
@@ -132,6 +135,20 @@ namespace Player
             Attack,
             Block,
             None
+        }
+    }
+
+    public class DamageEnemyEventArgs : EventArgs
+    {
+        public readonly GameObject Enemy;
+        public readonly int Damage;
+        public readonly int PoiseDecrement;
+
+        public DamageEnemyEventArgs(GameObject enemy, int damage, in int poiseDecrement)
+        {
+            Enemy = enemy;
+            Damage = damage;
+            PoiseDecrement = poiseDecrement;
         }
     }
 }

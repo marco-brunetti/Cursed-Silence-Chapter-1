@@ -5,15 +5,15 @@ namespace SnowHorse.Systems
 {
     public static class EventsManager
     {
-        public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
+        /*public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
 
         public static void Damage(GameObject enemy, int damage, int poiseDecrement)
         {
             DamageEnemy?.Invoke(null, new DamageEnemyEventArgs(enemy, damage, poiseDecrement));
-        }
+        }*/
     }
 
-    public class DamageEnemyEventArgs : EventArgs
+    /*public class DamageEnemyEventArgs : EventArgs
     {
         public readonly GameObject Enemy;
         public readonly int Damage;
@@ -25,5 +25,5 @@ namespace SnowHorse.Systems
             Damage = damage;
             PoiseDecrement = poiseDecrement;
         }
-    }
+    }*/
 }
