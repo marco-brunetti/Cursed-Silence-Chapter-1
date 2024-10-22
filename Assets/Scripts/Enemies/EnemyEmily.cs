@@ -76,6 +76,8 @@ namespace Enemies
             //TODO: Add any other state that contains walk clip
             if (currentState == EnemyState.Walk) 
             {
+				speed += speed * (random.Next(1, 100)) / 100;
+
                 animation.SetState(data.MoveAnim.name, currentState, moveTarget: player);
                 animation.SetAgentSpeed(speed);
                 setTransparentMode = true;

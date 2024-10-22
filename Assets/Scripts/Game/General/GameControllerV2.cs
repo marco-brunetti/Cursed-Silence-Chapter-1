@@ -50,7 +50,7 @@ namespace Game.General
         {
             if(!activeEnemies.Contains(enemy))
             {
-                if(activeEnemies.Count == 0) SetCurrentMusic("fight");
+                if(activeEnemies.Count == 0) SetCurrentMusic("fight", blendTime: 1f);
                 activeEnemies.Add(enemy);
             }
         }
@@ -70,9 +70,9 @@ namespace Game.General
             }
         }
 
-        private void SetCurrentMusic(string style)
+        private void SetCurrentMusic(string style, float blendTime = 0)
         {
-            AudioManager.Instance.PlayMusic(style);
+            AudioManager.Instance.PlayMusic(style, blendTime);
         }
     }
 }

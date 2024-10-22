@@ -219,7 +219,7 @@ namespace Enemies
         {
             if (!attackKeysList.Contains(animation.CurrentKey))
             {
-                animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                animation.SetState(data.AttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                 yield return null;
             }
 
@@ -243,16 +243,16 @@ namespace Enemies
 
                     if (hasHeavyAttack && hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
-                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
+                        else if (p < data.HeavyAttackProbability + data.SpecialAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                     else if (hasHeavyAttack)
                     {
-                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.HeavyAttackProbability) animation.SetState(data.HeavyAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                     else if (hasSpecialAttack)
                     {
-                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player);
+                        if (p < data.SpecialAttackProbability) animation.SetState(data.SpecialAttackAnim.name, currentState, rootTransformForLook: transform, lookTarget: player, lookTargetSpeed: 50);
                     }
                 }
                 else
