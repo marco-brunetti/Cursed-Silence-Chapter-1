@@ -4,7 +4,12 @@ namespace SnowHorse.Utils
 {
     public static class Raycaster
     {
-        //Makes the raycast result independent of any component or class
+        /// <summary>
+        /// Finds an object with the given tag in the raycast and returns the given component if it exists.
+        /// </summary>
+        /// <typeparam name="T">The type of the component to find.</typeparam>
+        /// <param name="data">Raycast data.</param>
+        /// <returns>A raycast result with the found object and the requested component if it exists, otherwise null.</returns>
         public static RaycastResult<T> FindWithTag<T>(RaycastData data)
         {
             var result = Find<GameObject>(data);
@@ -12,6 +17,12 @@ namespace SnowHorse.Utils
             return null;
         }
 
+        /// <summary>
+        /// Finds an object in the raycast and returns the given component if it exists.
+        /// </summary>
+        /// <typeparam name="T">The type of the component to find.</typeparam>
+        /// <param name="data">Raycast data.</param>
+        /// <returns>A raycast result with the found object and the requested component if it exists, otherwise null.</returns>
         public static RaycastResult<T> Find<T>(RaycastData data)
         {
             data.Ray ??= new Ray(origin: data.Origin, direction: data.Direction);
