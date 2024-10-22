@@ -1,5 +1,4 @@
 using System.Collections;
-using Game.General;
 using UnityEngine;
 using SnowHorse.Utils;
 using Player;
@@ -45,7 +44,7 @@ namespace Interactables.Behaviours
                     {
                         if (PlayerController.Instance.Inventory.Contains(_key, removeItem:true, destroyItem:true))
                         {
-                            _audioSource.PlayOneShot(_isUnlockedClip, _volume * GameController.Instance.GlobalVolume); //Unlock sound
+                            //_audioSource.PlayOneShot(_isUnlockedClip, _volume * GameController.Instance.GlobalVolume); //Unlock sound
 
                             CurrentDoorState = DoorState.Closed;
                             _changeDoorState = true;
@@ -53,7 +52,7 @@ namespace Interactables.Behaviours
                         }
                         else
                         {
-                            _audioSource.PlayOneShot(_isLockedClip, _volume * GameController.Instance.GlobalVolume); //Locked sound
+                            //_audioSource.PlayOneShot(_isLockedClip, _volume * GameController.Instance.GlobalVolume); //Locked sound
                         }
                         break;
                     }
@@ -105,12 +104,12 @@ namespace Interactables.Behaviours
             {
                 case DoorState.Open:
                     {
-                        _audioSource.PlayOneShot(_isClosingClip, _volume * GameController.Instance.GlobalVolume);
+                        //_audioSource.PlayOneShot(_isClosingClip, _volume * GameController.Instance.GlobalVolume);
                         break;
                     }
                 case DoorState.Closed:
                     {
-                        _audioSource.PlayOneShot(_isOpeningClip, _volume * GameController.Instance.GlobalVolume);
+                        //_audioSource.PlayOneShot(_isOpeningClip, _volume * GameController.Instance.GlobalVolume);
                         break;
                     }
             }

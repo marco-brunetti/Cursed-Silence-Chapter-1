@@ -1,13 +1,15 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections;
-using Game.General;
 using UnityEngine;
 
 public class UISubtitles : MonoBehaviour
 {
     private SubtitleTextList _subtitleTextList;
     private TextAsset _subtitleAsset;
+    private string currentLanguage;
+
+    public void SetCurrentLanguage(string language)=> currentLanguage = language;
 
     private void Start()
     {
@@ -36,9 +38,9 @@ public class UISubtitles : MonoBehaviour
 
     private void ParseJSON()
     {
-        if (GameController.Instance != null && GameController.Instance.SelectedLanguage == Language.English)
+        if (currentLanguage == "english")
             _subtitleAsset = Resources.Load<TextAsset>("JSON/Subtitles/en-US");
-        else if (GameController.Instance != null && GameController.Instance.SelectedLanguage == Language.Spanish)
+        else if (currentLanguage == "spanish")
             _subtitleAsset = Resources.Load<TextAsset>("JSON/Subtitles/es-LA");
         else
             _subtitleAsset = Resources.Load<TextAsset>("JSON/Subtitles/en-US");

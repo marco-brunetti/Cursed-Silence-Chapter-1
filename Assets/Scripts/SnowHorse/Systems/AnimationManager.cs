@@ -14,6 +14,18 @@ namespace SnowHorse.Systems
         public int CurrentKey { get; private set; }
         public string CurrentKeyString { get; private set; }
 
+        
+        /// <summary>
+        /// AnimationManager is a utility script that helps register animation states based on a set of predefined keys.
+        /// The class is created with a set of key-value pairs where the key is the name of the animation state in the animator
+        /// controller and the value is the hash key to access the animation clips.
+        ///
+        /// If no clips are provided, the AnimationManager class will then look for all AnimationClips
+        /// with the provided key in the provided path. If the AnimationClip does not exist in the
+        /// Resources folder, but does exist in the animator controller, a warning is logged.
+        ///
+        /// Finally, the AnimationManager will randomize the animation clips based on the provided keys.
+        /// </summary>
         public AnimationManager(KeyValuePair<string, int>[] animationKeys, Animator animator, RuntimeAnimatorController animatorController, AnimationClip[] clips = null, string animationPath = "")
         {
             this.animator = animator;
@@ -40,7 +52,11 @@ namespace SnowHorse.Systems
             }
         }
 
-        //Original state clip and bool should have the same name as the key string
+        /// <summary>
+        /// Enables a key and plays a random animation clip.
+        /// </summary>
+        /// <param name="key">The key to enable. The key should be a name of a state clip and corresponding bool in the animator controller.</param>
+        /// <param name="deactivateOtherKeys">If true, all other keys will be disabled</param>
         public void Enable(KeyValuePair<string, int> key, bool deactivateOtherKeys = true)
         {
             if (animator.GetBool(key.Value)) return;

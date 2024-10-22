@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Game.General;
 using UnityEngine;
 
 public class UILanguage : MonoBehaviour
@@ -10,17 +9,17 @@ public class UILanguage : MonoBehaviour
     private UITextList _uiTextList;
     private TextAsset _uiAsset;
 
-    public void SetLanguage(Language selectedLanguage)
+    public void SetLanguage(string selectedLanguage)
     {
         ParseJSON(selectedLanguage);
         SetUILanguage();
     }
 
-    private void ParseJSON(Language selectedLanguange)
+    private void ParseJSON(string selectedLanguange)
     {
-        if (selectedLanguange == Language.English)
+        if (selectedLanguange == "english")
             _uiAsset = Resources.Load<TextAsset>("JSON/UI/en-US");
-        else if (selectedLanguange == Language.Spanish)
+        else if (selectedLanguange == "spanish")
             _uiAsset = Resources.Load<TextAsset>("JSON/UI/es-LA");
         else
             _uiAsset = Resources.Load<TextAsset>("JSON/UI/en-US");

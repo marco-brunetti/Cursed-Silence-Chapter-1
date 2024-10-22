@@ -1,6 +1,5 @@
 //using Player;
 
-using Game.General;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,6 +17,8 @@ public class UIManager : MonoBehaviour
     public bool HideUI;
 
     private bool _pause;
+
+    public bool SetPause(bool isPaused) => _pause = isPaused;
     public static UIManager Instance { get; private set; }
     private void Awake()
     {
@@ -28,11 +29,6 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if(GameController.Instance != null)
-        {
-            _pause = GameController.Instance.Pause;
-        }
-
         CenterPointControl();
         ManagePrompts();
         ManageCanvases();
@@ -84,7 +80,7 @@ public class UIManager : MonoBehaviour
 
         UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
         UIData.BlackboardUI.SetActive(show);
-        GameController.Instance.ShowCursor = show;
+        //GameController.Instance.ShowCursor = show;
     }
 
     public void ShowRotateItemButton(bool show)

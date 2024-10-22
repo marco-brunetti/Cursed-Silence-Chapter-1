@@ -2,6 +2,11 @@ namespace SnowHorse.Utils
 {
     public static class MaterialRenderMode
     {
+        /// <summary>
+        /// Sets a material to use the Opaque render mode.
+        /// The material will be rendered with a 1:0 blend mode, and will write to the depth buffer.
+        /// </summary>
+        /// <param name="material">The material to set the render mode for.</param>
         public static void Opaque(UnityEngine.Material material)
         {
             material.SetOverrideTag("RenderType", "");
@@ -14,6 +19,12 @@ namespace SnowHorse.Utils
             material.renderQueue = -1;
         }
 
+        /// <summary>
+        /// Sets a material to use the Fade render mode.
+        /// This mode is used for transparent rendering with alpha blending,
+        /// where the material will not write to the depth buffer.
+        /// </summary>
+        /// <param name="material">The material to set the render mode for.</param>
         public static void Fade(UnityEngine.Material material)
         {
             material.SetOverrideTag("RenderType", "Transparent");

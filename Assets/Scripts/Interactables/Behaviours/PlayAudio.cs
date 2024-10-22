@@ -1,5 +1,4 @@
 using System.Collections;
-using Game.General;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -75,7 +74,7 @@ namespace Interactables.Behaviours
 
         private void Play()
         {
-            audioSource.PlayOneShot(audioClip, volume * GameController.Instance.GlobalVolume);
+            //audioSource.PlayOneShot(audioClip, volume * GameController.Instance.GlobalVolume);
         }
 
         public bool IsInteractable()
