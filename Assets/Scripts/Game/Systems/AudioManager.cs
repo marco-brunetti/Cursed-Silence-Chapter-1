@@ -1,37 +1,48 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioManager : MonoBehaviour
+namespace SnowHorse.Systems
 {
-    [SerializeField] private AudioMixer musicMixer;
-    [SerializeField] private float blendTime = 3f;
-    [SerializeField] private AudioSource fightMusicSource;
-    [SerializeField] private AudioSource style1MusicSource;
-    [SerializeField] private AudioSource style2MusicSource;
-    [SerializeField] private AudioSource style3MusicSource;
-    [SerializeField] private AudioSource style4MusicSource;
-
-    public static AudioManager Instance;
-
-    private void Awake()
+    public class AudioManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(this);
-    }
+        [SerializeField] private AudioMixer musicMixer;
+        [SerializeField] private float defaultBlendTime = 3f;
+        [SerializeField] private AudioSource[] musicSources;
+        [SerializeField] private AudioSource playerSource;
 
-    private void Init()
-    {
-        
-    }
+        public static AudioManager Instance;
 
-    public void ActivateMixerMusic(string snapshotName, AudioSource source = null, float time = 0f)
-    {
-        if(source)
+        private void Awake()
         {
-            source.Stop();
-            source.Play();
+            if (Instance == null) Instance = this;
+            else Destroy(this);
         }
 
-        musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot($"{snapshotName}Snapshot") }, weights: new[] { 1f }, timeToReach: time == 0f ? blendTime : time);
+        public void PlayMusic(string snapshotName, float blendTime = 0f)
+        {
+            var source = musicSources.FirstOrDefault(x => string.Equals($"{snapshotName}_audio_source", x.gameObject.name));
+
+            if (source)
+            {
+                source.Stop();
+                source.Play();
+            }
+
+            musicMixer.TransitionToSnapshots(snapshots: new[] { musicMixer.FindSnapshot($"{snapshotName}Snapshot") }, weights: new[] { 1f }, timeToReach: blendTime == 0f ? defaultBlendTime : blendTime);
+        }
+
+        public void PlayAudio(string id, AudioClip clip, float volume = 1f, float pitch = 1)
+        {
+            switch(id)
+            {
+                case "player":
+                    playerSource.pitch = pitch;
+                    playerSource.PlayOneShot(clip, volume);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

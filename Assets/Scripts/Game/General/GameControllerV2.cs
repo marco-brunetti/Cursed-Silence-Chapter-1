@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Layouts;
+using SnowHorse.Systems;
 
 namespace Game.General
 {
@@ -44,7 +45,7 @@ namespace Game.General
 
         public void SetCurrentMusic(string style)
         {
-            AudioManager.Instance.ActivateMixerMusic(style);
+            AudioManager.Instance.PlayMusic(style);
         }
     }
 }
