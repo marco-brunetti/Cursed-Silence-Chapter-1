@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 
 [CustomPropertyDrawer (typeof (MinValueAttribute))]
@@ -21,3 +23,4 @@ public class MinValueDrawer : PropertyDrawer {
 		}
 	}
 }
+#endif

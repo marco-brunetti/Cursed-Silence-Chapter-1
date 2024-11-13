@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+
+using UnityEditor;
 
 [CustomEditor(typeof(VolumetricFog))]
 [CanEditMultipleObjects]
@@ -15,3 +17,4 @@ public class VolumetricFogEditor : Editor
 		DrawDefaultInspector();
 	}
 }
+#endif

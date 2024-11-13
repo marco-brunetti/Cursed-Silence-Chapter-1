@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(FogLight))]
@@ -71,3 +73,4 @@ public class FogLightEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 }
+#endif

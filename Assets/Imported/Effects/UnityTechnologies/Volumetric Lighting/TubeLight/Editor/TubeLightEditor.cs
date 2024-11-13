@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
@@ -60,3 +62,5 @@ public class TubeLightEditor : Editor {
 		return i < TubeLight.maxPlanes;
 	}
 }
+
+#endif
