@@ -27,7 +27,7 @@ namespace SnowHorse.Components
 
         private void FollowPosition()
         {
-            if (_followPosition)
+            if (_followPosition && _followObject)
             {
                 transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_followObject.transform.position.x + positionOffset.x,
                 _followObject.transform.position.y + positionOffset.y, _followObject.transform.position.z + positionOffset.z), ref currentVelocity, _smoothTime);
@@ -37,10 +37,9 @@ namespace SnowHorse.Components
         {
             if (_followRotation)
             {
-                //gets rotation
-                rot.x = _rotationTargetX.rotation.eulerAngles.x + rotationOffset.x;
-                rot.y = _rotationTargetY.rotation.eulerAngles.y + rotationOffset.y;
-                rot.z = _rotationTargetZ.rotation.eulerAngles.z + rotationOffset.z;
+                rot.x = _rotationTargetX ? _rotationTargetX.rotation.eulerAngles.x + rotationOffset.x : transform.rotation.eulerAngles.x;
+                rot.y = _rotationTargetY ? _rotationTargetY.rotation.eulerAngles.y + rotationOffset.y : transform.rotation.eulerAngles.y;
+                rot.z = _rotationTargetZ ? _rotationTargetZ.rotation.eulerAngles.z + rotationOffset.z : transform.rotation.eulerAngles.z;
 
                 //Rotates object
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(rot),
