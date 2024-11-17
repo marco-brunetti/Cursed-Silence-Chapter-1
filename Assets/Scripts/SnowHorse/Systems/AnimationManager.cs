@@ -64,6 +64,7 @@ namespace SnowHorse.Systems
             ChangeClip(key);
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private void ChangeClip(KeyValuePair<string, int> animKey)
         {
             if (!dict.TryGetValue(animKey.Value, out var anim))

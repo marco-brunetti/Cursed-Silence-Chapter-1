@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834b4a9f53ebe1f4e92ca595dea88d57, type: 3}
   m_Name: Player1Data
   m_EditorClassIdentifier: 
-  WalkSpeed: 3
-  RunSpeed: 8
+  WalkSpeed: 4
+  RunSpeed: 12
   Gravity: -19.62
   SprintStaminaDuration: 2
   MouseSensitivityX: 0.05
@@ -73,8 +73,11 @@ MonoBehaviour:
   <HeavyAttackLoadTime>k__BackingField: 0.6
   <HeavyAttackCooldown>k__BackingField: 2.5
   <HeavyAttackPoiseDecrement>k__BackingField: 20
-  <AnimationClips>k__BackingField: []
-  <AnimatorController>k__BackingField: {fileID: 9100000, guid: 703fd1d5b0d5a6b4495c40a355dcdee7, type: 2}
+  <AnimationClips>k__BackingField:
+  - {fileID: 7400000, guid: 8d7d661ef633cc142b3b96086222ccf6, type: 2}
+  - {fileID: 7400000, guid: 78c9878a1fa7d744ca1de5de48a1c99b, type: 2}
+  - {fileID: 7400000, guid: d548269cb3a289541a9d901bfe362b4a, type: 2}
+  <AnimatorController>k__BackingField: {fileID: 9100000, guid: ba9ee7e6187797e46b1f82504ca8db06, type: 2}
   InteractDistance: 2
   InteractLayer:
     serializedVersion: 2

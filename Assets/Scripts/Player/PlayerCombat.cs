@@ -15,6 +15,8 @@ namespace Player
         private float currentLightAttackCooldown;
         private bool attackQueued;
 
+        private float animationTriggerVelocity = 1;
+
         public static EventHandler<DamageEnemyEventArgs> DamageEnemy;
 
         private void Start()
@@ -23,7 +25,7 @@ namespace Player
             _data = _controller.PlayerData;
         }
 
-        public void Manage()
+        public void Manage(float currentVelocity)
         {
             if (currentLightAttackCooldown > 0)
             {
@@ -50,8 +52,19 @@ namespace Player
                     break;
                 default:
                     attackQueued = false;
+                    NormalState(currentVelocity);
                     break;
             }
+        }
+
+        private void NormalState(float currentVelocity)
+        {
+            if (currentVelocity > animationTriggerVelocity)
+            {
+                if(Input.GetKey(KeyCode.LeftShift)) _controller.Animation.Run();
+                else _controller.Animation.Walk();
+            }
+            else _controller.Animation.Idle();
         }
 
         public void DealDamage()
@@ -114,7 +127,7 @@ namespace Player
                     _controller.Animation.Attack();
                 }
 
-                DamageEnemy.Invoke(this, new(enemy, damage, poiseDecrement));
+                DamageEnemy.Invoke(this, new DamageEnemyEventArgs(enemy, damage, poiseDecrement));
             }
 
             string targetName = enemy ? enemy.name.ToUpper() : "NONE";

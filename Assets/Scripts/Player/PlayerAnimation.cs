@@ -10,11 +10,14 @@ public class PlayerAnimation : MonoBehaviour
     private new AnimationManager animation;
     private PlayerData data;
 
-    private readonly KeyValuePair<string, int> AnimAttack = new("attack", Animator.StringToHash("attack"));
-    private readonly KeyValuePair<string, int> AnimHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
-    private readonly KeyValuePair<string, int> AnimBlock = new("block", Animator.StringToHash("block"));
-    private readonly KeyValuePair<string, int> AnimGrab = new("grab", Animator.StringToHash("grab"));
-    private readonly KeyValuePair<string, int> AnimRelease = new("release", Animator.StringToHash("release"));
+    private readonly KeyValuePair<string, int> animIdle = new("idle", Animator.StringToHash("idle"));
+    private readonly KeyValuePair<string, int> animWalk = new("walk", Animator.StringToHash("walk"));
+    private readonly KeyValuePair<string, int> animRun = new("run", Animator.StringToHash("run"));
+    private readonly KeyValuePair<string, int> animAttack = new("attack", Animator.StringToHash("attack"));
+    private readonly KeyValuePair<string, int> animHeavyAttack = new("heavy_attack", Animator.StringToHash("heavy_attack"));
+    private readonly KeyValuePair<string, int> animBlock = new("block", Animator.StringToHash("block"));
+    private readonly KeyValuePair<string, int> animGrab = new("grab", Animator.StringToHash("grab"));
+    private readonly KeyValuePair<string, int> animRelease = new("release", Animator.StringToHash("release"));
 
     private void Start()
     {
@@ -24,36 +27,54 @@ public class PlayerAnimation : MonoBehaviour
 
         KeyValuePair<string, int>[] animationKeys =
         {
-            AnimAttack,
-            AnimHeavyAttack,
-            AnimBlock
+            animIdle,
+            animWalk,
+            animRun,
+            animAttack,
+            animHeavyAttack,
+            animBlock,
+            animGrab,
+            animRelease
         };
 
-        animation = new(animationKeys, animator, data.AnimatorController, data.AnimationClips);
+        animation = new AnimationManager(animationKeys, animator, data.AnimatorController, data.AnimationClips);
+    }
+
+    public void Idle()
+    {
+        animation.Enable(animIdle);
+    }
+    public void Walk()
+    {
+        animation.Enable(animWalk);
+    }
+    public void Run()
+    {
+        animation.Enable(animRun);
     }
 
     public void Attack()
     {
-        animation.Enable(AnimAttack);
+        animation.Enable(animAttack);
     }
 
     public void HeavyAttack()
     {
-        animation.Enable(AnimHeavyAttack);
+        animation.Enable(animHeavyAttack);
     }
 
     public void Block()
     {
-        animation.Enable(AnimBlock);
+        animation.Enable(animBlock);
     }
 
     public void Grab()
     {
-        animation.Enable(AnimGrab);
+        animation.Enable(animGrab);
     }
 
     public void Release()
     {
-        animation.Enable(AnimRelease);
+        animation.Enable(animRelease);
     }
 }
