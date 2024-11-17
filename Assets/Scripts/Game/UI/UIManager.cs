@@ -1,7 +1,45 @@
 using UnityEngine;
+using Interactables.Behaviours;
+using Player;
 
 public class UIManager : MonoBehaviour
 {
+    private void Start()
+    {
+        InteractableInventoryRequirement.ShowRequiredItems += ShowInventoryItem;
+        InteractableInventoryRequirement.HideRequiredItems += HideInventoryItem;
+    }
+
+    private void ShowInventoryItem(object sender, InventoryItem[] requiredInventoryItems)
+    {
+        foreach(var item in requiredInventoryItems)
+        {
+            if(PlayerController.Instance.Inventory.Contains(item, removeItem:false, destroyItem:false))
+            {
+
+            }
+        }
+
+
+        
+
+        Debug.Log("Show Inventory Item");
+    }
+
+    private void HideInventoryItem(object sender, InventoryItem[] requiredInventoryItems)
+    {
+        foreach(var item in requiredInventoryItems)
+        {
+            if(PlayerController.Instance.Inventory.Contains(item, removeItem:false, destroyItem:false))
+            {
+                
+            }
+        }
+
+
+        Debug.Log("Hide Inventory Item");
+    }
+
   /*[SerializeField] private UIPrompts _prompts;
 
     public UIData UIData;
