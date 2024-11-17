@@ -3,9 +3,9 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Readable : MonoBehaviour, IBehaviour
+    public class Readable : MonoBehaviour//, IBehaviour
     {
-        [FormerlySerializedAs("_message")] [SerializeField, TextArea(20, 20)] private string message;
+        /*[FormerlySerializedAs("_message")] [SerializeField, TextArea(20, 20)] private string message;
         [FormerlySerializedAs("_spanishMessage")] [SerializeField, TextArea(20, 20)] private string spanishMessage;
 
         private string currentLanguage;
@@ -53,6 +53,6 @@ namespace Interactables.Behaviours
         public bool IsInteractable()
         {
             return false;
-        }
+        }*/
     }
 }

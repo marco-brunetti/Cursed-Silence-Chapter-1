@@ -5,9 +5,9 @@ using UnityEngine.Serialization;
 namespace Interactables.Behaviours
 {
     [RequireComponent(typeof(SubtitleHelper))]
-    public class BehaviourDisplaySubtitles : MonoBehaviour, IBehaviour
+    public class BehaviourDisplaySubtitles : MonoBehaviour//, IBehaviour
     {
-        [field: SerializeField] public int[] SubtitleIndex {  get; private set; }
+        /*[field: SerializeField] public int[] SubtitleIndex {  get; private set; }
 
         [FormerlySerializedAs("_subtitleDuration")] [SerializeField] private float[] subtitleDuration;
 
@@ -107,6 +107,6 @@ namespace Interactables.Behaviours
         public bool IsInspectable()
         {
             return triggerOnInspection;
-        }
+        }*/
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class UILanguage : MonoBehaviour
 {
-    private UITextList _uiTextList;
+    /*private UITextList _uiTextList;
     private TextAsset _uiAsset;
 
     public void SetLanguage(string selectedLanguage)
@@ -34,7 +34,7 @@ public class UILanguage : MonoBehaviour
         {
             UIManager.Instance.UIData.UITexts[i].text = _uiTextList.UITexts[i].Text;
         }
-    }
+    }*/
 }
 
 [Serializable]

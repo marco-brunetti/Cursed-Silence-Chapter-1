@@ -32,7 +32,7 @@ namespace Interactables.Behaviours
 
                 _isInteracting = true;
 
-                UIManager.Instance.HideUI = true;
+                //UIManager.Instance.HideUI = true;
             }
             if(!isInspecting && !isInspecting)
             {
@@ -44,7 +44,7 @@ namespace Interactables.Behaviours
                 _isInteracting = false;
 
                 //GameController.Instance.ShowCursor = false;
-                UIManager.Instance.HideUI = false;
+                //UIManager.Instance.HideUI = false;
             }
         }
 

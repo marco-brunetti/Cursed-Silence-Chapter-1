@@ -1,12 +1,8 @@
-//using Player;
-
 using UnityEngine;
-using UnityEngine.Events;
 
 public class UIManager : MonoBehaviour
 {
-    
-    [SerializeField] private UIPrompts _prompts;
+  /*[SerializeField] private UIPrompts _prompts;
 
     public UIData UIData;
     public UICanvasControl CanvasControl;
@@ -51,7 +47,7 @@ public class UIManager : MonoBehaviour
             {
                 UIData.CenterPoint.SetActive(true);
             }*/
-        }
+        /*}
     }
 
     private void ManagePrompts()
@@ -87,5 +83,5 @@ public class UIManager : MonoBehaviour
     {
         if (show) UIData.BlackboardRotateImage.color = Color.white;
         else UIData.BlackboardRotateImage.color = new Color(0, 0, 0, 0);
-    }
+    }*/
 }

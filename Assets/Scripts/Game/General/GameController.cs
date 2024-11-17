@@ -10,7 +10,7 @@ namespace Game.General
 
     public class GameController : MonoBehaviour
     {
-        public bool Pause { get; private set; }
+        /*public bool Pause { get; private set; }
 
         [NonSerialized] public bool ShowCursor;
         [NonSerialized] public bool IsInDream;
@@ -43,7 +43,7 @@ namespace Game.General
         [SerializeField] private float _ambienceVolume = 0.3f;
 
         private bool _playMenuMusic = true;
-        private GameObject _playerCamera;
+        private GameObject _playerCamera;*/
 
         public static GameController Instance { get; private set; }
         private void Awake()
@@ -60,7 +60,7 @@ namespace Game.General
 
         }
 
-        private void Start()
+        /*private void Start()
         {
             Cursor.SetCursor(_cursor, new Vector2(_cursor.width / 2, _cursor.height / 2), CursorMode.Auto);
 
@@ -91,7 +91,7 @@ namespace Game.General
         }
 
         MenuMusic();*/
-        }
+        /*}
 
         private void MenuMusic()
         {
@@ -230,6 +230,6 @@ namespace Game.General
         public void Quit()
         {
             Application.Quit();
-        }
+        }*/
     }
 }

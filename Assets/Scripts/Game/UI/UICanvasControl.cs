@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UICanvasControl : MonoBehaviour
 {
-    [SerializeField] private float _delay = 4f;
+    /*[SerializeField] private float _delay = 4f;
     [SerializeField] private float _transparencyDuration = 2f;
 
     private bool _isSceneChanged;
@@ -66,5 +66,5 @@ public class UICanvasControl : MonoBehaviour
                 _isSceneChanged = false;
             }
         }
-    }
+    }*/
 }

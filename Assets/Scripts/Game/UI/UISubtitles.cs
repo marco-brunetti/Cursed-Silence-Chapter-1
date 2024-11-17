@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UISubtitles : MonoBehaviour
 {
-    private SubtitleTextList _subtitleTextList;
+    /*private SubtitleTextList _subtitleTextList;
     private TextAsset _subtitleAsset;
     private string currentLanguage;
 
@@ -47,7 +47,7 @@ public class UISubtitles : MonoBehaviour
 
         string json = _subtitleAsset.text;
         _subtitleTextList = JsonConvert.DeserializeObject<SubtitleTextList>(json);
-    }
+    }*/
 }
 
 [Serializable]

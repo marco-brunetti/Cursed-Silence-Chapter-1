@@ -49,7 +49,7 @@ namespace Interactables.Behaviours
             _playerController = PlayerController.Instance;
             _collider = GetComponent<Collider>();
 
-            UIManager.Instance.SetBlackboardButtons(RotateItem, ApplyRotation, ResetBlackboard);
+            //UIManager.Instance.SetBlackboardButtons(RotateItem, ApplyRotation, ResetBlackboard);
         }
 
         public void Behaviour(bool isInteracting, bool isInspecting)
@@ -169,12 +169,12 @@ namespace Interactables.Behaviours
                 _currentState = BlackboardState.Looking;
                 currentItem = selectedItem;
                 _uiOrientation = currentItem.Orientation;
-                UIManager.Instance.ShowBlackboardImage(sprite: currentItem.Sprite,
-                    zAngle: _orientationAngles[_uiOrientation]);
+                //UIManager.Instance.ShowBlackboardImage(sprite: currentItem.Sprite,
+                    //zAngle: _orientationAngles[_uiOrientation]);
 
                 if (_showRotateIconCount > 0)
                 {
-                    UIManager.Instance.ShowRotateItemButton(true);
+                    //UIManager.Instance.ShowRotateItemButton(true);
                     _showRotateIconCount--;
                 }
 
@@ -213,8 +213,8 @@ namespace Interactables.Behaviours
         private void RotateItem()
         {
             _uiOrientation = _uiOrientation.Next();
-            UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_uiOrientation]);
-            UIManager.Instance.ShowRotateItemButton(false);
+            //UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_uiOrientation]);
+            //UIManager.Instance.ShowRotateItemButton(false);
         }
 
         private void ApplyRotation()
@@ -229,7 +229,7 @@ namespace Interactables.Behaviours
 
         private void ResetBlackboard()
         {
-            UIManager.Instance.ShowBlackboardImage(false);
+            //UIManager.Instance.ShowBlackboardImage(false);
             SetupComponentsForLook(false);
             currentItem = null;
             _currentState = BlackboardState.None;

@@ -4,7 +4,7 @@ namespace Game.General
 {
     public class Fix_ApplyGlobalVolume : MonoBehaviour
     {
-        [SerializeField] private AudioSource[] _audioSources;
+        /*[SerializeField] private AudioSource[] _audioSources;
         [SerializeField] private float[] _volumes;
 
         private float _currentGlobalVolume;
@@ -32,6 +32,6 @@ namespace Game.General
                     _audioSources[i].volume = _volumes[i] * _currentGlobalVolume;
                 }
             }
-        }
+        }*/
     }
 }

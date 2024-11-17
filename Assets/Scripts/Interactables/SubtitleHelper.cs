@@ -5,13 +5,13 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class SubtitleHelper : MonoBehaviour
 {
-    [Header("Attach this script to a game object \nwith Behaviour_DisplaySubtitles script")]
+    /*[Header("Attach this script to a game object \nwith Behaviour_DisplaySubtitles script")]
     [Header("Disable and reenable script to refresh subtitles")]
 
     [SerializeField] private string[] currentSubtitles;
 
     private BehaviourDisplaySubtitles _subtitleTrigger;
-    private SubtitleTextList _subtitleTextList;
+    //private SubtitleTextList _subtitleTextList;
     private TextAsset _subtitleAsset;
 
     private void OnEnable()
@@ -42,5 +42,5 @@ public class SubtitleHelper : MonoBehaviour
         string json = _subtitleAsset.text;
 
         _subtitleTextList = JsonConvert.DeserializeObject<SubtitleTextList>(json); //JsonUtility.FromJson<SubtitleTextList>(json);
-    }
+    }*/
 }
