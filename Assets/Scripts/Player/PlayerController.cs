@@ -107,7 +107,7 @@ namespace Player
             {
                 if (FreezePlayerMovement == false)
                 {
-                    _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint);
+                    _movement.PlayerMove(PlayerData, _input, _groundSpawnPoint, Character.velocity.magnitude);
                     IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
                 }
                 else
