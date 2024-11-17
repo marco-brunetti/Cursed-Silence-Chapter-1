@@ -13,6 +13,7 @@ namespace Game.General
             LayoutManager.LayoutStyleChanged += OnLayoutStyleChanged;
             PlayerController.SetPlayerTransform += OnSetPlayerTransform;
             PlayerCombat.DamageEnemy += OnDamageEnemy;
+            PlayerAnimation.Step += OnPlayerAudioPlay;
             Enemy.EnemyAwake += OnEnemyAwake;
             Enemy.AddActiveEnemy += OnAddActiveEnemy;
             Enemy.RemoveActiveEnemy += OnRemoveActiveEnemy;
@@ -67,5 +68,7 @@ namespace Game.General
                 enemy.Damage(e.Damage, e.PoiseDecrement);
             }
         }
+
+        private void OnPlayerAudioPlay(object sender, PlayerAudioEventArgs e) => GameControllerV2.PlayAudio(e.Id, e.Clip, e.Volume, e.Pitch);
     }
 }

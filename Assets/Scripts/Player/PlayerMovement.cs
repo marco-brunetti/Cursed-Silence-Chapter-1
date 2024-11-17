@@ -8,7 +8,7 @@ namespace Player
         private float _currentMoveSpeed = 0;
         private RaycastHit _hit;
 
-        private float _decelerationTime = 0.5f;
+        private float _maxSpeedChange = 10f;
 
         public void PlayerMove(PlayerData playerData, IPlayerInput input, Transform groundSpawnPoint, float currentVelocity)
         {
@@ -29,7 +29,7 @@ namespace Player
                 targetSpeed = input.playerRunInput ? runSpeed : playerData.WalkSpeed;
             }
 
-            _currentMoveSpeed = Mathf.MoveTowards(_currentMoveSpeed, targetSpeed, _decelerationTime);
+            _currentMoveSpeed = Mathf.MoveTowards(_currentMoveSpeed, targetSpeed, _maxSpeedChange);
 
             float curSpeedX = _currentMoveSpeed * input.playerMovementInput.y;
             float curSpeedY = _currentMoveSpeed * input.playerMovementInput.x;
@@ -47,8 +47,8 @@ namespace Player
                 direction = -groundSpawnPoint.transform.up
             };
 
-            if (Physics.Raycast(ray, out _hit, 1))
-                PlayerController.Instance.IsOutside = _hit.collider.CompareTag("Terrain");
+            //if (Physics.Raycast(ray, out _hit, 1))
+            //    PlayerController.Instance.IsOutside = _hit.collider.CompareTag("Terrain");
 
             moveDirection.y += playerData.Gravity;
             PlayerController.Instance.Character.Move(moveDirection * Time.deltaTime);

@@ -2,6 +2,7 @@ using Player;
 using System.Collections.Generic;
 using SnowHorse.Systems;
 using UnityEngine;
+using System;
 
 public class PlayerAnimation : MonoBehaviour
 {
@@ -18,6 +19,17 @@ public class PlayerAnimation : MonoBehaviour
     private readonly KeyValuePair<string, int> animBlock = new("block", Animator.StringToHash("block"));
     private readonly KeyValuePair<string, int> animGrab = new("grab", Animator.StringToHash("grab"));
     private readonly KeyValuePair<string, int> animRelease = new("release", Animator.StringToHash("release"));
+
+    public static EventHandler<PlayerAudioEventArgs> Step;
+
+    public void StepEvent()
+    {
+        if(PlayerController.Instance.Character.velocity.magnitude < (data.WalkSpeed / 2)) return;
+
+        var args = new PlayerAudioEventArgs("player", data.WoodFootstepClips[UnityEngine.Random.Range(0, data.WoodFootstepClips.Length)], data.WoodFootstepClipsVolume);
+
+        Step?.Invoke(this, args);
+    }
 
     private void Start()
     {

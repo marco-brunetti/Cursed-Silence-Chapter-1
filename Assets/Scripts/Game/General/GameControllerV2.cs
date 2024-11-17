@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SnowHorse.Systems;
 using Enemies;
+using Player;
 
 namespace Game.General
 {
@@ -19,17 +20,16 @@ namespace Game.General
             Cursor.visible = enable;
         }
         
-        
-        
         public static void SetLevelStyle(string newStyle) => CurrentLayoutStyle = newStyle;
-
-        
-
-        
 
         public static void SetCurrentMusic(string style, float blendTime = 0)
         {
             AudioManager.Instance.PlayMusic(style, blendTime);
+        }
+
+        public static void PlayAudio(string id, AudioClip clip, float volume = 1f, float pitch = 1)
+        {
+            AudioManager.Instance.PlayAudio(id, clip, volume, pitch);
         }
     }
 }
