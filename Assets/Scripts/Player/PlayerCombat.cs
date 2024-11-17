@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using SnowHorse.Systems;
 using SnowHorse.Utils;
 
 namespace Player
@@ -23,6 +22,8 @@ namespace Player
         {
             if (!_controller) _controller = PlayerController.Instance;
             _data = _controller.PlayerData;
+
+            _currentState = CombatState.None;
         }
 
         public void Manage(float currentVelocity)
