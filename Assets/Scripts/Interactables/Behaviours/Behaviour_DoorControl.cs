@@ -8,8 +8,8 @@ namespace Interactables.Behaviours
     public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
     {
         [SerializeField] private float maxOpenAngle = 90f;
-        [SerializeField] private TriggerEnterDetector playerEnterDetector;
-        [SerializeField] private TriggerExitDetector playerExitDetector;
+        //[SerializeField] private TriggerEnterDetector playerEnterDetector;
+        //[SerializeField] private TriggerExitDetector playerExitDetector;
 
         [SerializeField] private InteractableInventoryRequirement inventoryRequirement;
         [SerializeField] private new InteractablePlayAudioEvent audio;
@@ -26,11 +26,11 @@ namespace Interactables.Behaviours
 
         private void Awake()
         {
-            playerEnterDetector.Init(new() { "player" });
-            playerExitDetector.Init(new() { "player" });
+            //playerEnterDetector.Init(new() { "player" });
+            //playerExitDetector.Init(new() { "player" });
 
-            playerEnterDetector.TagEntered += (sender, e) => inventoryRequirement.ShowItems();
-            playerExitDetector.TagExited += (sender, e) => inventoryRequirement.HideItems();
+            //playerEnterDetector.TagEntered += (sender, e) => inventoryRequirement.ShowItems();
+            //playerExitDetector.TagExited += (sender, e) => inventoryRequirement.HideItems();
 
             initialRotation = transform.localRotation.eulerAngles;
         }
