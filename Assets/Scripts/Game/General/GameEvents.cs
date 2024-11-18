@@ -1,8 +1,8 @@
-using System;
 using UnityEngine;
 using Enemies;
 using Player;
 using Layouts;
+using Interactables.Behaviours;
 
 namespace Game.General
 {
@@ -17,6 +17,7 @@ namespace Game.General
             Enemy.EnemyAwake += OnEnemyAwake;
             Enemy.AddActiveEnemy += OnAddActiveEnemy;
             Enemy.RemoveActiveEnemy += OnRemoveActiveEnemy;
+            InteractablePlayAudioEvent.InteractablePlayAudio += OnInteractableAudioPlay;
         }
 
         private void Start()
@@ -70,5 +71,7 @@ namespace Game.General
         }
 
         private void OnPlayerAudioPlay(object sender, PlayerAudioEventArgs e) => GameControllerV2.PlayAudio(e.Id, e.Clip, e.Volume, e.Pitch);
+
+        private void OnInteractableAudioPlay(object sender, InteractableAudioEventArgs e) => GameControllerV2.PlayAudio(e.Id, e.Clip, e.Volume, e.Pitch);
     }
 }

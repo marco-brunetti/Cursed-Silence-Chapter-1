@@ -217,6 +217,9 @@ PrefabInstance:
       addedObject: {fileID: 8755557348042291234}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef26157666e11d84cafc53144075ae4b, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 2554853229741115697}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef26157666e11d84cafc53144075ae4b, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 3711045005725151878}
   m_SourcePrefab: {fileID: 100100000, guid: ef26157666e11d84cafc53144075ae4b, type: 3}
 --- !u!4 &2568308042857123932 stripped
@@ -271,11 +274,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2559527aef99c3d499c4d2b2025044ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxOpenAngle: 90
   playerEnterDetector: {fileID: 4823889393875476156}
   playerExitDetector: {fileID: 3005322382284294703}
   inventoryRequirement: {fileID: 9174043971392769464}
+  audio: {fileID: 2554853229741115697}
   currentDoorState: 1
   collider: {fileID: 3711045005725151878}
+  openClip: {fileID: 8300000, guid: c29a3325488c6d043b460dde77105efc, type: 3}
+  closeClip: {fileID: 8300000, guid: d5e3c1a8d9150d94ba500af85864f43e, type: 3}
+--- !u!114 &2554853229741115697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2949758946496695014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd98177d6bfe56e4f952e0a390e35ed8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &3711045005725151878
 BoxCollider:
   m_ObjectHideFlags: 0

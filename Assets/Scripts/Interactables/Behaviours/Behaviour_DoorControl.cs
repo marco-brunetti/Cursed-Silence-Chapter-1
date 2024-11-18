@@ -12,13 +12,17 @@ namespace Interactables.Behaviours
         [SerializeField] private TriggerExitDetector playerExitDetector;
 
         [SerializeField] private InteractableInventoryRequirement inventoryRequirement;
+        [SerializeField] private new InteractablePlayAudioEvent audio;
         [SerializeField] private DoorState currentDoorState = DoorState.Closed;
         [SerializeField] private new Collider collider;
+
+        [SerializeField] private AudioClip openClip;
+        [SerializeField] private AudioClip closeClip;
 
         private Vector3 initialRotation;
 
         private Coroutine moveDoor;
-        private float doorMoveDuration = .8f;
+        private float doorMoveDuration = 1f;
 
         private void Awake()
         {
@@ -41,14 +45,15 @@ namespace Interactables.Behaviours
                         break;
                     case DoorState.Closed:
                         moveDoor ??= StartCoroutine(MoveDoor(targetYRotation: -maxOpenAngle));
+                        audio.Play(openClip);
                         currentDoorState = DoorState.Open;
                         break;
                     case DoorState.Open:
                         moveDoor ??= StartCoroutine(MoveDoor(targetYRotation: 0));
+                        audio.Play(closeClip);
                         currentDoorState = DoorState.Closed;
                         break;
                 }
-
             }
         }
 
