@@ -1,17 +1,24 @@
 using UnityEngine;
 using SnowHorse.Components;
+using System.Collections;
+using SnowHorse.Utils;
 
 namespace Interactables.Behaviours
 {
     public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
     {
+        [SerializeField] private float maxOpenAngle = 90f;
         [SerializeField] private TriggerEnterDetector playerEnterDetector;
         [SerializeField] private TriggerExitDetector playerExitDetector;
 
         [SerializeField] private InteractableInventoryRequirement inventoryRequirement;
         [SerializeField] private DoorState currentDoorState = DoorState.Closed;
+        [SerializeField] private new Collider collider;
 
         private Vector3 initialRotation;
+
+        private Coroutine moveDoor;
+        private float doorMoveDuration = .8f;
 
         private void Awake()
         {
@@ -33,16 +40,34 @@ namespace Interactables.Behaviours
                     case DoorState.Locked:
                         break;
                     case DoorState.Closed:
-                        transform.localRotation = Quaternion.Euler(initialRotation.x, initialRotation.y - 90f, initialRotation.z);
+                        moveDoor ??= StartCoroutine(MoveDoor(targetYRotation: -maxOpenAngle));
                         currentDoorState = DoorState.Open;
                         break;
                     case DoorState.Open:
-                        transform.localRotation = Quaternion.Euler(initialRotation.x, initialRotation.y, initialRotation.z);
+                        moveDoor ??= StartCoroutine(MoveDoor(targetYRotation: 0));
                         currentDoorState = DoorState.Closed;
                         break;
                 }
 
             }
+        }
+
+
+        private IEnumerator MoveDoor(float targetYRotation)
+        {
+            collider.enabled = false;
+            var lerpRef = 0f;
+
+            while(!Mathf.Approximately(lerpRef, doorMoveDuration))
+            {
+                var percent = Interpolation.Smooth(doorMoveDuration, ref lerpRef);
+                transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(initialRotation.x, initialRotation.y + targetYRotation, initialRotation.z), percent);
+                yield return null;
+            }
+
+            collider.enabled = true;
+            moveDoor = null;
+            yield return null;
         }
 
 
