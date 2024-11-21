@@ -43,6 +43,7 @@ namespace Game.General
         {
             controller.IsTeleporting = true;
             controller.transform.parent = objectsContainer;
+            yield return new WaitForEndOfFrame();
             UpdateObjectsPosition();
             yield return new WaitForEndOfFrame();
             controller.transform.parent = null;
