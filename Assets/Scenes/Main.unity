@@ -343,11 +343,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a63d7da42fcc1104da1fc0096bfd53c9, type: 3}
---- !u!4 &33648320 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2006914716835110741, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
-  m_PrefabInstance: {fileID: 1763247474}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &42738601 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4453762778962611995, guid: a63d7da42fcc1104da1fc0096bfd53c9, type: 3}
@@ -1386,6 +1381,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone1
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1686,8 +1685,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e607192ab2d0c4dbcfd6a0ee5e81eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLevelTeleport: {fileID: 0}
-  teleportPlayer: 1
+  mainLevelTeleport: {fileID: 697010668}
+  teleportPlayer: 0
 --- !u!65 &151811326
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2862,6 +2861,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone3
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7271,6 +7274,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     - target: {fileID: 8938308115316999583, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -8723,8 +8730,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e607192ab2d0c4dbcfd6a0ee5e81eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLevelTeleport: {fileID: 0}
-  teleportPlayer: 1
+  mainLevelTeleport: {fileID: 697010668}
+  teleportPlayer: 0
 --- !u!65 &497245121
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10350,18 +10357,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectsContainer: {fileID: 697010667}
   targets:
-  - {fileID: 1266441384}
-  - {fileID: 1252746362}
-  - {fileID: 151811327}
-  - {fileID: 737031439}
-  - {fileID: 497245122}
-  - {fileID: 33648320}
-  - {fileID: 1643135672}
---- !u!4 &737031439 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2006914716835110741, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
-  m_PrefabInstance: {fileID: 1427025488}
-  m_PrefabAsset: {fileID: 0}
+  - {fileID: 889439596}
+  - {fileID: 351814029}
+  - {fileID: 767620714}
+  - {fileID: 1427025489}
+  - {fileID: 185550063}
+  - {fileID: 1763247475}
+  - {fileID: 1527859112}
+  - {fileID: 1236249795}
 --- !u!1001 &767620713
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10426,6 +10429,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone2
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14263,6 +14270,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone4 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14277,11 +14288,6 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4453762778962611995, guid: 95986a96e27f17340a2bda551178f1d4, type: 3}
   m_PrefabInstance: {fileID: 856757120}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1252746362 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2006914716835110741, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
-  m_PrefabInstance: {fileID: 351814028}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1266441381
 GameObject:
@@ -14313,8 +14319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e607192ab2d0c4dbcfd6a0ee5e81eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLevelTeleport: {fileID: 0}
-  teleportPlayer: 1
+  mainLevelTeleport: {fileID: 697010668}
+  teleportPlayer: 0
 --- !u!65 &1266441383
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15963,6 +15969,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16474,6 +16484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone4
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18697,8 +18711,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e607192ab2d0c4dbcfd6a0ee5e81eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLevelTeleport: {fileID: 0}
-  teleportPlayer: 1
+  mainLevelTeleport: {fileID: 697010668}
+  teleportPlayer: 0
 --- !u!65 &1643135671
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19217,6 +19231,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainLayoutStyle0_Zone3 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8925070471661801239, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
+      propertyPath: mainLevelTeleport
+      value: 
+      objectReference: {fileID: 697010668}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
