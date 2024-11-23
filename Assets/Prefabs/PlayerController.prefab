@@ -516,8 +516,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141731214546713978}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.5167514, z: -0, w: 0.85613555}
-  m_LocalPosition: {x: 4.0999985, y: 0.993, z: -0.6000004}
+  m_LocalRotation: {x: -0, y: 0.96274257, z: -0, w: 0.27041975}
+  m_LocalPosition: {x: 4.1269455, y: 0.99300003, z: -0.5023431}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -526,7 +526,7 @@ Transform:
   - {fileID: 2444223027453795349}
   - {fileID: 4008185129048192069}
   m_Father: {fileID: 2770135100652048857}
-  m_LocalEulerAnglesHint: {x: 0, y: 62.229, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 148.621, z: 0}
 --- !u!114 &1135860993740903373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -902,7 +902,6 @@ GameObject:
   - component: {fileID: 1244818626890093661}
   - component: {fileID: 6389676996695918610}
   - component: {fileID: 4841622738163987005}
-  - component: {fileID: 8355663154541536424}
   m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1155,41 +1154,6 @@ MonoBehaviour:
   thickDistort: 0.2
   fineDistort: 0.2
   material: {fileID: 2100000, guid: 0b2b1aef91c2345ab8d2fecf276fba3c, type: 2}
---- !u!114 &8355663154541536424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2554238375801542227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f35c02a2c6230584391703bf32006791, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_DebugShader: {fileID: 4800000, guid: 91e29ad407521e447a7254f5c1ea9b54, type: 3}
-  m_ShadowmapShader: {fileID: 4800000, guid: 2c4cd42b134f7864fa579350e9cf6896, type: 3}
-  m_InjectLightingAndDensity: {fileID: 7200000, guid: 55812fd61bd54104aa23612fc28bfeb8, type: 3}
-  m_Scatter: {fileID: 7200000, guid: 2a7c01c2354d03a4e9c31096bf130b6a, type: 3}
-  m_ApplyToOpaqueShader: {fileID: 4800000, guid: 6f73df8e11615074dbf62a3a384af521, type: 3}
-  m_BlurShadowmapShader: {fileID: 4800000, guid: 701192b62a7678549918bc87434699fe, type: 3}
-  m_Noise: {fileID: 2800000, guid: 35eb47181d630134c97488476efbda59, type: 3}
-  m_Debug: 0
-  m_Z: 1
-  m_NearClip: 0.1
-  m_FarClipMax: 10
-  m_GlobalDensityMult: 1
-  m_ConstantFog: 0
-  m_HeightFogAmount: 1
-  m_HeightFogExponent: 1
-  m_HeightFogOffset: 1
-  m_NoiseFogAmount: 0.73
-  m_NoiseFogScale: 1
-  m_Wind: {fileID: 0}
-  m_Anisotropy: 0
-  m_GlobalIntensityMult: 1
-  m_AmbientLightIntensity: 1
-  m_AmbientLightColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &4442467629261753272
 GameObject:
   m_ObjectHideFlags: 0
