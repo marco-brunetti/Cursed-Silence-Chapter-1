@@ -6911,10 +6911,6 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
-    - target: {fileID: 2985148138932171788, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 3036812817411040160, guid: a768996f4d90abb43be29a5b970934b1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -7489,10 +7485,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 594157918343524576, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
-      propertyPath: m_RenderingPath
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 2770135100652048857, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7536,14 +7528,6 @@ PrefabInstance:
     - target: {fileID: 4885722693976578010, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
       propertyPath: m_Name
       value: PlayerController
-      objectReference: {fileID: 0}
-    - target: {fileID: 7910862982637792271, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 46.93
-      objectReference: {fileID: 0}
-    - target: {fileID: 7910862982637792271, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -36.02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9051,7 +9035,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -14502,6 +14486,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2007081595}
     m_Modifications:
+    - target: {fileID: 1733710136048921494, guid: de6f8e9eecf1ddf458e1433e562e89be, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 6736857338412008354, guid: de6f8e9eecf1ddf458e1433e562e89be, type: 3}
       propertyPath: m_Range
       value: 3.42
@@ -19575,7 +19563,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
