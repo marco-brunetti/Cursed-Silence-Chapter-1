@@ -6,8 +6,8 @@ using Player;
 
 public class Interactable : MonoBehaviour, IInteractable
 {
-    public Vector3 InspectableInitialRotation { get; private set; }
-    public Vector3 InspectablePosition { get; private set; }
+    [field: SerializeField] public Vector3 InspectableInitialRotation { get; private set; }
+    [field: SerializeField] public Vector3 InspectablePosition { get; private set; }
     public bool RotateX;
     public bool RotateY;
     public bool FreezePlayerRotation;
