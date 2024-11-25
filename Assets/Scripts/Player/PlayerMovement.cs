@@ -33,7 +33,7 @@ namespace Player
                 targetSpeed = input.playerRunInput ? runSpeed : playerData.WalkSpeed;
             }
 
-            _currentMoveSpeed = Mathf.MoveTowards(_currentMoveSpeed, targetSpeed, _maxSpeedChange);
+            _currentMoveSpeed = Mathf.MoveTowards(_currentMoveSpeed, targetSpeed, _maxSpeedChange * Time.deltaTime);
 
             float curSpeedX = _currentMoveSpeed * input.playerMovementInput.y;
             float curSpeedY = _currentMoveSpeed * input.playerMovementInput.x;

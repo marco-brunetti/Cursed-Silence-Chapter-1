@@ -8,25 +8,23 @@ namespace Game.General
     public class TeleportMainLevelObjects : MonoBehaviour
     {
         [SerializeField] private Transform objectsContainer;
-        [SerializeField] private List<Transform> targets;
+        [SerializeField] private List<Transform> mainLevelInstances;
 
         private int currentIndex = 0;
         private PlayerController controller;
 
         private void Start()
         {
-            objectsContainer.parent = targets[currentIndex];
-            objectsContainer.localPosition = Vector3.zero;
             controller = PlayerController.Instance;
+            objectsContainer.transform.position = mainLevelInstances[currentIndex].position;
         }
         
         public void UpdateObjectsPosition()
         {
-            if (currentIndex < targets.Count)
+            if (currentIndex < mainLevelInstances.Count)
             {
                 currentIndex++;
-                objectsContainer.parent = targets[currentIndex];
-                objectsContainer.localPosition = Vector3.zero;
+                objectsContainer.transform.position = mainLevelInstances[currentIndex].position;
             }
             else
             {
@@ -36,18 +34,13 @@ namespace Game.General
 
         public void UpdatePlayerAndObjectsPosition()
         {
-            StartCoroutine(TeleportPlayer());
-        }
-
-        private IEnumerator TeleportPlayer()
-        {
-            controller.IsTeleporting = true;
-            controller.transform.parent = objectsContainer;
-            yield return new WaitForEndOfFrame();
             UpdateObjectsPosition();
-            yield return new WaitForEndOfFrame();
-            controller.transform.parent = null;
-            controller.IsTeleporting = false;
+            
+            var offset = mainLevelInstances[currentIndex].position - mainLevelInstances[currentIndex - 1].position;
+
+            controller.Character.enabled = false;
+            controller.Player.transform.position += offset;
+            controller.Character.enabled = true;
         }
     }
 }
