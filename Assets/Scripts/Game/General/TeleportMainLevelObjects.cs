@@ -37,10 +37,8 @@ namespace Game.General
             UpdateObjectsPosition();
             
             var offset = mainLevelInstances[currentIndex].position - mainLevelInstances[currentIndex - 1].position;
-
-            controller.Character.enabled = false;
             controller.Player.transform.position += offset;
-            controller.Character.enabled = true;
+            Physics.SyncTransforms(); //Prevents character controller from overriding the position
         }
     }
 }
