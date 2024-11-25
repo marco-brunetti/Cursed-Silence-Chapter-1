@@ -1,5 +1,5 @@
 using System.Collections;
-//using Game.General;
+using SnowHorse.Utils;
 using UnityEngine;
 
 namespace Player
@@ -7,129 +7,103 @@ namespace Player
     public class PlayerInspect : MonoBehaviour
     {
         public bool IsInspecting { get; private set; }
-
-        private float _goToInspectorSpeed = 300f;
-        private float _resetInspectorTimer = 0.7f;
-        private float _rotationSpeed = 0.2f;
-        private float _timer;
-        private float _currentDepthOfField;
-
-        private bool _initialSetup;
-        private bool _returnItemToPreviousPosition;
-        private bool _activateDepthOfField;
+        
+        private readonly float _rotationSpeed = 0.2f;
+        private readonly float _inspectableMoveDuration = 0.3f;
+        
         private bool[] _rotateXY;
 
         private Transform _interactable;
         private IInteractable _interactableComponent;
+        private Collider _interactableCollider;
         private Transform _previousParent;
-
-        private Vector3[] _previousPositionAndRotation;
-        private Vector3 _currentVelocity;
+        
+        private Vector3 _previousPosition;
+        private Quaternion _previousRotation;
 
         private Vector3 _targetRotation;
-        private Vector3 _targetPosition;
 
-        public void ManageInspection(PlayerData playerData, IPlayerInput playerInput)
+        public void ManageInspection()
         {
             if (_interactable)
             {
-                if (Input.GetMouseButtonDown(1))
-                {
-                    _returnItemToPreviousPosition = true;
-                    _activateDepthOfField = false;
-                    PlayerController.Instance.ActivateDepthOfField(false);
-                    _currentDepthOfField = 0;
-                    IsInspecting = false;
-                }
-
-                if (IsInspecting)
-                {
-                    Inspect(playerData, playerInput);
-                }
-                else
-                {
-                    ResetInspector(_returnItemToPreviousPosition);
-                }
+                if (Input.GetMouseButtonDown(1)) IsInspecting = false;
             }
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void StartInspection(Transform interactable)
         {
-            //Forces previous interactable reset if needed
-            if (_interactable != null)
-            {
-                Vector3 targetPosition = _previousPositionAndRotation[0];
-                Quaternion targetRotation = Quaternion.Euler(_previousPositionAndRotation[1]);
-                ResetInspectable(targetPosition, targetRotation);
-            }
-
-            interactable.GetComponent<Collider>().enabled = false;
-            _interactableComponent = interactable.GetComponent<IInteractable>();
-            _interactable = interactable;
-
-            _rotateXY = _interactableComponent.RotateXY();
-
-            _previousParent = interactable.parent;
-            _previousPositionAndRotation = new Vector3[]
-                { interactable.localPosition, interactable.localRotation.eulerAngles };
-
-            _timer = _resetInspectorTimer;
-
-            PlayerController playerController = PlayerController.Instance;
-            PlayerData playerData = playerController.PlayerData;
-
-            playerController.InspectablesSource.pitch = 1;
-            playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip,
-                0.2f /** GameController.Instance.GlobalVolume*/);
-
-            playerController.FreezePlayerMovement = true;
-            playerController.FreezePlayerRotation = true;
-            //playerController.ActivateDepthOfField(true);
             IsInspecting = true;
+            PlayerController.Instance.FreezePlayerMovement = true;
+            PlayerController.Instance.FreezePlayerRotation = true;
+            
+            if (_interactable != null) ResetInspectable();
+            
+            _interactable = interactable;
+            _interactableCollider = _interactable.GetComponent<Collider>();
+            _interactableCollider.enabled = false;
+            _interactableComponent = _interactable.GetComponent<IInteractable>();
+            _previousParent = _interactable.parent;
+            _previousPosition = _interactable.position;
+            _previousRotation = _interactable.rotation;
+            _rotateXY = _interactableComponent.RotateXY();
+            
+            StartCoroutine(GoToInspectionPosition());
         }
 
-        private void Inspect(PlayerData playerData, IPlayerInput playerInput)
+        private IEnumerator GoToInspectionPosition()
         {
-            if (_initialSetup && !_interactableComponent.InspectableOnly && Input.GetMouseButtonDown(0))
+            _interactable.parent = PlayerController.Instance.InspectorParent;
+            
+            var localPos = _interactable.localPosition;
+            var localRot = _interactable.localRotation;
+            var lerpTime = 0f;
+            
+            while(IsInspecting && !Mathf.Approximately(lerpTime, _inspectableMoveDuration))
             {
-                _interactableComponent.Interact(PlayerController.Instance, true, false);
-                _returnItemToPreviousPosition = false;
-                //PlayerController.Instance.ActivateDepthOfField(true);
-                IsInspecting = false;
+                var percent = Interpolation.Smoother(_inspectableMoveDuration, ref lerpTime);
+                _interactable.localPosition = Vector3.Lerp(localPos, _interactableComponent.InspectablePosition, percent);
+                _interactable.localRotation = Quaternion.Lerp(localRot, Quaternion.Euler(_interactableComponent.InspectableInitialRotation), percent);
+                yield return null;
             }
 
-
-            if (IsInspecting)
-            {
-                if (!_initialSetup)
-                {
-                    _interactable.parent = PlayerController.Instance.InspectorParent;
-                    _targetRotation = _interactableComponent.InspectableInitialRotation;
-                    _targetPosition = _interactableComponent.InspectablePosition;
-                    StartCoroutine(DepthOfFieldWaitTime());
-                    _initialSetup = true;
-                }
-
-                _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, _targetPosition,
-                    ref _currentVelocity, 0.1f, _goToInspectorSpeed);
-
-                SetRotation(playerInput);
-
-                if (_activateDepthOfField && _currentDepthOfField < playerData.defaultDepthOfField - 0.1f)
-                {
-                    _currentDepthOfField = Mathf.MoveTowards(_currentDepthOfField, playerData.defaultDepthOfField, 5f);
-                    PlayerController.Instance.ActivateDepthOfField(true, currentValue: _currentDepthOfField);
-                }
-            }
+            StartCoroutine(Inspecting());
         }
 
-        private IEnumerator DepthOfFieldWaitTime()
+        private IEnumerator Inspecting()
         {
-            yield return new WaitForSecondsRealtime(0.1f);
-            _activateDepthOfField = true;
+            _targetRotation = _interactable.localRotation.eulerAngles;
+            while (IsInspecting)
+            {
+                SetRotation(PlayerController.Instance.Input);
+                yield return null;
+            }
+
+            StartCoroutine(ReturnInspectable());
         }
 
+        private IEnumerator ReturnInspectable()
+        {
+            var position = _interactable.position;
+            var rotation = _interactable.rotation;
+            var lerpTime = 0f;
+
+            while(!Mathf.Approximately(lerpTime, _inspectableMoveDuration))
+            {
+                var percent = Interpolation.Smoother(_inspectableMoveDuration, ref lerpTime);
+                _interactable.position = Vector3.Lerp(position, _previousPosition, percent);
+                _interactable.rotation = Quaternion.Lerp(rotation, _previousRotation, percent);
+                yield return null;
+            }
+            
+            ResetInspectable();
+            
+            PlayerController.Instance.FreezePlayerMovement = false;
+            PlayerController.Instance.FreezePlayerRotation = false;
+            IsInspecting = false;
+        }
+        
         private void SetRotation(IPlayerInput playerInput)
         {
             if (playerInput.mouseMovementInput.x != 0 || playerInput.mouseMovementInput.y != 0)
@@ -144,85 +118,19 @@ namespace Player
             }
         }
 
-        private void ResetInspector(bool returnItemToPreviousPosition)
-        {
-            if (_interactable)
-            {
-                PlayerController playerController = PlayerController.Instance;
-                PlayerData playerData = playerController.PlayerData;
-
-                playerController.FreezePlayerMovement = false;
-                playerController.FreezePlayerRotation = false;
-
-                if (returnItemToPreviousPosition)
-                {
-                    _interactableComponent.Interact(playerController, false, false);
-
-                    if (_timer == _resetInspectorTimer)
-                    {
-                        playerController.InspectablesSource.pitch = 0.9f;
-                        playerController.InspectablesSource.PlayOneShot(playerData.InspectablePickupClip,
-                            0.2f /** GameController.Instance.GlobalVolume*/);
-                    }
-
-                    Vector3 targetPosition = _previousPositionAndRotation[0];
-                    Quaternion targetRotation = Quaternion.Euler(_previousPositionAndRotation[1]);
-
-                    if (_interactable.parent != PlayerController.Instance.InventoryHolder)
-                    {
-                        _interactable.parent = _previousParent;
-                        _interactable.localPosition = Vector3.SmoothDamp(_interactable.localPosition, targetPosition,
-                            ref _currentVelocity, 0.1f, _goToInspectorSpeed);
-                        _interactable.localRotation = Quaternion.Lerp(_interactable.localRotation, targetRotation,
-                            _goToInspectorSpeed * Time.deltaTime / 20);
-                    }
-
-                    if (_timer > 0)
-                    {
-                        _timer -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        ResetInspectable(targetPosition, targetRotation);
-                    }
-                }
-                else
-                {
-                    if (_interactable.parent != PlayerController.Instance.InventoryHolder)
-                    {
-                        _interactable.parent = _previousParent;
-                    }
-
-                    _interactable = null;
-                    _interactableComponent = null;
-                    _initialSetup = false;
-                    _timer = _resetInspectorTimer;
-                }
-            }
-        }
-
-        //Forces previous reset of inspectable if needed
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void ResetInspectable(Vector3 targetPosition, Quaternion targetRotation)
+        private void ResetInspectable()
         {
             if (_interactable.parent != PlayerController.Instance.InventoryHolder)
             {
                 _interactable.parent = _previousParent;
-                _interactable.localPosition = targetPosition;
-                _interactable.localRotation = targetRotation;
+                _interactable.position = _previousPosition;
+                _interactable.rotation = _previousRotation;
             }
 
-            _interactable.GetComponent<Collider>().enabled = true;
+            _interactableCollider.enabled = true;
             _interactable = null;
             _interactableComponent = null;
-            _initialSetup = false;
-            _timer = _resetInspectorTimer;
-        }
-
-        public GameObject CurrentInspectable()
-        {
-            if (_interactable != null) return _interactable.gameObject;
-            else return null;
+            _interactableCollider = null;
         }
     }
 }

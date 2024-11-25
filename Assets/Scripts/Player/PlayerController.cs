@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -12,12 +13,12 @@ namespace Player
         [field: SerializeField] public PlayerStressControl PlayerStress { get; private set; }
         [field: SerializeField] public PlayerAnimation Animation { get; private set; }
         [field: SerializeField] public GameObject Player { get; private set; }
+        [field: SerializeField] public PlayerInput Input { get; private set; }
 
         [SerializeField] private Transform _groundSpawnPoint;
         [SerializeField] private PlayerDataScript _data;
         [SerializeField] private PlayerMovement _movement;
         [SerializeField] private PlayerRotate _rotator;
-        [SerializeField] private PlayerInput _input;
         [SerializeField] private PlayerInspect _inspector;
         [SerializeField] private PlayerInteract _interactor;
         [SerializeField] private PlayerAudio _audio;
@@ -98,7 +99,7 @@ namespace Player
 
         private void Rotate()
         {
-            _rotator.Rotate(PlayerData, _input, FreezePlayerRotation, pause);
+            _rotator.Rotate(PlayerData, Input, FreezePlayerRotation, pause);
         }
 
         private void Move()
@@ -107,8 +108,8 @@ namespace Player
             {
                 if (FreezePlayerMovement == false)
                 {
-                    _movement.PlayerMove(PlayerData, _input, Character.velocity.magnitude);
-                    IsSprinting = _input.playerMovementInput != Vector2.zero && _input.playerRunInput;
+                    _movement.PlayerMove(PlayerData, Input, Character.velocity.magnitude);
+                    IsSprinting = Input.playerMovementInput != Vector2.zero && Input.playerRunInput;
                 }
                 else
                 {
@@ -119,13 +120,13 @@ namespace Player
 
         private void Interact()
         {
-            _interactor.Interact(PlayerData, _input, _inspector);
-            _inspector.ManageInspection(PlayerData, _input);
+            _interactor.Interact(PlayerData, Input, _inspector);
+            _inspector.ManageInspection();
         }
 
         private void PlayerAudio()
         {
-            _audio.PlayerAudioControl(PlayerData, _input);
+            _audio.PlayerAudioControl(PlayerData, Input);
         }
 
         private void ManageStress()
@@ -140,12 +141,12 @@ namespace Player
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)
         {
-            _postProcessVolume.gameObject.SetActive(enable);
+            //_postProcessVolume.gameObject.SetActive(enable);
 
-            if (currentValue == -1)
+            /*if (currentValue == -1)
                 _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value =
                     PlayerData.defaultDepthOfField;
-            else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;
+            else _postProcessVolume.profile.GetSetting<DepthOfField>().focalLength.value = currentValue;*/
         }
     }
 }
