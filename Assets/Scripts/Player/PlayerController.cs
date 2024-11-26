@@ -51,6 +51,8 @@ namespace Player
         private bool pause;
 
         public void Pause(bool isPause)=> pause = isPause;
+        
+        public bool FreezePlayer(bool freeze)=> FreezePlayerMovement = FreezePlayerRotation = freeze;
 
         private void Awake()
         {
@@ -121,7 +123,8 @@ namespace Player
         private void Interact()
         {
             _interactor.Interact(PlayerData, Input, _inspector);
-            _inspector.ManageInspection();
+            
+            if(UnityEngine.Input.GetMouseButtonDown(1)) _inspector.StopInspection();
         }
 
         private void PlayerAudio()
