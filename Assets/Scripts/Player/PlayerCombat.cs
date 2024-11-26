@@ -39,7 +39,7 @@ namespace Player
                 ChangeState(CombatState.Attack);
             }
 
-            if (Input.GetMouseButtonDown(1)) ChangeState(CombatState.Block);
+            if (Input.GetMouseButtonDown(1) && !PlayerController.Instance.IsInspecting) ChangeState(CombatState.Block);
 
 
             switch (_currentState)
