@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Interactables.Behaviours;
 using Player;
@@ -15,70 +16,39 @@ public class Interactable : MonoBehaviour, IInteractable
 
     public bool NonInspectable { get; private set; }
     public bool InspectableOnly { get; private set; }
-    private List<IBehaviour> InteractionBehaviours = new();
-    private List<IBehaviour> InspectionBehaviours = new();
     public bool DeactivateBehaviours;
     public List<GameObject> RequiredInventoryItems { get; private set; } = new();
+
+    private List<IBehaviour> behaviours;
 
 
     private void Awake()
     {
-        SetupInteractable();
-    }
+        behaviours = gameObject.gameObject.GetComponents<IBehaviour>().ToList();
 
-    private void SetupInteractable()
-    {
-        var behavioursInObject = gameObject.GetComponents<IBehaviour>();
+        InspectableOnly = !behaviours.Any(x => x.IsInteractable());
+        if (!InspectableOnly) NonInspectable = !behaviours.Any(x => x.IsInspectable());
 
-        foreach (IBehaviour behaviour in behavioursInObject)
-        {
-            if (behaviour != null)
-            {
-                if(behaviour.GetType() is IRequireInventoryItem)
-                {
-                    var requireItem = behaviour.GetType() as IRequireInventoryItem;
-                    if (requireItem.RequiredObjects != null) RequiredInventoryItems.AddRange(requireItem.RequiredObjects);
-                }
-                
-                if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
-                if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
-
-                if (!behaviour.IsInteractable() && !behaviour.IsInspectable()) InteractionBehaviours.Add(behaviour);
-            }
-        }
-
-        foreach (Transform child in transform)
-        {
-            var behaviour = child.GetComponent<IBehaviour>();
-
-            if (behaviour != null)
-            {
-                if (behaviour.IsInteractable()) InteractionBehaviours.Add(behaviour);
-                if (behaviour.IsInspectable()) InspectionBehaviours.Add(behaviour);
-
-                if (!behaviour.IsInteractable() && !behaviour.IsInspectable()) InteractionBehaviours.Add(behaviour);
-            }
-        }
-
-        if (InteractionBehaviours.Count == 0) InspectableOnly = true;
-        if (!InspectableOnly && InspectionBehaviours.Count == 0) NonInspectable = true;
+        behaviours.Where(x => x is IRequireInventoryItem).ToList().ForEach(x => RequiredInventoryItems.AddRange(((IRequireInventoryItem)x).RequiredObjects));
     }
 
     // ReSharper disable Unity.PerformanceAnalysis
     public void Interact(PlayerController playerController, bool isInteracting, bool isInspecting)
     {
-        if (!InspectableOnly && isInteracting)
+        foreach (var behaviour in behaviours)
         {
-            ManageInteractionBehaviours(isInteracting);
-        }
-        else if (!NonInspectable && isInspecting)
-        {
-            ManageInspectionBehaviours(isInspecting);
-        }
-        else if (!isInteracting && !isInspecting)
-        {
-            ManageInteractionBehaviours(isInteracting);
-            ManageInspectionBehaviours(isInspecting);
+            if (!InspectableOnly && isInteracting && behaviour.IsInteractable())
+            {
+                behaviour.Behaviour(isInteracting:true, isInspecting:false);
+            }
+            else if (!NonInspectable && isInspecting && behaviour.IsInspectable())
+            {
+                behaviour.Behaviour(isInteracting:false, isInspecting:true);
+            }
+            else if (!isInteracting && !isInspecting)
+            {
+                behaviour.Behaviour(isInteracting:false, isInspecting:false);
+            }
         }
 
         if(playerController)
@@ -91,35 +61,9 @@ public class Interactable : MonoBehaviour, IInteractable
         if(DeactivateBehaviours) GetComponent<Collider>().enabled = false;
     }
 
-    // ReSharper disable Unity.PerformanceAnalysis
-    private void ManageInteractionBehaviours(bool isInteracting)
-    {
-        if (InteractionBehaviours.Count > 0)
-        {
-            for (int i = 0; i < InteractionBehaviours.Count; i++)
-            {
-                var behaviour = InteractionBehaviours[i];
-                if (behaviour.gameObject.activeInHierarchy) behaviour.Behaviour(isInteracting, false);
-            }
-        }
-    }
-
-    // ReSharper disable Unity.PerformanceAnalysis
-    private void ManageInspectionBehaviours(bool isInspecting)
-    {
-        if (InspectionBehaviours.Count > 0)
-        {
-            for (int i = 0; i < InspectionBehaviours.Count; i++)
-            {
-                var behaviour = InspectionBehaviours[i];
-                if (behaviour.gameObject.activeInHierarchy) behaviour.Behaviour(false, isInspecting);
-            }
-        }
-    }
-
     public bool[] RotateXY()
     {
-        bool[] rotateXY = new bool[] { RotateX, RotateY };
+        bool[] rotateXY = { RotateX, RotateY };
         return rotateXY;
     }
 }

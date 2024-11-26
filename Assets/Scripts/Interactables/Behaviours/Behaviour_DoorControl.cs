@@ -1,12 +1,16 @@
 using UnityEngine;
 using SnowHorse.Components;
 using System.Collections;
+using System.Collections.Generic;
 using SnowHorse.Utils;
 
 namespace Interactables.Behaviours
 {
-    public class Behaviour_DoorControl : MonoBehaviour, IBehaviour
+    public class Behaviour_DoorControl : MonoBehaviour, IBehaviour, IRequireInventoryItem
     {
+        
+        [field: SerializeField] public List<GameObject> RequiredObjects { get; private set; }
+        
         [SerializeField] private float maxOpenAngle = 90f;
         //[SerializeField] private TriggerEnterDetector playerEnterDetector;
         //[SerializeField] private TriggerExitDetector playerExitDetector;
@@ -84,5 +88,6 @@ namespace Interactables.Behaviours
             Closed,
             Open
         }
+
     }
 }

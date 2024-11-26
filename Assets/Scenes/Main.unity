@@ -2031,8 +2031,9 @@ GameObject:
   - component: {fileID: 166747534}
   - component: {fileID: 166747533}
   - component: {fileID: 166747535}
+  - component: {fileID: 166747536}
   m_Layer: 0
-  m_Name: 9-Sliced
+  m_Name: InteractableExample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2051,7 +2052,7 @@ Transform:
   m_LocalScale: {x: 0.23386668, y: 0.2338667, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 697010667}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!65 &166747533
 BoxCollider:
@@ -2145,6 +2146,19 @@ MonoBehaviour:
   FreezePlayerRotation: 0
   FreezePlayerMotion: 0
   DeactivateBehaviours: 0
+--- !u!114 &166747536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166747531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f06b9f9cfddce343b6f304a5dd11fd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RequiredInventoryItems: []
 --- !u!1001 &182952223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7877,6 +7891,10 @@ PrefabInstance:
       propertyPath: _postProcessVolume
       value: 
       objectReference: {fileID: 1723041559}
+    - target: {fileID: 1249889970775907292, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2770135100652048857, guid: 2a6ff2a2fd75ce94b93c571855a29366, type: 3}
       propertyPath: m_LocalPosition.x
       value: -43.9
@@ -11194,7 +11212,6 @@ Transform:
   m_Children:
   - {fileID: 2007081595}
   - {fileID: 1189409808}
-  - {fileID: 166747532}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &697010668
@@ -28998,3 +29015,4 @@ SceneRoots:
   - {fileID: 1166741807}
   - {fileID: 697010667}
   - {fileID: 353997640}
+  - {fileID: 166747532}
