@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Interactables;
 using UnityEngine;
 using Interactables.Behaviours;
@@ -11,7 +12,7 @@ public class UIManager : MonoBehaviour
         InventoryRequirement.hideRequiredItems += HideInventoryItem;
     }
 
-    private void ShowInventoryItem(object sender, InventoryItem[] requiredInventoryItems)
+    private void ShowInventoryItem(object sender, List<InventoryItem> requiredInventoryItems)
     {
         foreach(var item in requiredInventoryItems)
         {
@@ -27,7 +28,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Show Inventory Item");
     }
 
-    private void HideInventoryItem(object sender, InventoryItem[] requiredInventoryItems)
+    private void HideInventoryItem(object sender, List<InventoryItem> requiredInventoryItems)
     {
         foreach(var item in requiredInventoryItems)
         {

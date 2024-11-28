@@ -23,21 +23,24 @@ namespace Player
         public void StopInspection() => IsInspecting = false;
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void Inspect(Transform inspectable)
+        public void Inspect(IInteractable item)
         {
             IsInspecting = true;
             PlayerController.Instance.FreezePlayer(true);
             
             if (interactable != null) ResetInspectable();
             
-            interactable = inspectable;
-            interactableCollider = interactable.GetComponent<Collider>();
-            interactableComponent = interactable.GetComponent<IInteractable>();
+            interactable = item.gameObject.transform;
+            interactableComponent = item;
+            interactableCollider = item.gameObject.GetComponent<Collider>();
+            interactableComponent = item.gameObject.GetComponent<IInteractable>();
             previousParent = interactable.parent;
             previousPosition = interactable.position;
             previousRotation = interactable.rotation;
             rotateXY = interactableComponent.RotateXY();
             interactableCollider.enabled = false;
+            
+            interactableComponent.InspectBehaviours();
             
             StartCoroutine(GoToInspectionPosition());
         }

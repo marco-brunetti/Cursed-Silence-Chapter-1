@@ -47,15 +47,15 @@ namespace Player
 
             if (Input.GetMouseButtonDown(0))
             {
-                /*if (interactable.NonInspectable)
+                switch (interactable.Type)
                 {
-                    interactable.Interact();
-                    playerController.InteractableInSight = null;
+                    case InteractableType.Inspectable:
+                        inspector.Inspect(interactable);
+                        break;
+                    case InteractableType.Interactable:
+                        interactable.InteractBehaviours();
+                        break;
                 }
-                else
-                {
-                    inspector.Inspect(interactable.gameObject.transform);
-                }*/
             }
         }
     }
