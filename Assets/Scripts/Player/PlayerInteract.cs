@@ -5,26 +5,25 @@ namespace Player
 {
     public class PlayerInteract : MonoBehaviour
     {
-        private PlayerController _playerController;
+        private PlayerController playerController;
 
         private void Start()
         {
-            _playerController = PlayerController.Instance;
+            playerController = PlayerController.Instance;
         }
 
         public void Interact(PlayerData playerData, IPlayerInput input, PlayerInspect inspector)
         {
-            if(_playerController.IsInspecting)
+            if(playerController.IsInspecting)
             {
-                _playerController.InteractableInSight = null;
+                playerController.InteractableInSight = null;
             }
-            else if (/*!GameController.Instance.IsInDream && */
-            (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero))
+            else if (Input.GetMouseButtonDown(0) || input.mouseMovementInput != Vector2.zero || input.playerMovementInput != Vector2.zero)
             {
                 var rayData = new RaycastData
                 {
-                    Origin = _playerController.Camera.position,
-                    Direction = _playerController.Camera.forward,
+                    Origin = playerController.Camera.position,
+                    Direction = playerController.Camera.forward,
                     MaxDistance = playerData.InteractDistance,
                     LayerMask = playerData.InteractLayer,
                     //Debug = true
@@ -33,13 +32,13 @@ namespace Player
                 var interactable = Raycaster.Find<IInteractable>(rayData)?.HitObject;
 
                 if(interactable != null) ManageInteraction(interactable, inspector);
-                else _playerController.InteractableInSight = null;
+                else playerController.InteractableInSight = null;
             }
         }
 
         private void ManageInteraction(IInteractable interactable, PlayerInspect inspector)
         {
-            _playerController.InteractableInSight = interactable;
+            playerController.InteractableInSight = interactable;
 
             if (interactable.RequiredInventoryItems.Count > 0)
             {
@@ -48,16 +47,15 @@ namespace Player
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (interactable.NonInspectable)
+                /*if (interactable.NonInspectable)
                 {
-                    interactable.Interact(_playerController, true, false);
-                    _playerController.InteractableInSight = null;
+                    interactable.Interact();
+                    playerController.InteractableInSight = null;
                 }
                 else
                 {
-                    interactable.Interact(_playerController, false, true);
-                    inspector.StartInspection(interactable.gameObject.transform);
-                }
+                    inspector.Inspect(interactable.gameObject.transform);
+                }*/
             }
         }
     }

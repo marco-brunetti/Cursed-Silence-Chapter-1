@@ -1,3 +1,4 @@
+using Interactables;
 using UnityEngine;
 using Interactables.Behaviours;
 using Player;
@@ -6,8 +7,8 @@ public class UIManager : MonoBehaviour
 {
     private void Start()
     {
-        InteractableInventoryRequirement.ShowRequiredItems += ShowInventoryItem;
-        InteractableInventoryRequirement.HideRequiredItems += HideInventoryItem;
+        InventoryRequirement.showRequiredItems += ShowInventoryItem;
+        InventoryRequirement.hideRequiredItems += HideInventoryItem;
     }
 
     private void ShowInventoryItem(object sender, InventoryItem[] requiredInventoryItems)

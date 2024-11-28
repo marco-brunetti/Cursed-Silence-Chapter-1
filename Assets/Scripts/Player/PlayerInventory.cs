@@ -13,10 +13,6 @@ namespace Player
         public void Add(InventoryItem item)
         {
             if(!_playerData) _playerData = PlayerController.Instance.PlayerData;
-
-            PlayerController.Instance.InspectablesSource.pitch = 1;
-            PlayerController.Instance.InspectablesSource.PlayOneShot(_playerData.InspectablePickupClip,
-                0.2f /** GameController.Instance.GlobalVolume*/);
      
             item.transform.SetParent(PlayerController.Instance.InventoryHolder);
             item.transform.localPosition = Vector3.zero;

@@ -4,22 +4,11 @@ namespace Interactables.Behaviours
 {
     public class BehaviourBlackboard : MonoBehaviour, IBehaviour
     {
-        public void Behaviour(bool isInteracting, bool isInspecting)
-        {
-            if(isInteracting)
-            {
+        public BehaviourType Type { get; } = BehaviourType.Interactable;
 
-            }
-        }
-
-        public bool IsInspectable()
+        public void Behaviour()
         {
-            return false;
-        }
-
-        public bool IsInteractable()
-        {
-            return true;
+            
         }
     }
 }

@@ -4,9 +4,16 @@ namespace Interactables.Behaviours
 {
     public interface IBehaviour
     {
-        void Behaviour(bool isInteracting, bool isInspecting);
-        bool IsInteractable();
-        bool IsInspectable();
+        BehaviourType Type { get; }
+        void Behaviour();
         GameObject gameObject { get; }
+
+
+    }
+    
+    public enum BehaviourType
+    {
+        Inspectable,
+        Interactable
     }
 }

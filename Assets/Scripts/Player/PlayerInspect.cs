@@ -23,7 +23,7 @@ namespace Player
         public void StopInspection() => IsInspecting = false;
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void StartInspection(Transform inspectable)
+        public void Inspect(Transform inspectable)
         {
             IsInspecting = true;
             PlayerController.Instance.FreezePlayer(true);
@@ -67,6 +67,12 @@ namespace Player
             while (IsInspecting)
             {
                 SetRotation();
+
+                /*if (Input.GetMouseButtonDown(0) && !interactableComponent.InspectableOnly)
+                {
+                    interactableComponent.Interact();
+                }*/
+                
                 yield return null;
             }
 

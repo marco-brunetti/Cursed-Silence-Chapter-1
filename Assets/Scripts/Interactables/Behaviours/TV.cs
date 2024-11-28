@@ -45,5 +45,11 @@ namespace Interactables.Behaviours
         {
             return false;
         }
+
+        public BehaviourType Type { get; }
+        public void Behaviour()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

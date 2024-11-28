@@ -78,6 +78,12 @@ namespace Interactables.Behaviours
         {
             return true;
         }
+
+        public BehaviourType Type { get; }
+        public void Behaviour()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

@@ -3,33 +3,32 @@ using UnityEngine;
 
 namespace Interactables.Behaviours
 {
+    [RequireComponent(typeof(InventoryItem))]
     public class AddToInventory : MonoBehaviour, IBehaviour
     {
-        [SerializeField] private InventoryItem inventoryItem;
+        
+        private InventoryItem inventoryItem;
 
-        private bool _addedToInventory;
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public BehaviourType Type => BehaviourType.Interactable;
+
+        public void Behaviour()
         {
-            if (!_addedToInventory && isInteracting)
+            if (!addedToInventory)
             {
-                if (!inventoryItem && !gameObject.TryGetComponent(out inventoryItem) && !gameObject.transform.parent.TryGetComponent(out inventoryItem))
-                {
-                    Debug.Log("Didn't find inventory object! object: " + gameObject.name + "; parent: " + transform.parent.name);
-                }
-
                 PlayerController.Instance.Inventory.Add(inventoryItem);
-                _addedToInventory = true;
+                addedToInventory = true;
             }
         }
 
-        public bool IsInteractable()
+        private void Awake()
         {
-            return true;
+            inventoryItem = GetComponent<InventoryItem>();
         }
 
-        public bool IsInspectable()
+        private bool addedToInventory;
+        public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            return false;
+            
         }
     }
 }

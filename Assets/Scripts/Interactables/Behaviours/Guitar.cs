@@ -10,23 +10,6 @@ namespace Interactables.Behaviours
         [FormerlySerializedAs("_volume")] [SerializeField] private float volume;
         private int _currentStrumIndex;
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
-        {
-            if(isInteracting)
-            {
-                if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V
-                {
-                    _currentStrumIndex = Random.Range(2, 4); //minInclusive, maxExclusive
-                }
-                else
-                {
-                    _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
-                }
-
-                //guitarStrumSource.PlayOneShot(guitarStrumClips[_currentStrumIndex], volume * GameController.Instance.GlobalVolume);
-            }
-        }
-
         public bool IsInspectable()
         {
             return false;
@@ -35,6 +18,19 @@ namespace Interactables.Behaviours
         public bool IsInteractable()
         {
             return true;
+        }
+
+        public BehaviourType Type { get; }
+        public void Behaviour()
+        {
+            if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V
+            {
+                _currentStrumIndex = Random.Range(2, 4); //minInclusive, maxExclusive
+            }
+            else
+            {
+                _currentStrumIndex = Random.Range(0, 2); //minInclusive, maxExclusive
+            }
         }
     }
 }

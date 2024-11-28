@@ -13,9 +13,6 @@ namespace Interactables.Behaviours
 
         [FormerlySerializedAs("_offModel")] [SerializeField] private GameObject offModel;
         [FormerlySerializedAs("_onModel")] [SerializeField] private GameObject onModel;
-
-        [FormerlySerializedAs("_onAudio")] [SerializeField] private PlayAudio onAudio;
-        [FormerlySerializedAs("_offAudio")] [SerializeField] private PlayAudio offAudio;
     
 
         private void Start()
@@ -23,20 +20,11 @@ namespace Interactables.Behaviours
             ManageLights(isOn);
         }
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public void Behaviour()
         {
             isOn = !isOn;
 
             ManageLights(isOn);
-
-            if(isOn)
-            {
-                onAudio.Behaviour(false, false);
-            }
-            else
-            {
-                offAudio.Behaviour(false, false);
-            }
         }
 
         private void ManageLights(bool enable)
@@ -60,5 +48,7 @@ namespace Interactables.Behaviours
         {
             return false;
         }
+
+        public BehaviourType Type { get; }
     }
 }

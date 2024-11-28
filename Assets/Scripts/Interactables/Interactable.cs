@@ -1,69 +1,55 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Interactables.Behaviours;
+using JetBrains.Annotations;
 using Player;
+using UnityEngine;
+using UnityEngine.Serialization;
 
-public class Interactable : MonoBehaviour, IInteractable
+namespace Interactables
 {
-    [field: SerializeField] public Vector3 InspectableInitialRotation { get; private set; }
-    [field: SerializeField] public Vector3 InspectablePosition { get; private set; }
-    public bool RotateX;
-    public bool RotateY;
-    public bool FreezePlayerRotation;
-    public bool FreezePlayerMotion;
+    public class Interactable : MonoBehaviour, IInteractable
+    { 
+        [field: SerializeField] public InteractableType Type { get; private set; }
+        
+        [Header("These behaviours will run independently from the inventory requirement.")]
+        [SerializeReference] private List<IBehaviour> interactBehaviours = new();
+        [SerializeReference] private List<IBehaviour> inspectBehaviours = new();
+        
+        private InspectableModifier inspectableModifier;
 
-    public bool NonInspectable { get; private set; }
-    public bool InspectableOnly { get; private set; }
-    public bool DeactivateBehaviours;
-    public List<GameObject> RequiredInventoryItems { get; private set; } = new();
+        public bool DeactivateBehaviours;
 
-    private List<IBehaviour> behaviours;
+        public Vector3 InspectableInitialRotation => inspectableModifier ? inspectableModifier.Rotation : Vector3.zero; 
+        public Vector3 InspectablePosition => inspectableModifier ? inspectableModifier.Position : Vector3.zero;
+        public bool[] RotateXY() => new[] { inspectableModifier && inspectableModifier.RotateX, inspectableModifier && inspectableModifier.RotateY };
+        public List<GameObject> RequiredInventoryItems { get; }
 
-
-    private void Awake()
-    {
-        behaviours = gameObject.gameObject.GetComponents<IBehaviour>().ToList();
-
-        InspectableOnly = !behaviours.Any(x => x.IsInteractable());
-        if (!InspectableOnly) NonInspectable = !behaviours.Any(x => x.IsInspectable());
-
-        behaviours.Where(x => x is IRequireInventoryItem).ToList().ForEach(x => RequiredInventoryItems.AddRange(((IRequireInventoryItem)x).RequiredObjects));
-    }
-
-    // ReSharper disable Unity.PerformanceAnalysis
-    public void Interact(PlayerController playerController, bool isInteracting, bool isInspecting)
-    {
-        foreach (var behaviour in behaviours)
+        private void Awake()
         {
-            if (!InspectableOnly && isInteracting && behaviour.IsInteractable())
-            {
-                behaviour.Behaviour(isInteracting:true, isInspecting:false);
-            }
-            else if (!NonInspectable && isInspecting && behaviour.IsInspectable())
-            {
-                behaviour.Behaviour(isInteracting:false, isInspecting:true);
-            }
-            else if (!isInteracting && !isInspecting)
-            {
-                behaviour.Behaviour(isInteracting:false, isInspecting:false);
-            }
+            TryGetComponent(out inspectableModifier);
         }
 
-        if(playerController)
+        public void Inspect()
         {
-            //Remember to unfreeze player in behaviour components
-            if (FreezePlayerMotion) playerController.FreezePlayerMovement = true;
-            if (FreezePlayerRotation) playerController.FreezePlayerRotation = true;
+            inspectBehaviours.ForEach(x=> x.Behaviour());
         }
 
-        if(DeactivateBehaviours) GetComponent<Collider>().enabled = false;
-    }
+        // ReSharper disable Unity.PerformanceAnalysis
+        public void Interact()
+        {
+            interactBehaviours.ForEach(x=> x.Behaviour());
 
-    public bool[] RotateXY()
-    {
-        bool[] rotateXY = { RotateX, RotateY };
-        return rotateXY;
+            if (DeactivateBehaviours) GetComponent<Collider>().enabled = false;
+        }
+    
+    
+        public enum InteractableType
+        {
+            Inspectable,
+            Interactable,
+            Mixed
+        }
     }
 }

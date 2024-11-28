@@ -6,22 +6,18 @@ namespace Interactables.Behaviours
 {
     public class BehaviourDeactivateColliders : MonoBehaviour, IBehaviour
     {
+        public BehaviourType Type { get; } = BehaviourType.Interactable;
+        public void Behaviour()
+        {
+            throw new System.NotImplementedException();
+        }
+        
         [FormerlySerializedAs("_colliders")] [SerializeField] private Collider[] colliders;
         [FormerlySerializedAs("_delay")] [SerializeField] private float delay;
 
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
             StartCoroutine(Deactivate());
-        }
-
-        public bool IsInspectable()
-        {
-            return false;
-        }
-
-        public bool IsInteractable()
-        {
-            return true;
         }
 
         private IEnumerator Deactivate()

@@ -43,12 +43,12 @@ namespace Interactables.Behaviours
 
         public void Behaviour(bool isInteracting, bool isInspecting)
         {
-            PrepareIngredientsForRetrieval();
+            /*PrepareIngredientsForRetrieval();
 
             if (_ingredientsReady &&  isInteracting && !_isCooking && door.currentDoorState == DoorState.Open && cookedItem != null)
             {
                 StartCoroutine(ManageCooking());
-            }
+            }*/
         }
 
         private void PrepareIngredientsForRetrieval()
@@ -127,6 +127,12 @@ namespace Interactables.Behaviours
         public bool IsInspectable()
         {
             return false;
+        }
+
+        public BehaviourType Type { get; }
+        public void Behaviour()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

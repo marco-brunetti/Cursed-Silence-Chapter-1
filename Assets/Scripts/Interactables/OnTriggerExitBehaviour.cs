@@ -14,7 +14,7 @@ public class OnTriggerExitBehaviour : MonoBehaviour
         {
             for (int i = 0; i < _behaviours.Length; i++)
             {
-                _behaviours[i].GetComponent<IBehaviour>().Behaviour(true, false);
+                _behaviours[i].GetComponent<IBehaviour>().Behaviour();
             }
         }
 
