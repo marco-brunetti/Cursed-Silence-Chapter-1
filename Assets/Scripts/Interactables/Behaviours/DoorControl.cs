@@ -6,9 +6,9 @@ using SnowHorse.Utils;
 
 namespace Interactables.Behaviours
 {
-    public class DoorControl : MonoBehaviour, IBehaviour
+    public class DoorControl : Behaviour
     {
-        public BehaviourType Type { get; } = BehaviourType.Interactable;
+        public override BehaviourType Type { get; } = BehaviourType.Interactable;
         
         [SerializeField] private float maxOpenAngle = 90f;
         //[SerializeField] private TriggerEnterDetector playerEnterDetector;
@@ -38,7 +38,7 @@ namespace Interactables.Behaviours
             initialRotation = transform.localRotation.eulerAngles;
         }
 
-        public void Behaviour()
+        public override void Activate()
         {
             switch(currentDoorState)
             {

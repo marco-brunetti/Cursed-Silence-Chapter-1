@@ -4,14 +4,14 @@ using UnityEngine;
 namespace Interactables.Behaviours
 {
     [RequireComponent(typeof(InventoryItem))]
-    public class AddToInventory : MonoBehaviour, IBehaviour
+    public class AddToInventory : Behaviour
     {
         
         private InventoryItem inventoryItem;
 
-        public BehaviourType Type => BehaviourType.Interactable;
+        public override BehaviourType Type => BehaviourType.Interactable;
 
-        public void Behaviour()
+        public override void Activate()
         {
             if (!addedToInventory)
             {

@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Interactables.Behaviours
 {
-    public class BehaviourBlackboard : MonoBehaviour, IBehaviour
+    public class BehaviourBlackboard : Behaviour
     {
-        public BehaviourType Type { get; } = BehaviourType.Interactable;
+        public override BehaviourType Type { get; } = BehaviourType.Interactable;
 
-        public void Behaviour()
+        public override void Activate()
         {
             
         }

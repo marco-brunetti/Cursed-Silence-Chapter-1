@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Oven : MonoBehaviour, IBehaviour
+    public class Oven : Behaviour
     {
         [FormerlySerializedAs("_requiredIngredients")] [SerializeField] private InventoryItem requiredIngredients;
 
@@ -129,8 +129,8 @@ namespace Interactables.Behaviours
             return false;
         }
 
-        public BehaviourType Type { get; }
-        public void Behaviour()
+        public override BehaviourType Type { get; }
+        public override void Activate()
         {
             throw new System.NotImplementedException();
         }

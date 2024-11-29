@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class Guitar : MonoBehaviour, IBehaviour
+    public class Guitar : Behaviour
     {
         [FormerlySerializedAs("_guitarStrumClips")] [SerializeField] private AudioClip[] guitarStrumClips;
         [FormerlySerializedAs("_guitarStrumSource")] [SerializeField] private AudioSource guitarStrumSource;
@@ -20,8 +20,8 @@ namespace Interactables.Behaviours
             return true;
         }
 
-        public BehaviourType Type { get; }
-        public void Behaviour()
+        public override BehaviourType Type { get; }
+        public override void Activate()
         {
             if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V
             {

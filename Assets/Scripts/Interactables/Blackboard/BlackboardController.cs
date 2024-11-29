@@ -8,7 +8,7 @@ using Player;
 
 namespace Interactables.Behaviours
 {
-    public class BlackboardController : MonoBehaviour, IBehaviour
+    public class BlackboardController : Behaviour
     {
         [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
 
@@ -52,9 +52,9 @@ namespace Interactables.Behaviours
             //UIManager.Instance.SetBlackboardButtons(RotateItem, ApplyRotation, ResetBlackboard);
         }
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public override void Activate()
         {
-            if (isInteracting && _currentState == BlackboardState.None)
+            if (_currentState == BlackboardState.None)
             {
                 var item = _playerController.Inventory.Find<BlackboardItem>(removeItem: true, destroyItem: false);
                 if (!item) return;
@@ -309,11 +309,7 @@ namespace Interactables.Behaviours
             return true;
         }
 
-        public BehaviourType Type { get; }
-        public void Behaviour()
-        {
-            throw new NotImplementedException();
-        }
+        public override BehaviourType Type { get; }
     }
 
     public enum BlackboardState

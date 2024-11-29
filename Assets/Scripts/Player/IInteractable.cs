@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Interactables;
 using UnityEngine;
 
 namespace Player
@@ -7,12 +8,10 @@ namespace Player
     {
         public InteractableType Type { get; }
         public GameObject gameObject { get; }
-        public Vector3 InspectableInitialRotation { get; }
-        public Vector3 InspectablePosition { get; }
+        public bool TryGetModifier(out PlayerInspectModifier modifier);
         public List<InventoryItem> RequiredInventoryItems{ get; }
         public void InspectBehaviours();
         public void InteractBehaviours();
-        public bool[] RotateXY();
     }
     
     public enum InteractableType

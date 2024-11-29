@@ -7,7 +7,7 @@ using Player;
 
 namespace Interactables.Behaviours
 {
-    public class PhoneController : MonoBehaviour, IBehaviour
+    public class PhoneController : Behaviour
     {
         [SerializeField] private GameObject _canvas;
 
@@ -19,11 +19,11 @@ namespace Interactables.Behaviours
 
         private bool _isInteracting;
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public override void Activate()
         {
             var playerController = PlayerController.Instance;
 
-            if(isInspecting)
+            /*if(isInspecting)
             {
                 StartCoroutine(ActivateCanvas(true));
 
@@ -45,7 +45,7 @@ namespace Interactables.Behaviours
 
                 //GameController.Instance.ShowCursor = false;
                 //UIManager.Instance.HideUI = false;
-            }
+            }*/
         }
 
         private IEnumerator ActivateCanvas(bool enable)
@@ -76,7 +76,7 @@ namespace Interactables.Behaviours
             if(_isInteracting) _timeText.text = string.Format("{0:hh:mm tt}", DateTime.Now);
         }
 
-        public BehaviourType Type { get; }
+        public override BehaviourType Type { get; }
         public void Behaviour()
         {
             throw new NotImplementedException();

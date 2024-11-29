@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Interactables.Behaviours;
-using JetBrains.Annotations;
 using Player;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Behaviour = Interactables.Behaviours.Behaviour;
 
 namespace Interactables
 {
@@ -15,36 +11,40 @@ namespace Interactables
         
         [SerializeField] private InventoryRequirement inventoryRequirement;
         
-        [Header("These behaviours will run independently from the inventory requirement.")]
-        [SerializeReference] private List<IBehaviour> interactBehaviours = new();
-        [SerializeReference] private List<IBehaviour> inspectBehaviours = new();
+        [Header("These behaviours will run independently from the inventory requirement")]
+        [SerializeField] private List<Behaviour> interactBehaviours = new();
+        [SerializeField] private List<Behaviour> inspectBehaviours = new();
+
+        private PlayerInspectModifier inspectModifier;
         
-        private InspectableModifier inspectableModifier;
+        [SerializeField] private DeactivationType deactivationType;
+        public List<InventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items : new List<InventoryItem>();
 
-        public bool DeactivateBehaviours;
-
-        public Vector3 InspectableInitialRotation => inspectableModifier ? inspectableModifier.Rotation : Vector3.zero; 
-        public Vector3 InspectablePosition => inspectableModifier ? inspectableModifier.Position : Vector3.zero;
-        public List<InventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.RequiredInventoryItems : new List<InventoryItem>();
-
-        public bool[] RotateXY() => new[] { inspectableModifier && inspectableModifier.RotateX, inspectableModifier && inspectableModifier.RotateY };
-
-        private void Awake()
+        public bool TryGetModifier(out PlayerInspectModifier modifier)
         {
-            TryGetComponent(out inspectableModifier);
+            if (inspectModifier == null) return TryGetComponent(out modifier);
+            modifier = inspectModifier;
+            return true;
         }
-
-        public void InspectBehaviours()
-        {
-            inspectBehaviours.ForEach(x=> x.Behaviour());
-        }
-
+        
         // ReSharper disable Unity.PerformanceAnalysis
         public void InteractBehaviours()
         {
-            interactBehaviours.ForEach(x=> x.Behaviour());
+            interactBehaviours.ForEach(x=> x.Activate());
+            if(deactivationType == DeactivationType.OnInteract) GetComponent<Collider>().enabled = false;
+        }
+        
+        public void InspectBehaviours()
+        {
+            inspectBehaviours.ForEach(x=> x.Activate());
+            if(deactivationType == DeactivationType.OnInspect) GetComponent<Collider>().enabled = false;
+        }
 
-            if (DeactivateBehaviours) GetComponent<Collider>().enabled = false;
+        private enum DeactivationType
+        {
+            None,
+            OnInteract,
+            OnInspect
         }
     }
 }

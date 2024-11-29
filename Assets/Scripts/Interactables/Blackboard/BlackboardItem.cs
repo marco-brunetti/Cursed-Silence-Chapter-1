@@ -5,7 +5,7 @@ using Player;
 
 namespace Interactables.Behaviours
 {
-    public class BlackboardItem : MonoBehaviour, IBehaviour
+    public class BlackboardItem : Behaviour
     {
         public ItemOrientation Orientation = ItemOrientation.Up;
         [SerializeField] private GameObject _glow;
@@ -35,9 +35,9 @@ namespace Interactables.Behaviours
             Array.ForEach(Snaps, snap => snap.SetSnapAction(_controller.SnapDetected, this));
         }
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public override void Activate()
         {
-            if (isInteracting && _controller.BlackboardItems.Contains(gameObject))
+            if (_controller.BlackboardItems.Contains(gameObject))
             {
                 var item = PlayerController.Instance.Inventory.Find<BlackboardItem>(removeItem: false,
                     destroyItem: false);
@@ -79,11 +79,7 @@ namespace Interactables.Behaviours
             return true;
         }
 
-        public BehaviourType Type { get; }
-        public void Behaviour()
-        {
-            throw new NotImplementedException();
-        }
+        public override BehaviourType Type { get; }
     }
 }
 

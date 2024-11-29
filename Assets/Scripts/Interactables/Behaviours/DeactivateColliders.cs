@@ -4,18 +4,14 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class BehaviourDeactivateColliders : MonoBehaviour, IBehaviour
+    public class BehaviourDeactivateColliders : Behaviour
     {
-        public BehaviourType Type { get; } = BehaviourType.Interactable;
-        public void Behaviour()
-        {
-            throw new System.NotImplementedException();
-        }
+        public override BehaviourType Type { get; } = BehaviourType.Interactable;
         
         [FormerlySerializedAs("_colliders")] [SerializeField] private Collider[] colliders;
         [FormerlySerializedAs("_delay")] [SerializeField] private float delay;
 
-        public void Behaviour(bool isInteracting, bool isInspecting)
+        public override void Activate()
         {
             StartCoroutine(Deactivate());
         }

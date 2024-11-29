@@ -831,10 +831,7 @@ MonoBehaviour:
   inventoryRequirement: {fileID: 0}
   interactBehaviours: []
   inspectBehaviours: []
-  DeactivateBehaviours: 0
-  references:
-    version: 2
-    RefIds: []
+  deactivationType: 0
 --- !u!65 &109534681
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12217,10 +12214,7 @@ MonoBehaviour:
   inventoryRequirement: {fileID: 0}
   interactBehaviours: []
   inspectBehaviours: []
-  DeactivateBehaviours: 0
-  references:
-    version: 2
-    RefIds: []
+  deactivationType: 0
 --- !u!114 &802596515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23631,6 +23625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1877073289}
   - component: {fileID: 1877073290}
+  - component: {fileID: 1877073295}
   - component: {fileID: 1877073294}
   - component: {fileID: 1877073293}
   - component: {fileID: 1877073292}
@@ -23674,10 +23669,7 @@ MonoBehaviour:
   inventoryRequirement: {fileID: 1877073294}
   interactBehaviours: []
   inspectBehaviours: []
-  DeactivateBehaviours: 0
-  references:
-    version: 2
-    RefIds: []
+  deactivationType: 2
 --- !u!65 &1877073291
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23739,9 +23731,23 @@ MonoBehaviour:
   <RequiredInventoryItems>k__BackingField: []
   requirementSuccessBehaviours: []
   requirementFailBehaviours: []
-  references:
-    version: 2
-    RefIds: []
+--- !u!114 &1877073295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877073288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cfce74c1d1af244f93d549f026ba2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Position>k__BackingField: {x: 0, y: 0, z: 0}
+  <Rotation>k__BackingField: {x: 0, y: 0, z: 0}
+  <Scale>k__BackingField: {x: 0, y: 0, z: 0}
+  <RotateX>k__BackingField: 0
+  <RotateY>k__BackingField: 0
 --- !u!1001 &1880010788
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class TV : MonoBehaviour, IBehaviour
+    public class TV : Behaviour
     {
         [FormerlySerializedAs("_opaqueScreen")] [SerializeField] private GameObject opaqueScreen;
         [FormerlySerializedAs("_videoScreen")] [SerializeField] private GameObject videoScreen;
@@ -46,8 +46,8 @@ namespace Interactables.Behaviours
             return false;
         }
 
-        public BehaviourType Type { get; }
-        public void Behaviour()
+        public override BehaviourType Type { get; }
+        public override void Activate()
         {
             throw new System.NotImplementedException();
         }

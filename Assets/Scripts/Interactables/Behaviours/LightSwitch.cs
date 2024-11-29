@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
-    public class LightSwitch : MonoBehaviour, IBehaviour
+    public class LightSwitch : Behaviour
     {
         public bool isOn;
 
@@ -20,7 +20,7 @@ namespace Interactables.Behaviours
             ManageLights(isOn);
         }
 
-        public void Behaviour()
+        public override void Activate()
         {
             isOn = !isOn;
 
@@ -49,6 +49,6 @@ namespace Interactables.Behaviours
             return false;
         }
 
-        public BehaviourType Type { get; }
+        public override BehaviourType Type { get; }
     }
 }

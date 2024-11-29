@@ -2,13 +2,11 @@ using UnityEngine;
 
 namespace Interactables.Behaviours
 {
-    public interface IBehaviour
+    public abstract class Behaviour : MonoBehaviour
     {
-        BehaviourType Type { get; }
-        void Behaviour();
-        GameObject gameObject { get; }
+        public abstract BehaviourType Type { get; }
 
-
+        public abstract void Activate();
     }
     
     public enum BehaviourType

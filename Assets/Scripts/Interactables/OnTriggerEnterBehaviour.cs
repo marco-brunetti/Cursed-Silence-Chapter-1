@@ -1,5 +1,6 @@
 using UnityEngine;
 using Interactables.Behaviours;
+using Behaviour = Interactables.Behaviours.Behaviour;
 
 public class OnTriggerEnterBehaviour : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class OnTriggerEnterBehaviour : MonoBehaviour
         {
             for (int i = 0; i < _behaviours.Length; i++)
             {
-                _behaviours[i].GetComponent<IBehaviour>().Behaviour();
+                _behaviours[i].GetComponent<Behaviour>().Activate();
             }
         }
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using Interactables;
 using SnowHorse.Utils;
 using UnityEngine;
 
@@ -12,8 +13,9 @@ namespace Player
         private bool[] rotateXY;
         private Vector2 currentRotation;
         private Vector3 previousPosition;
-        private Collider interactableCollider;
+        private Vector3 previousLocalScale;
         private Quaternion previousRotation;
+        private Collider interactableCollider;
         private Transform previousParent;
         private Transform interactable;
         private IInteractable interactableComponent;
@@ -37,27 +39,45 @@ namespace Player
             previousParent = interactable.parent;
             previousPosition = interactable.position;
             previousRotation = interactable.rotation;
-            rotateXY = interactableComponent.RotateXY();
+            previousLocalScale = interactable.localScale;
             interactableCollider.enabled = false;
             
             interactableComponent.InspectBehaviours();
+
+            var position = Vector3.zero;
+            var rotation = Vector3.zero;
+            var localScale = Vector3.zero;
             
-            StartCoroutine(GoToInspectionPosition());
+            if (interactableComponent.TryGetModifier(out var modifier))
+            {
+                rotateXY = modifier.RotateXY;
+                position = modifier.Position;
+                rotation = modifier.Rotation;
+                localScale = modifier.Scale;
+            }
+            else
+            {
+                rotateXY = new[] { false, false };
+            }
+            
+            StartCoroutine(GoToInspectionPosition(position, rotation, localScale));
         }
 
-        private IEnumerator GoToInspectionPosition()
+        private IEnumerator GoToInspectionPosition(Vector3 position, Vector3 rotation, Vector3 scale)
         {
             interactable.parent = PlayerController.Instance.InspectorParent;
             
             var localPos = interactable.localPosition;
+            var localScale = interactable.localScale;
             var localRot = interactable.localRotation;
             var lerpTime = 0f;
             
             while(IsInspecting && !Mathf.Approximately(lerpTime, inspectableMoveDuration))
             {
                 var percent = Interpolation.Smoother(inspectableMoveDuration, ref lerpTime);
-                interactable.localPosition = Vector3.Lerp(localPos, interactableComponent.InspectablePosition, percent);
-                interactable.localRotation = Quaternion.Lerp(localRot, Quaternion.Euler(interactableComponent.InspectableInitialRotation), percent);
+                interactable.localPosition = Vector3.Lerp(localPos, position, percent);
+                if(scale != Vector3.zero) interactable.localScale = Vector3.Lerp(localScale, scale, percent);
+                interactable.localRotation = Quaternion.Lerp(localRot, Quaternion.Euler(rotation), percent);
                 yield return null;
             }
 
@@ -84,14 +104,18 @@ namespace Player
 
         private IEnumerator ReturnInspectable()
         {
+            interactable.parent = previousParent;
+            
             var position = interactable.position;
             var rotation = interactable.rotation;
+            var scale = interactable.localScale;
             var lerpTime = 0f;
 
             while(!Mathf.Approximately(lerpTime, inspectableMoveDuration))
             {
                 var percent = Interpolation.Smoother(inspectableMoveDuration, ref lerpTime);
                 interactable.position = Vector3.Lerp(position, previousPosition, percent);
+                interactable.localScale = Vector3.Lerp(scale, previousLocalScale, percent);
                 interactable.rotation = Quaternion.Lerp(rotation, previousRotation, percent);
                 yield return null;
             }
