@@ -31,7 +31,7 @@ namespace Interactables
         
         public void InteractBehaviours()
         {
-            if(Type == InteractableType.Interactable) inventoryRequirement.SearchItemsInInventory();
+            if(Type == InteractableType.Interactable && inventoryRequirement) inventoryRequirement.SearchItemsInInventory();
             
             interactBehaviours.ForEach(x=> x.Activate());
             if(deactivate == DeactivationType.OnInteract) GetComponent<Collider>().enabled = false;
@@ -39,7 +39,7 @@ namespace Interactables
         
         public void InspectBehaviours()
         {
-            if(Type == InteractableType.Inspectable) inventoryRequirement.SearchItemsInInventory();
+            if(Type == InteractableType.Inspectable && inventoryRequirement) inventoryRequirement.SearchItemsInInventory();
             
             inspectBehaviours.ForEach(x=> x.Activate());
             if(deactivate == DeactivationType.OnInspect) GetComponent<Collider>().enabled = false;
