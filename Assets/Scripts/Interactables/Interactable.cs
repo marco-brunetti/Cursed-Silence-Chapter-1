@@ -29,15 +29,18 @@ namespace Interactables
             return true;
         }
         
-        // ReSharper disable Unity.PerformanceAnalysis
         public void InteractBehaviours()
         {
+            if(Type == InteractableType.Interactable) inventoryRequirement.SearchItemsInInventory();
+            
             interactBehaviours.ForEach(x=> x.Activate());
             if(deactivate == DeactivationType.OnInteract) GetComponent<Collider>().enabled = false;
         }
         
         public void InspectBehaviours()
         {
+            if(Type == InteractableType.Inspectable) inventoryRequirement.SearchItemsInInventory();
+            
             inspectBehaviours.ForEach(x=> x.Activate());
             if(deactivate == DeactivationType.OnInspect) GetComponent<Collider>().enabled = false;
         }

@@ -7,6 +7,7 @@ namespace Interactables.Behaviours
     {
         public static EventHandler<InteractableAudioEventArgs> InteractablePlayAudio;
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public void Play(AudioClip clip, float volume = 1)
         {
             var args = new InteractableAudioEventArgs("interactable", clip, volume);

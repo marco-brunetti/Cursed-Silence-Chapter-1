@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interactables.Behaviours;
 using Player;
 using UnityEngine;
@@ -24,5 +25,21 @@ namespace Interactables
         }
         public void ShowItems() => showRequiredItems?.Invoke(this, Items());
         public void HideItems() => hideRequiredItems?.Invoke(this, Items());
+
+        public void SearchItemsInInventory()
+        {
+            foreach (var item in items.ToList())
+            {
+                IInventoryItem inventoryItem = item;
+                if (PlayerController.Instance.Inventory.Contains(inventoryItem, removeItem: true, destroyItem: false))
+                {
+                    items.Remove(item);
+                    Destroy(item.gameObject);
+                }
+            }
+
+            if (items.Count == 0) successBehaviours.ForEach(x => x.Activate());
+            else failBehaviours.ForEach(x => x.Activate());
+        }
     }
 }

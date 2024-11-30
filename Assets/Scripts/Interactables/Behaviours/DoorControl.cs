@@ -1,38 +1,24 @@
 using UnityEngine;
-using SnowHorse.Components;
 using System.Collections;
-using System.Collections.Generic;
 using SnowHorse.Utils;
 
 namespace Interactables.Behaviours
 {
     public class DoorControl : Behaviour
     {
-        [SerializeField] private float maxOpenAngle = 90f;
-        //[SerializeField] private TriggerEnterDetector playerEnterDetector;
-        //[SerializeField] private TriggerExitDetector playerExitDetector;
-
-        [SerializeField] private InventoryRequirement inventoryRequirement;
-        [SerializeField] private new InteractablePlayAudioEvent audio;
         [SerializeField] private DoorState currentDoorState = DoorState.Closed;
+        [SerializeField] private float maxOpenAngle = 90f;
         [SerializeField] private new Collider collider;
-
+        [SerializeField] private new InteractablePlayAudioEvent audio;
         [SerializeField] private AudioClip openClip;
         [SerializeField] private AudioClip closeClip;
 
+        private readonly float doorMoveDuration = 1f;
         private Vector3 initialRotation;
-
         private Coroutine moveDoor;
-        private float doorMoveDuration = 1f;
 
         private void Awake()
         {
-            //playerEnterDetector.Init(new() { "player" });
-            //playerExitDetector.Init(new() { "player" });
-
-            //playerEnterDetector.TagEntered += (sender, e) => inventoryRequirement.ShowItems();
-            //playerExitDetector.TagExited += (sender, e) => inventoryRequirement.HideItems();
-
             initialRotation = transform.localRotation.eulerAngles;
         }
 
@@ -40,8 +26,6 @@ namespace Interactables.Behaviours
         {
             switch(currentDoorState)
             {
-                case DoorState.Locked:
-                    break;
                 case DoorState.Closed:
                     moveDoor ??= StartCoroutine(MoveDoor(targetYRotation: -maxOpenAngle));
                     audio.Play(openClip);
@@ -72,12 +56,7 @@ namespace Interactables.Behaviours
             yield return null;
         }
 
-
-        public bool IsInteractable() => true;
-        public bool IsInspectable() => false;
-
         private enum DoorState {
-            Locked,
             Closed,
             Open
         }
