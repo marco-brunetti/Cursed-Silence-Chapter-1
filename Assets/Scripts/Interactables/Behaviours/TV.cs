@@ -46,7 +46,6 @@ namespace Interactables.Behaviours
             return false;
         }
 
-        public override BehaviourType Type { get; }
         public override void Activate()
         {
             throw new System.NotImplementedException();

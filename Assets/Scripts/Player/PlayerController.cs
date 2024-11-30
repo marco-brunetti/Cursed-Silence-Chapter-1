@@ -123,8 +123,12 @@ namespace Player
         private void Interact()
         {
             _interactor.Interact(PlayerData, Input, _inspector);
-            
-            if(UnityEngine.Input.GetMouseButtonDown(1)) _inspector.StopInspection();
+
+            if (IsInspecting)
+            {
+                if(UnityEngine.Input.GetMouseButtonDown(0)) _inspector.Interact();
+                else if(UnityEngine.Input.GetMouseButtonDown(1)) _inspector.StopInspection();
+            }
         }
 
         private void PlayerAudio()

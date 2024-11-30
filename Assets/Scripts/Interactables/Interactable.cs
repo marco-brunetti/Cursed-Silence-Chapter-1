@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Interactables.Behaviours;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Behaviour = Interactables.Behaviours.Behaviour;
 
 namespace Interactables
@@ -8,6 +10,7 @@ namespace Interactables
     public class Interactable : MonoBehaviour, IInteractable
     { 
         [field: SerializeField] public InteractableType Type { get; private set; }
+        [SerializeField] private DeactivationType deactivate;
         
         [SerializeField] private InventoryRequirement inventoryRequirement;
         
@@ -17,8 +20,7 @@ namespace Interactables
 
         private PlayerInspectModifier inspectModifier;
         
-        [SerializeField] private DeactivationType deactivationType;
-        public List<InventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items : new List<InventoryItem>();
+        public List<IInventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items() : new List<IInventoryItem>();
 
         public bool TryGetModifier(out PlayerInspectModifier modifier)
         {
@@ -31,18 +33,18 @@ namespace Interactables
         public void InteractBehaviours()
         {
             interactBehaviours.ForEach(x=> x.Activate());
-            if(deactivationType == DeactivationType.OnInteract) GetComponent<Collider>().enabled = false;
+            if(deactivate == DeactivationType.OnInteract) GetComponent<Collider>().enabled = false;
         }
         
         public void InspectBehaviours()
         {
             inspectBehaviours.ForEach(x=> x.Activate());
-            if(deactivationType == DeactivationType.OnInspect) GetComponent<Collider>().enabled = false;
+            if(deactivate == DeactivationType.OnInspect) GetComponent<Collider>().enabled = false;
         }
 
         private enum DeactivationType
         {
-            None,
+            NoDeactivate,
             OnInteract,
             OnInspect
         }

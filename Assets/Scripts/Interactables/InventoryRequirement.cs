@@ -1,23 +1,28 @@
 using System;
 using System.Collections.Generic;
 using Interactables.Behaviours;
+using Player;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Behaviour = Interactables.Behaviours.Behaviour;
 
 namespace Interactables
 {
     public class InventoryRequirement : MonoBehaviour
     {
-        [field:SerializeField] public List<InventoryItem> Items { get; private set; }
+        [SerializeField] private List<InventoryItem> items;
+        [SerializeField] private List<Behaviour> successBehaviours;
+        [SerializeField] private List<Behaviour> failBehaviours;
         
-        [SerializeReference] private List<Behaviour> successBehaviours;
-        [SerializeReference] private List<Behaviour> failBehaviours;
-        
-        public static EventHandler<List<InventoryItem>> showRequiredItems;
-        public static EventHandler<List<InventoryItem>> hideRequiredItems;
+        public static EventHandler<List<IInventoryItem>> showRequiredItems;
+        public static EventHandler<List<IInventoryItem>> hideRequiredItems;
 
-        public void ShowItems() => showRequiredItems?.Invoke(this, Items);
-        public void HideItems() => hideRequiredItems?.Invoke(this, Items);
+        public List<IInventoryItem> Items()
+        {
+            var inventoryItems = new List<IInventoryItem>();
+            items.ForEach(x=> inventoryItems.Add(x));
+            return inventoryItems;
+        }
+        public void ShowItems() => showRequiredItems?.Invoke(this, Items());
+        public void HideItems() => hideRequiredItems?.Invoke(this, Items());
     }
 }

@@ -6,8 +6,6 @@ namespace Interactables.Behaviours
 {
     public class BehaviourDeactivateColliders : Behaviour
     {
-        public override BehaviourType Type { get; } = BehaviourType.Interactable;
-        
         [FormerlySerializedAs("_colliders")] [SerializeField] private Collider[] colliders;
         [FormerlySerializedAs("_delay")] [SerializeField] private float delay;
 

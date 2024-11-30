@@ -76,7 +76,6 @@ namespace Interactables.Behaviours
             if(_isInteracting) _timeText.text = string.Format("{0:hh:mm tt}", DateTime.Now);
         }
 
-        public override BehaviourType Type { get; }
         public void Behaviour()
         {
             throw new NotImplementedException();

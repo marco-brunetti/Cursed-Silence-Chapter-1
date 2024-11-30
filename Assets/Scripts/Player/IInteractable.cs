@@ -9,7 +9,7 @@ namespace Player
         public InteractableType Type { get; }
         public GameObject gameObject { get; }
         public bool TryGetModifier(out PlayerInspectModifier modifier);
-        public List<InventoryItem> RequiredInventoryItems{ get; }
+        public List<IInventoryItem> RequiredInventoryItems{ get; }
         public void InspectBehaviours();
         public void InteractBehaviours();
     }

@@ -20,7 +20,6 @@ namespace Interactables.Behaviours
             return true;
         }
 
-        public override BehaviourType Type { get; }
         public override void Activate()
         {
             if (_currentStrumIndex == 0 || _currentStrumIndex == 1)  //Place strum clips in grades I, VI, IV, and V

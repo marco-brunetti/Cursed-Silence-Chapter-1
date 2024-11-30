@@ -8,7 +8,7 @@ namespace Interactables.Behaviours
 {
     public class Oven : Behaviour
     {
-        [FormerlySerializedAs("_requiredIngredients")] [SerializeField] private InventoryItem requiredIngredients;
+        [FormerlySerializedAs("_requiredIngredients")] [SerializeField] private IInventoryItem requiredIngredients;
 
         [FormerlySerializedAs("_initialDelay")] [SerializeField] private float initialDelay = 1.2f;
         [FormerlySerializedAs("_light")] [SerializeField] private new Light light;
@@ -57,9 +57,9 @@ namespace Interactables.Behaviours
 
             if (inventory.Contains(requiredIngredients, removeItem:true, destroyItem:false))
             {
-                requiredIngredients.transform.SetParent(ingredientsHolder);
-                _previousPosition = requiredIngredients.transform.position;
-                _previousRotation = requiredIngredients.transform.rotation;
+                requiredIngredients.gameObject.transform.SetParent(ingredientsHolder);
+                _previousPosition = requiredIngredients.gameObject.transform.position;
+                _previousRotation = requiredIngredients.gameObject.transform.rotation;
                 _retrievingIngredients = true;
                 _ingredientsReady = true;
             }
@@ -109,8 +109,8 @@ namespace Interactables.Behaviours
             {
                 float percentage = Interpolation.Smoother(1, ref _currentLerpTime);
 
-                requiredIngredients.transform.position = Vector3.Lerp(_previousPosition, ingredientsHolder.position, percentage);
-                requiredIngredients.transform.rotation = Quaternion.Lerp(_previousRotation, ingredientsHolder.rotation, percentage);
+                requiredIngredients.gameObject.transform.position = Vector3.Lerp(_previousPosition, ingredientsHolder.position, percentage);
+                requiredIngredients.gameObject.transform.rotation = Quaternion.Lerp(_previousRotation, ingredientsHolder.rotation, percentage);
 
                 if(percentage  >= 1) 
                 {
@@ -129,7 +129,6 @@ namespace Interactables.Behaviours
             return false;
         }
 
-        public override BehaviourType Type { get; }
         public override void Activate()
         {
             throw new System.NotImplementedException();

@@ -18,7 +18,6 @@ namespace Interactables.Behaviours
             }
         }
 
-        public override BehaviourType Type { get; }
         public override void Activate()
         {
             DeactivateLights();

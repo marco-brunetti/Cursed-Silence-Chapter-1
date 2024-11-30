@@ -48,7 +48,5 @@ namespace Interactables.Behaviours
         {
             return false;
         }
-
-        public override BehaviourType Type { get; }
     }
 }

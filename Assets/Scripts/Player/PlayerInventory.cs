@@ -7,51 +7,50 @@ namespace Player
 {
     public class PlayerInventory : MonoBehaviour
     {
-        private HashSet<InventoryItem> _inventory = new();
-        private PlayerData _playerData;
+        private HashSet<IInventoryItem> inventory = new();
+        private PlayerData playerData;
 
-        public void Add(InventoryItem item)
+        public void Add(IInventoryItem item)
         {
-            if(!_playerData) _playerData = PlayerController.Instance.PlayerData;
+            if(!playerData) playerData = PlayerController.Instance.PlayerData;
      
-            item.transform.SetParent(PlayerController.Instance.InventoryHolder);
-            item.transform.localPosition = Vector3.zero;
+            item.gameObject.transform.SetParent(PlayerController.Instance.InventoryHolder);
+            item.gameObject.transform.localPosition = Vector3.zero;
             item.gameObject.SetActive(false);
             
-            _inventory.Add(item);
+            inventory.Add(item);
         }
 
-        public bool Contains(InventoryItem item, bool removeItem, bool destroyItem)
+        public bool Contains(IInventoryItem item, bool removeItem, bool destroyItem)
         {
-            if(!item) return false;
+            if(item == null) return false;
             
-            var isInInventory = _inventory.Contains(item);
+            var isInInventory = inventory.Contains(item);
 
             if (isInInventory && removeItem)
             {
-                _inventory.Remove(item);
+                inventory.Remove(item);
                 if(destroyItem) Destroy(item.gameObject);
             }
             
             return isInInventory;
         }
-
-        // ReSharper disable Unity.PerformanceAnalysis
+        
         public T Find<T>(bool removeItem, bool destroyItem) where T : Component
         {
             T component = null;
-            _inventory.FirstOrDefault(x=>x.TryGetComponent(out component));
+            inventory.FirstOrDefault(x=>x.gameObject.TryGetComponent(out component));
 
             if (component && removeItem)
             {
-                _inventory.Remove(component.GetComponent<InventoryItem>());
+                inventory.Remove(component.GetComponent<IInventoryItem>());
                 if(destroyItem) Destroy(component.gameObject);
             }
 
             return component;
         }
 
-        public void ShowInUI(List<InventoryItem> requiredItems)
+        public void ShowInUI(List<IInventoryItem> requiredItems)
         {
             
         }

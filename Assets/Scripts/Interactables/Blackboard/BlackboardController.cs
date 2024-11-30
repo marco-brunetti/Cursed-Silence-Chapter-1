@@ -308,8 +308,6 @@ namespace Interactables.Behaviours
         {
             return true;
         }
-
-        public override BehaviourType Type { get; }
     }
 
     public enum BlackboardState

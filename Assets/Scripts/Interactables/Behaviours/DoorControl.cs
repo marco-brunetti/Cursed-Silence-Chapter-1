@@ -8,8 +8,6 @@ namespace Interactables.Behaviours
 {
     public class DoorControl : Behaviour
     {
-        public override BehaviourType Type { get; } = BehaviourType.Interactable;
-        
         [SerializeField] private float maxOpenAngle = 90f;
         //[SerializeField] private TriggerEnterDetector playerEnterDetector;
         //[SerializeField] private TriggerExitDetector playerExitDetector;

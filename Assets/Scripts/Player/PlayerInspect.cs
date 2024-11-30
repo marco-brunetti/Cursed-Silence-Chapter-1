@@ -19,10 +19,23 @@ namespace Player
         private Transform previousParent;
         private Transform interactable;
         private IInteractable interactableComponent;
+        private Coroutine currentInspection;
 
         public bool IsInspecting { get; private set; }
 
         public void StopInspection() => IsInspecting = false;
+
+        public void Interact()
+        {
+            if(currentInspection == null) return;
+            
+            StopCoroutine(currentInspection);
+            currentInspection = null;
+            IsInspecting = false;
+            PlayerController.Instance.FreezePlayer(false);
+            interactableComponent.InteractBehaviours();
+            CleanVariables();
+        }
 
         // ReSharper disable Unity.PerformanceAnalysis
         public void Inspect(IInteractable item)
@@ -80,8 +93,8 @@ namespace Player
                 interactable.localRotation = Quaternion.Lerp(localRot, Quaternion.Euler(rotation), percent);
                 yield return null;
             }
-
-            StartCoroutine(Inspecting());
+            
+            currentInspection = StartCoroutine(Inspecting());
         }
 
         private IEnumerator Inspecting()
@@ -99,6 +112,7 @@ namespace Player
                 yield return null;
             }
 
+            currentInspection = null;
             StartCoroutine(ReturnInspectable());
         }
 
@@ -147,6 +161,11 @@ namespace Player
                 interactable.rotation = previousRotation;
             }
 
+            CleanVariables();
+        }
+
+        private void CleanVariables()
+        {
             interactableCollider.enabled = true;
             interactable = null;
             interactableComponent = null;
