@@ -24,6 +24,7 @@ namespace Player
         [SerializeField] private PlayerAudio _audio;
         [SerializeField] private PlayerCombat _combat;
         [SerializeField] private PostProcessVolume _postProcessVolume;
+        [SerializeField] private GameObject _playerModel;
 
         [NonSerialized] public IInteractable InteractableInSight;
         [NonSerialized] public bool FreezePlayerMovement;
@@ -34,7 +35,7 @@ namespace Player
         [Header("Player Components")] public GameObject CamHolder;
         public Transform Camera;
         public CinemachineVirtualCamera VirtualCamera;
-        public GameObject InventoryCamera;
+        public CinemachineVirtualCamera SecondaryVirtualCamera;
         public Transform InventoryHolder;
         public Transform InspectorParent;
 
@@ -52,7 +53,9 @@ namespace Player
 
         public void Pause(bool isPause)=> pause = isPause;
         
-        public bool FreezePlayer(bool freeze)=> FreezePlayerMovement = FreezePlayerRotation = freeze;
+        public bool FreezePlayer(bool freeze) => FreezePlayerMovement = FreezePlayerRotation = freeze;
+        
+        public void ActivateModel(bool activate) => _playerModel.SetActive(activate);
 
         private void Awake()
         {
