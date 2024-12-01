@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     {
         foreach(var item in requiredInventoryItems)
         {
-            if(PlayerController.Instance.Inventory.Contains(item, removeItem:false, destroyItem:false))
+            if(PlayerController.Instance.Inventory.Contains(item))
             {
 
             }
@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     {
         foreach(var item in requiredInventoryItems)
         {
-            if(PlayerController.Instance.Inventory.Contains(item, removeItem:false, destroyItem:false))
+            if(PlayerController.Instance.Inventory.Contains(item))
             {
                 
             }

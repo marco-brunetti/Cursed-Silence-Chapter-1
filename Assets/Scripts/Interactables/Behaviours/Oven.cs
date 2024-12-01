@@ -53,7 +53,7 @@ namespace Interactables.Behaviours
 
         private void PrepareIngredientsForRetrieval()
         {
-            PlayerInventory inventory = PlayerController.Instance.Inventory;
+            /*PlayerInventory inventory = PlayerController.Instance.Inventory;
 
             if (inventory.Contains(requiredIngredients, removeItem:true, destroyItem:false))
             {
@@ -62,7 +62,7 @@ namespace Interactables.Behaviours
                 _previousRotation = requiredIngredients.gameObject.transform.rotation;
                 _retrievingIngredients = true;
                 _ingredientsReady = true;
-            }
+            }*/
         }
 
         private IEnumerator ManageCooking()

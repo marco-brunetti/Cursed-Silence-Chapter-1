@@ -54,11 +54,10 @@ namespace Interactables.Behaviours
 
         public override void Activate()
         {
-            if (_currentState == BlackboardState.None)
+            if (_currentState != BlackboardState.None) return;
+            
+            if (_playerController.Inventory.Find<BlackboardItem>(removeFromInventory: true, out var item))
             {
-                var item = _playerController.Inventory.Find<BlackboardItem>(removeItem: true, destroyItem: false);
-                if (!item) return;
-
                 BlackboardItems.Add(item.gameObject);
                 SetPos(item);
                 HoldItem(item, isFirstPlacement: true);

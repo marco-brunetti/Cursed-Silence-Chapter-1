@@ -11,6 +11,8 @@ namespace Interactables
     public class InventoryRequirement : MonoBehaviour
     {
         [SerializeField] private List<InventoryItem> items;
+        [SerializeField] private bool removeFromInventory;
+        [SerializeField] private bool destroyItems;
         [SerializeField] private List<Behaviour> successBehaviours;
         [SerializeField] private List<Behaviour> failBehaviours;
         
@@ -33,6 +35,9 @@ namespace Interactables
                 IInventoryItem inventoryItem = item;
                 if (PlayerController.Instance.Inventory.Contains(inventoryItem, removeItem: true, destroyItem: false))
                 {
+                    if(removeFromInventory) PlayerController.Instance.Inventory.Remove(inventoryItem);
+                    if(destroyItems) PlayerController.Instance.Inventory.RemoveAndDestroy(inventoryItem);
+                    
                     items.Remove(item);
                     Destroy(item.gameObject);
                 }

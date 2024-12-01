@@ -37,19 +37,15 @@ namespace Interactables.Behaviours
 
         public override void Activate()
         {
-            if (_controller.BlackboardItems.Contains(gameObject))
+            if (!_controller.BlackboardItems.Contains(gameObject)) return;
+            
+            if (PlayerController.Instance.Inventory.Find<BlackboardItem>(removeFromInventory: false, out var item))
             {
-                var item = PlayerController.Instance.Inventory.Find<BlackboardItem>(removeItem: false,
-                    destroyItem: false);
-
-                if (item)
-                {
-                    Debug.Log("Put subtitle for placing somewhere else");
-                }
-                else
-                {
-                    _controller.CheckMouseHold(this);
-                }
+                Debug.Log("Put subtitle for placing somewhere else");
+            }
+            else
+            {
+                _controller.CheckMouseHold(this);
             }
         }
 
