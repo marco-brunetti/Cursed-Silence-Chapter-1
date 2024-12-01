@@ -47,10 +47,15 @@ namespace Interactables.Behaviours
 
             foreach (var item in BlackboardItems)
             {
-                var interactable = item.GetComponent<Interactable>();
-                interactable.SetInteractionType(InteractableType.Interactable);
-                interactable.AddInteractionBehaviour(interactable.GetComponent<BlackboardItem>());
+                SetItem(item);
             }
+        }
+
+        private void SetItem(GameObject item)
+        {
+            var interactable = item.GetComponent<Interactable>();
+            interactable.SetInteractionType(InteractableType.Interactable);
+            interactable.AddInteractionBehaviour(interactable.GetComponent<BlackboardItem>());
         }
 
         private void Start()
@@ -67,6 +72,7 @@ namespace Interactables.Behaviours
             
             if (_playerController.Inventory.Find<BlackboardItem>(removeFromInventory: true, out var item))
             {
+                SetItem(item.gameObject);
                 BlackboardItems.Add(item.gameObject);
                 SetPos(item);
                 HoldItem(item, isFirstPlacement: true);
