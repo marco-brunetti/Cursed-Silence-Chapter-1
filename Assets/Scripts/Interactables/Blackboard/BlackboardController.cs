@@ -5,6 +5,7 @@ using UnityEngine;
 using SnowHorse.Utils;
 using System.Linq;
 using Player;
+using UnityEngine.Events;
 
 namespace Interactables.Behaviours
 {
@@ -15,6 +16,8 @@ namespace Interactables.Behaviours
         [field: SerializeField] public Material DefaultPageMaterial { get; private set; }
 
         public EventHandler<BlackboardEventArgs> SetColliderEnabled;
+        public static EventHandler<BlackboardUIActionArgs> blackboardUIAction;
+        public static EventHandler<ShowBlackboardImageArgs> showBlackboardImage;
         public static BlackboardController Instance;
 
         private BlackboardItem currentItem;
@@ -62,8 +65,13 @@ namespace Interactables.Behaviours
         {
             _playerController = PlayerController.Instance;
             _collider = GetComponent<Collider>();
-
-            //UIManager.Instance.SetBlackboardButtons(RotateItem, ApplyRotation, ResetBlackboard);
+            
+            blackboardUIAction?.Invoke(this, new BlackboardUIActionArgs
+            {
+                RotateItem = RotateItem,
+                ApplyRotation = ApplyRotation,
+                CancelRotation = ResetBlackboard
+            });
         }
 
         public override void Activate()
@@ -81,7 +89,7 @@ namespace Interactables.Behaviours
 
         private RaycastHit GetHitObject()
         {
-            Physics.Raycast(_playerController.Camera.position, _playerController.Camera.forward, out RaycastHit hit,
+            Physics.Raycast(_playerController.Camera.position, _playerController.Camera.forward, out var hit,
                 _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer);
             return hit;
         }
@@ -95,8 +103,11 @@ namespace Interactables.Behaviours
                 if (hit.collider == _collider)
                 {
                     if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
+
+                    var rotationOffset = transform.parent.localRotation.eulerAngles.y; //fixes a rotation bug
+                    
                     currentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset,
-                        Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[currentItem.Orientation]));
+                        Quaternion.Euler(hit.normal.x + 180, hit.normal.y + rotationOffset, _orientationAngles[currentItem.Orientation] + 180));
                 }
                 else
                 {
@@ -146,13 +157,14 @@ namespace Interactables.Behaviours
         private void SetPos(BlackboardItem item)
         {
             var hit = GetHitObject();
+            var rotationOffset = transform.parent.localRotation.eulerAngles.y; //fixes a rotation bug
             item.transform.SetPositionAndRotation(hit.point,
-                Quaternion.Euler(hit.normal.x, hit.normal.y + 90, _orientationAngles[item.Orientation]));
+                Quaternion.Euler(hit.normal.x + 180, hit.normal.y + rotationOffset, _orientationAngles[item.Orientation] + 180));
             item.transform.parent = transform.parent;
             item.transform.localScale = Vector3.one;
         }
 
-        public void HoldItem(BlackboardItem item, bool isFirstPlacement = false)
+        private void HoldItem(BlackboardItem item, bool isFirstPlacement = false)
         {
             SetupComponentsForHold(isHolding: true, item);
             StartCoroutine(WaitForMouseUp(item, isFirstPlacement));
@@ -183,8 +195,12 @@ namespace Interactables.Behaviours
                 _currentState = BlackboardState.Looking;
                 currentItem = selectedItem;
                 _uiOrientation = currentItem.Orientation;
-                //UIManager.Instance.ShowBlackboardImage(sprite: currentItem.Sprite,
-                    //zAngle: _orientationAngles[_uiOrientation]);
+                
+                showBlackboardImage?.Invoke(this, new ShowBlackboardImageArgs
+                {
+                    Sprite = currentItem.Sprite,
+                    ZAngle = _orientationAngles[_uiOrientation]
+                });
 
                 if (_showRotateIconCount > 0)
                 {
@@ -209,7 +225,7 @@ namespace Interactables.Behaviours
                 _itemMoveOffset = Vector3.zero;
             }
 
-            SetColliderEnabled?.Invoke(this, new() { ColliderEnabled = !isHolding });
+            SetColliderEnabled?.Invoke(this, new BlackboardEventArgs { ColliderEnabled = !isHolding });
 
             _playerController.FreezePlayerMovement = isHolding;
             currentItem = item;
@@ -227,7 +243,8 @@ namespace Interactables.Behaviours
         private void RotateItem()
         {
             _uiOrientation = _uiOrientation.Next();
-            //UIManager.Instance.ShowBlackboardImage(zAngle: _orientationAngles[_uiOrientation]);
+            showBlackboardImage?.Invoke(this, new ShowBlackboardImageArgs { ZAngle = _orientationAngles[_uiOrientation] });
+
             //UIManager.Instance.ShowRotateItemButton(false);
         }
 
@@ -243,13 +260,13 @@ namespace Interactables.Behaviours
 
         private void ResetBlackboard()
         {
-            //UIManager.Instance.ShowBlackboardImage(false);
+            showBlackboardImage?.Invoke(this, new ShowBlackboardImageArgs { Show = false });
             SetupComponentsForLook(false);
             currentItem = null;
             _currentState = BlackboardState.None;
         }
 
-        public void CancelHold()
+        private void CancelHold()
         {
             _currentState = BlackboardState.None;
         }
@@ -290,7 +307,7 @@ namespace Interactables.Behaviours
             if (isSnapped)
             {
                 if (item.SnappedPoints.Contains(snap)) return;
-                else item.SnappedPoints.Add(snap);
+                item.SnappedPoints.Add(snap);
             }
             else
             {
@@ -299,7 +316,7 @@ namespace Interactables.Behaviours
 
             if (item.SnappedPoints.Count == item.Snaps.Length)
             {
-                item.OnSetColliderEnabled(null, new() { ColliderEnabled = false });
+                item.OnSetColliderEnabled(null, new BlackboardEventArgs { ColliderEnabled = false });
                 item.SpriteRenderer.enabled = false;
 
                 if (item.FullPage)
@@ -311,6 +328,20 @@ namespace Interactables.Behaviours
 
                 item.IsFullySnapped = true;
             }
+        }
+
+        public class BlackboardUIActionArgs : EventArgs
+        {
+            public UnityAction RotateItem;
+            public UnityAction ApplyRotation;
+            public UnityAction CancelRotation;
+        }
+
+        public class ShowBlackboardImageArgs : EventArgs
+        {
+            public bool Show = true;
+            public float ZAngle;
+            public Sprite Sprite;
         }
     }
 

@@ -15,7 +15,7 @@ namespace Interactables.Behaviours
         [NonSerialized] public bool IsFullySnapped;
         [NonSerialized] public SpriteRenderer SpriteRenderer;
         [NonSerialized] public Sprite Sprite;
-        [NonSerialized] public Collider[] Colliders;
+        [NonSerialized] private Collider[] Colliders;
 
         private BlackboardController controller;
 
