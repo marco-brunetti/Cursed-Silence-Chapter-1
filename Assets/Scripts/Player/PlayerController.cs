@@ -34,6 +34,7 @@ namespace Player
 
         [Header("Player Components")] public GameObject CamHolder;
         public Transform Camera;
+        public CinemachineBrain CinemachineBrain;
         public CinemachineVirtualCamera VirtualCamera;
         public CinemachineVirtualCamera SecondaryVirtualCamera;
         public Transform InventoryHolder;

@@ -25,6 +25,10 @@ namespace Interactables.Behaviours
             yield return new WaitForSeconds(lookDuration);
             
             EnableLookCamera(false);
+            
+            yield return new WaitForEndOfFrame();
+            yield return new WaitUntil(()=> !controller.CinemachineBrain.IsBlending);
+            
             controller.ActivateModel(true);
             controller.FreezePlayer(false);
             lookAtInteractable = null;
@@ -33,11 +37,15 @@ namespace Interactables.Behaviours
         private void EnableLookCamera(bool enable)
         {
             controller.VirtualCamera.gameObject.SetActive(!enable);
-            controller.SecondaryVirtualCamera.transform.position = enable ? transform.position : controller.Player.transform.position;
-            controller.SecondaryVirtualCamera.transform.rotation = enable ? transform.rotation : controller.Player.transform.rotation;
+
+            if (enable)
+            {
+                controller.SecondaryVirtualCamera.transform.position = transform.position;
+                controller.SecondaryVirtualCamera.transform.rotation = transform.rotation;
+                controller.SecondaryVirtualCamera.m_Lens.FieldOfView = fov > 0 ? fov : 50;
+            }
+                
             controller.SecondaryVirtualCamera.gameObject.SetActive(enable);
-            
-            controller.SecondaryVirtualCamera.m_Lens.FieldOfView = fov > 0 ? fov : 50;
         }
     }
 }
