@@ -8,6 +8,8 @@ namespace Interactables.Behaviours
     {
         [SerializeField] private float fov;
         [SerializeField] private float lookDuration;
+        [SerializeField] private float startLookBlend;
+        [SerializeField] private float endLookBlend;
 
         private PlayerController controller;
         private Coroutine lookAtInteractable;
@@ -17,7 +19,7 @@ namespace Interactables.Behaviours
         private IEnumerator LookAtInteractable()
         {
             controller = PlayerController.Instance;
-
+            
             controller.FreezePlayer(true);
             controller.ActivateModel(false);
             EnableLookCamera(true);
@@ -36,6 +38,7 @@ namespace Interactables.Behaviours
 
         private void EnableLookCamera(bool enable)
         {
+            controller.CinemachineBrain.m_DefaultBlend.m_Time = enable ? startLookBlend : endLookBlend;
             controller.VirtualCamera.gameObject.SetActive(!enable);
 
             if (enable)
@@ -44,7 +47,7 @@ namespace Interactables.Behaviours
                 controller.SecondaryVirtualCamera.transform.rotation = transform.rotation;
                 controller.SecondaryVirtualCamera.m_Lens.FieldOfView = fov > 0 ? fov : 50;
             }
-                
+            
             controller.SecondaryVirtualCamera.gameObject.SetActive(enable);
         }
     }
