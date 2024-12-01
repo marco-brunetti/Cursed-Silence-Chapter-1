@@ -11,6 +11,8 @@ namespace Interactables.Behaviours
     public class BlackboardController : Behaviour
     {
         [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
+        [field: SerializeField] public Material GlowPageMaterial { get; private set; }
+        [field: SerializeField] public Material DefaultPageMaterial { get; private set; }
 
         public EventHandler<BlackboardEventArgs> SetColliderEnabled;
         public static BlackboardController Instance;
@@ -31,7 +33,7 @@ namespace Interactables.Behaviours
             if (Instance == null) Instance = this;
             else Destroy(this);
 
-            _orientationAngles = new()
+            _orientationAngles = new Dictionary<ItemOrientation, float>
             {
                 { ItemOrientation.Up, 0 },
                 { ItemOrientation.UpLeft, 45 },
@@ -42,6 +44,13 @@ namespace Interactables.Behaviours
                 { ItemOrientation.Right, 270 },
                 { ItemOrientation.UpRight, 315 },
             };
+
+            foreach (var item in BlackboardItems)
+            {
+                var interactable = item.GetComponent<Interactable>();
+                interactable.SetInteractionType(InteractableType.Interactable);
+                interactable.AddInteractionBehaviour(interactable.GetComponent<BlackboardItem>());
+            }
         }
 
         private void Start()
@@ -296,16 +305,6 @@ namespace Interactables.Behaviours
 
                 item.IsFullySnapped = true;
             }
-        }
-
-        public bool IsInspectable()
-        {
-            return false;
-        }
-
-        public bool IsInteractable()
-        {
-            return true;
         }
     }
 

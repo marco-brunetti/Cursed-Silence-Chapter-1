@@ -8,7 +8,6 @@ namespace Interactables.Behaviours
     public class BlackboardItem : Behaviour
     {
         public ItemOrientation Orientation = ItemOrientation.Up;
-        [SerializeField] private GameObject _glow;
         [field: SerializeField] public BlackboardItem FullPage { get; private set; }
         public BlackboardItemSnap[] Snaps { get; private set; }
         public List<BlackboardItemSnap> SnappedPoints = new();
@@ -18,7 +17,7 @@ namespace Interactables.Behaviours
         [NonSerialized] public Sprite Sprite;
         [NonSerialized] public Collider[] Colliders;
 
-        private BlackboardController _controller;
+        private BlackboardController controller;
 
         private void Awake()
         {
@@ -30,14 +29,14 @@ namespace Interactables.Behaviours
 
         private void Start()
         {
-            _controller = BlackboardController.Instance;
-            _controller.SetColliderEnabled += OnSetColliderEnabled;
-            Array.ForEach(Snaps, snap => snap.SetSnapAction(_controller.SnapDetected, this));
+            controller = BlackboardController.Instance;
+            controller.SetColliderEnabled += OnSetColliderEnabled;
+            Array.ForEach(Snaps, snap => snap.SetSnapAction(controller.SnapDetected, this));
         }
 
         public override void Activate()
         {
-            if (!_controller.BlackboardItems.Contains(gameObject)) return;
+            if (!controller.BlackboardItems.Contains(gameObject)) return;
             
             if (PlayerController.Instance.Inventory.Find<BlackboardItem>(removeFromInventory: false, out var item))
             {
@@ -45,7 +44,7 @@ namespace Interactables.Behaviours
             }
             else
             {
-                _controller.CheckMouseHold(this);
+                controller.CheckMouseHold(this);
             }
         }
 
@@ -55,24 +54,11 @@ namespace Interactables.Behaviours
             Array.ForEach(Colliders, x => x.enabled = enable);
         }
 
-        public void Glow(bool enable)
-        {
-            _glow.SetActive(enable);
-        }
+        public void Glow(bool enable) => SpriteRenderer.material = enable ? controller.GlowPageMaterial : controller.DefaultPageMaterial;
 
         public void OnSetColliderEnabled(object sender, BlackboardEventArgs e)
         {
             if (!IsFullySnapped) Array.ForEach(Colliders, x => x.enabled = e.ColliderEnabled);
-        }
-
-        public bool IsInspectable()
-        {
-            return false;
-        }
-
-        public bool IsInteractable()
-        {
-            return true;
         }
     }
 }

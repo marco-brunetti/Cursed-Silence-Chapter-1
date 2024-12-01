@@ -23,6 +23,8 @@ namespace Interactables
         public List<IInventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items() : new List<IInventoryItem>();
 
         public void ShowInventoryRequirement(bool show) => inventoryRequirement?.ShowItems(show);
+        public void SetInteractionType(InteractableType type) => Type = type;
+        public void AddInteractionBehaviour(Behaviour behaviour) => interactBehaviours.Add(behaviour);
 
         public bool TryGetModifier(out PlayerInspectModifier modifier)
         {
