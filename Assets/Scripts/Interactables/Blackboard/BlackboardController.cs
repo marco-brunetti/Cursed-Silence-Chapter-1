@@ -14,6 +14,7 @@ namespace Interactables.Behaviours
         [field: SerializeField] public List<GameObject> BlackboardItems { get; private set; } = new();
         [field: SerializeField] public Material GlowPageMaterial { get; private set; }
         [field: SerializeField] public Material DefaultPageMaterial { get; private set; }
+        [SerializeField] private InteractableCamLook camLook;
 
         public EventHandler<BlackboardEventArgs> SetColliderEnabled;
         public static EventHandler<BlackboardUIActionArgs> blackboardUIAction;
@@ -89,13 +90,42 @@ namespace Interactables.Behaviours
 
         private RaycastHit GetHitObject()
         {
-            Physics.Raycast(_playerController.Camera.position, _playerController.Camera.forward, out var hit,
-                _playerController.PlayerData.InteractDistance, _playerController.PlayerData.InteractLayer);
+            var origin = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,
+                Camera.main.nearClipPlane));
+            var ray = new Ray()
+            {
+                origin = origin,
+                direction = origin - _playerController.Camera.position
+            };
+            
+            Physics.Raycast(ray, out var hit, 100);
             return hit;
         }
 
         private void Update()
         {
+            if (camLook.IsLooking)
+            {
+                
+                var hit = GetHitObject();
+
+                if (hit.collider && hit.collider.TryGetComponent(out BlackboardItem item))
+                {
+                    CheckGlowObject(item.GetComponent<IInteractable>());
+                    
+                    if(Input.GetMouseButtonDown(0)) item.Activate();
+                }
+                else
+                {
+                    CheckGlowObject(null);
+                }
+                
+                if (Input.GetMouseButtonDown(1))
+                {
+                    camLook.StopLooking();
+                }
+            }
+            
             if (_currentState == BlackboardState.Moving && Input.mousePosition != Vector3.zero)
             {
                 var hit = GetHitObject();
@@ -104,10 +134,8 @@ namespace Interactables.Behaviours
                 {
                     if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
 
-                    var rotationOffset = transform.parent.localRotation.eulerAngles.y; //fixes a rotation bug
-                    
-                    currentItem.transform.SetPositionAndRotation(hit.point + _itemMoveOffset,
-                        Quaternion.Euler(hit.normal.x + 180, hit.normal.y + rotationOffset, _orientationAngles[currentItem.Orientation] + 180));
+                    currentItem.transform.position = hit.point + _itemMoveOffset;
+                    currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation] + 180);
                 }
                 else
                 {
@@ -115,16 +143,14 @@ namespace Interactables.Behaviours
                 }
             }
 
-            if (_currentState == BlackboardState.None)
+            /*if (_currentState == BlackboardState.None)
             {
-                CheckGlowObject();
-            }
+                CheckGlowObject(_playerController.InteractableInSight);
+            }*/
         }
 
-        private void CheckGlowObject()
+        private void CheckGlowObject(IInteractable newItemInSight)
         {
-            var newItemInSight = _playerController.InteractableInSight;
-
             if (newItemInSight != null)
             {
                 if (_currentItemInSight)
@@ -157,10 +183,9 @@ namespace Interactables.Behaviours
         private void SetPos(BlackboardItem item)
         {
             var hit = GetHitObject();
-            var rotationOffset = transform.parent.localRotation.eulerAngles.y; //fixes a rotation bug
-            item.transform.SetPositionAndRotation(hit.point,
-                Quaternion.Euler(hit.normal.x + 180, hit.normal.y + rotationOffset, _orientationAngles[item.Orientation] + 180));
             item.transform.parent = transform.parent;
+            currentItem.transform.position = hit.point + _itemMoveOffset;
+            currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation] + 180);
             item.transform.localScale = Vector3.one;
         }
 
@@ -323,6 +348,7 @@ namespace Interactables.Behaviours
                 {
                     item.FullPage.Orientation = item.Orientation;
                     BlackboardItems.Add(item.FullPage.gameObject);
+                    item.FullPage.transform.localRotation = Quaternion.Euler(Vector3.zero);
                     item.FullPage.gameObject.SetActive(true);
                 }
 

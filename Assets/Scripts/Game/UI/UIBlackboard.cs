@@ -35,7 +35,7 @@ namespace Game.UI
 
             blackboardImage.transform.localRotation = Quaternion.Euler(0, 0, args.ZAngle);
             container.SetActive(args.Show);
-            GameControllerV2.ActiveCursor(args.Show);
+            //UIManager.ActiveCursor(this, args.Show);
         }
     }
 }

@@ -13,12 +13,6 @@ namespace Game.General
         public static string CurrentLayoutStyle { get; private set; }// = "style0";
         //private Transform playerTransform;
         public static List<Enemy> enemyWaitingList = new();
-
-        public static void ActiveCursor(bool enable)
-        {
-            Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = enable;
-        }
         
         public static void SetLevelStyle(string newStyle) => CurrentLayoutStyle = newStyle;
 

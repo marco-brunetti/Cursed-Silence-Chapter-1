@@ -1,5 +1,6 @@
 using UnityEngine;
 using Enemies;
+using Game.UI;
 using Player;
 using Layouts;
 using Interactables.Behaviours;
@@ -23,7 +24,7 @@ namespace Game.General
         private void Start()
         {
             OnLayoutStyleChanged(null, "style1");
-            GameControllerV2.ActiveCursor(false);
+            UIManager.ActiveCursor(this, false);
         }
 
         private void OnLayoutStyleChanged(object sender, string style)

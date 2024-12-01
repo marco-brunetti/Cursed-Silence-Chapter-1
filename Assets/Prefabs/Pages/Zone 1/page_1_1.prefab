@@ -121,10 +121,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1841c4163f33d4846ad11e87ae810ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Type>k__BackingField: 0
+  <Type>k__BackingField: 1
   deactivate: 0
   inventoryRequirement: {fileID: 0}
-  interactBehaviours: []
+  interactBehaviours:
+  - {fileID: 1367784282008059358}
   inspectBehaviours: []
 --- !u!114 &1367784282008059358
 MonoBehaviour:
@@ -400,6 +401,7 @@ GameObject:
   - component: {fileID: 5043226321827858314}
   - component: {fileID: 8021378903435853404}
   - component: {fileID: 3880927247263924764}
+  - component: {fileID: 3228654517446856384}
   - component: {fileID: 1999488416890250836}
   - component: {fileID: 8316749504211679409}
   m_Layer: 0
@@ -501,6 +503,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.06588591, y: 0.08756185, z: 0.01793236}
   m_Center: {x: -0.018495884, y: 0.022045823, z: 0}
+--- !u!114 &3228654517446856384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5739554296597458296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cfce74c1d1af244f93d549f026ba2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Position>k__BackingField: {x: 0, y: 0, z: 0}
+  <Rotation>k__BackingField: {x: 0, y: 0, z: 0}
+  <Scale>k__BackingField: {x: 3, y: 3, z: 2}
+  <RotateX>k__BackingField: 0
+  <RotateY>k__BackingField: 0
 --- !u!114 &1999488416890250836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -530,7 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c057fc3118ef264b81850f923b1cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Orientation: 0
+  Orientation: 4
   <FullPage>k__BackingField: {fileID: 1367784282008059358}
   SnappedPoints: []
 --- !u!1 &8122083512249056671

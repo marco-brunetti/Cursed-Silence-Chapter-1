@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Interactables;
+using Interactables.Behaviours;
 using Player;
 using UnityEngine;
 
@@ -7,7 +9,27 @@ namespace Game.UI
 {
     public class UIManager : MonoBehaviour
     {
+        [SerializeField] private GameObject centerPoint;
+
+        private static EventHandler<bool> activateCenterPoint;
         
+        private void Awake()
+        {
+            InteractableCamLook.showUICursor += ActiveCursor;
+            UIManager.activateCenterPoint += ActivateCenterPoint;
+        }
+
+        public static void ActiveCursor(object sender, bool enable)
+        {
+            Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = enable;
+            activateCenterPoint?.Invoke(sender, !enable);
+        }
+
+        private void ActivateCenterPoint(object sender, bool activate)
+        {
+            centerPoint.SetActive(activate);
+        }
 
         /*[SerializeField] private UIPrompts _prompts;
 
@@ -68,28 +90,6 @@ namespace Game.UI
     private void ManageCanvases()
     {
         CanvasControl.ManageCanvases(UIData, _pause);
-    }
-
-    public void SetBlackboardButtons(UnityAction rotateAction, UnityAction applyAction, UnityAction cancelAction)
-    {
-        UIData.BlackboardRotateItemButton.onClick.AddListener(rotateAction);
-        UIData.ApplyRotationButton.onClick.AddListener(applyAction);
-        UIData.CancelRotationButton.onClick.AddListener(cancelAction);
-    }
-
-    public void ShowBlackboardImage(bool show = true, Sprite sprite = null, float zAngle = 0)
-    {
-        if(sprite) UIData.BlackboardImage.sprite = sprite;
-
-        UIData.BlackboardImage.transform.localRotation = Quaternion.Euler(0, 0, zAngle);
-        UIData.BlackboardUI.SetActive(show);
-        //GameController.Instance.ShowCursor = show;
-    }
-
-    public void ShowRotateItemButton(bool show)
-    {
-        if (show) UIData.BlackboardRotateImage.color = Color.white;
-        else UIData.BlackboardRotateImage.color = new Color(0, 0, 0, 0);
     }*/
     }
 }

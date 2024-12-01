@@ -243,6 +243,7 @@ GameObject:
   - component: {fileID: 8424145577604747521}
   - component: {fileID: 128945285706917777}
   - component: {fileID: 7027813312530154302}
+  - component: {fileID: 3384466310388753733}
   - component: {fileID: 6276008753471217415}
   - component: {fileID: 8471132989920536065}
   - component: {fileID: 2010365473175091148}
@@ -344,6 +345,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.070369706, y: 0.09690389, z: 0.017931934}
   m_Center: {x: 0.018869584, y: 0.021485528, z: -0.0057773944}
+--- !u!114 &3384466310388753733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3356933357987816542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cfce74c1d1af244f93d549f026ba2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Position>k__BackingField: {x: 0, y: 0, z: 0}
+  <Rotation>k__BackingField: {x: 0, y: 0, z: 0}
+  <Scale>k__BackingField: {x: 3, y: 3, z: 2}
+  <RotateX>k__BackingField: 0
+  <RotateY>k__BackingField: 0
 --- !u!114 &6276008753471217415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,6 +404,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c057fc3118ef264b81850f923b1cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Orientation: 0
+  Orientation: 4
   <FullPage>k__BackingField: {fileID: 0}
   SnappedPoints: []

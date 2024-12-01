@@ -31,6 +31,7 @@ namespace Player
         [NonSerialized] public bool FreezePlayerRotation;
         [NonSerialized] public bool IsOutside;
         [NonSerialized] public bool IsTeleporting;
+        [NonSerialized] public bool CanInteract = true;
 
         [Header("Player Components")] public GameObject CamHolder;
         public Transform Camera;
@@ -126,6 +127,8 @@ namespace Player
 
         private void Interact()
         {
+            if(!CanInteract) return;
+            
             _interactor.Interact(PlayerData, Input, _inspector);
 
             if (IsInspecting)
