@@ -1,48 +1,15 @@
 using System.Collections.Generic;
 using Interactables;
-using Interactables.Behaviours;
-using UnityEngine;
 using Player;
+using UnityEngine;
 
-public class UIManager : MonoBehaviour
+namespace Game.UI
 {
-    private void Start()
+    public class UIManager : MonoBehaviour
     {
-        InventoryRequirement.showRequiredItems += ShowInventoryItem;
-        InventoryRequirement.hideRequiredItems += HideInventoryItem;
-    }
-
-    private void ShowInventoryItem(object sender, List<IInventoryItem> requiredInventoryItems)
-    {
-        foreach(var item in requiredInventoryItems)
-        {
-            if(PlayerController.Instance.Inventory.Contains(item))
-            {
-
-            }
-        }
-
-
         
 
-        Debug.Log("Show Inventory Item");
-    }
-
-    private void HideInventoryItem(object sender, List<IInventoryItem> requiredInventoryItems)
-    {
-        foreach(var item in requiredInventoryItems)
-        {
-            if(PlayerController.Instance.Inventory.Contains(item))
-            {
-                
-            }
-        }
-
-
-        Debug.Log("Hide Inventory Item");
-    }
-
-  /*[SerializeField] private UIPrompts _prompts;
+        /*[SerializeField] private UIPrompts _prompts;
 
     public UIData UIData;
     public UICanvasControl CanvasControl;
@@ -124,4 +91,5 @@ public class UIManager : MonoBehaviour
         if (show) UIData.BlackboardRotateImage.color = Color.white;
         else UIData.BlackboardRotateImage.color = new Color(0, 0, 0, 0);
     }*/
+    }
 }

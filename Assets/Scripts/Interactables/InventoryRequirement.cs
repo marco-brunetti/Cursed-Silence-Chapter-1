@@ -17,7 +17,9 @@ namespace Interactables
         [SerializeField] private List<Behaviour> failBehaviours;
         
         public static EventHandler<List<IInventoryItem>> showRequiredItems;
-        public static EventHandler<List<IInventoryItem>> hideRequiredItems;
+        public static EventHandler hideRequiredItems;
+
+        private bool displayingRequirements;
 
         public List<IInventoryItem> Items()
         {
@@ -25,14 +27,26 @@ namespace Interactables
             items.ForEach(x=> inventoryItems.Add(x));
             return inventoryItems;
         }
-        public void ShowItems() => showRequiredItems?.Invoke(this, Items());
-        public void HideItems() => hideRequiredItems?.Invoke(this, Items());
+
+        public void ShowItems(bool show)
+        {
+            if (show && !displayingRequirements)
+            {
+                showRequiredItems?.Invoke(this, Items());
+                displayingRequirements = true;
+            }
+            else if(!show && displayingRequirements)
+            {
+                hideRequiredItems?.Invoke(this, null);
+                displayingRequirements = false;
+            }
+        }
 
         public void SearchItemsInInventory()
         {
             foreach (var item in items.ToList())
             {
-                if (!PlayerController.Instance.Inventory.Contains(item)) continue;
+                if(!AllItemsInInventory()) break;
                 
                 if(removeFromInventory) PlayerController.Instance.Inventory.Remove(item);
                 if(destroyItems) PlayerController.Instance.Inventory.RemoveAndDestroy(item);
@@ -42,6 +56,16 @@ namespace Interactables
 
             if (items.Count == 0) successBehaviours.ForEach(x => x.Activate());
             else failBehaviours.ForEach(x => x.Activate());
+        }
+
+        private bool AllItemsInInventory()
+        {
+            foreach (var item in items)
+            {
+                if(!PlayerController.Instance.Inventory.Contains(item)) return false;
+            }
+
+            return true;
         }
     }
 }

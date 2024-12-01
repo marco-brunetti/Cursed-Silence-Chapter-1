@@ -10,6 +10,7 @@ namespace Player
         public GameObject gameObject { get; }
         public bool TryGetModifier(out PlayerInspectModifier modifier);
         public List<IInventoryItem> RequiredInventoryItems{ get; }
+        public void ShowInventoryRequirement(bool show);
         public void InspectBehaviours();
         public void InteractBehaviours();
     }

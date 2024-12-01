@@ -32,7 +32,11 @@ namespace Player
                 var interactable = Raycaster.Find<IInteractable>(rayData)?.HitObject;
 
                 if(interactable != null) ManageInteraction(interactable, inspector);
-                else playerController.InteractableInSight = null;
+                else
+                {
+                    playerController.InteractableInSight?.ShowInventoryRequirement(false);
+                    playerController.InteractableInSight = null;
+                }
             }
         }
 
@@ -42,6 +46,7 @@ namespace Player
 
             if (interactable.RequiredInventoryItems.Count > 0)
             {
+                interactable.ShowInventoryRequirement(true);
                 //Show inventory required object in UI
             }
 

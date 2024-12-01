@@ -22,6 +22,8 @@ namespace Interactables
         
         public List<IInventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items() : new List<IInventoryItem>();
 
+        public void ShowInventoryRequirement(bool show) => inventoryRequirement?.ShowItems(show);
+
         public bool TryGetModifier(out PlayerInspectModifier modifier)
         {
             if (inspectModifier == null) return TryGetComponent(out modifier);
