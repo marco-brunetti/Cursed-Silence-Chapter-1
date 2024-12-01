@@ -6,7 +6,6 @@ namespace Interactables.Behaviours
 {
     public class InteractableCamLook : Behaviour
     {
-        [SerializeField] private Transform target;
         [SerializeField] private float fov;
         [SerializeField] private float lookDuration;
 
