@@ -28,6 +28,12 @@ namespace Player
 
         public void Manage(float currentVelocity)
         {
+            if (_controller.InteractableInSight != null)
+            {
+                NormalState(currentVelocity);
+                return;
+            }
+            
             if (currentLightAttackCooldown > 0)
             {
                 currentLightAttackCooldown -= Time.deltaTime;

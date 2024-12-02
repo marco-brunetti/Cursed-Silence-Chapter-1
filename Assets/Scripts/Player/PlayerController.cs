@@ -150,7 +150,7 @@ namespace Player
 
         private void ManageCombat()
         {
-            if (InteractableInSight == null) _combat.Manage(currentVelocity: Character.velocity.magnitude);
+            _combat.Manage(currentVelocity: Character.velocity.magnitude);
         }
 
         public void ActivateDepthOfField(bool enable, float currentValue = -1)
