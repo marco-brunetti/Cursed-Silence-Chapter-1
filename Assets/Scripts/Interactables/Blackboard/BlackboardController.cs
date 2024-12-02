@@ -100,6 +100,8 @@ namespace Interactables.Behaviours
 
         private IEnumerator ControlState()
         {
+            InventoryRequirement.hideRequiredItems?.Invoke(this, null);
+            
             yield return new WaitUntil(() => camLook.IsLooking);
             
             while (camLook.IsLooking)

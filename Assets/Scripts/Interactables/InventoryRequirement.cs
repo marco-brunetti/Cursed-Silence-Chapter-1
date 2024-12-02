@@ -11,6 +11,7 @@ namespace Interactables
     public class InventoryRequirement : MonoBehaviour
     {
         [SerializeField] private List<InventoryItem> items;
+        [SerializeField] private bool waitForAllItems = true;
         [SerializeField] private bool removeFromInventory;
         [SerializeField] private bool destroyItems;
         [SerializeField] private List<Behaviour> successBehaviours;
@@ -46,7 +47,12 @@ namespace Interactables
         {
             foreach (var item in items.ToList())
             {
-                if(!AllItemsInInventory()) break;
+                if (waitForAllItems && !AllItemsInInventory())
+                {
+                    break;
+                }
+                
+                if(!PlayerController.Instance.Inventory.Contains(item)) continue;
                 
                 if(removeFromInventory) PlayerController.Instance.Inventory.Remove(item);
                 if(destroyItems) PlayerController.Instance.Inventory.RemoveAndDestroy(item);
