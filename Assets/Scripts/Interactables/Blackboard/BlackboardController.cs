@@ -6,7 +6,6 @@ using SnowHorse.Utils;
 using System.Linq;
 using Player;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
@@ -26,6 +25,7 @@ namespace Interactables.Behaviours
         private BlackboardItem currentItem;
         private int _showRotateIconCount = 3;
         private int _defaultRendererOrder;
+        private bool isLookingInUI;
         private Collider _collider;
         private PlayerController _playerController;
         private BlackboardItem _currentItemInSight;
@@ -106,6 +106,12 @@ namespace Interactables.Behaviours
             
             while (camLook.IsLooking)
             {
+                if (isLookingInUI)
+                {
+                    yield return null;
+                    continue;
+                }
+                
                 var hit = GetHitObject();
 
                 if (hit.collider)
@@ -127,7 +133,7 @@ namespace Interactables.Behaviours
                                     if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
 
                                     currentItem.transform.position = hit.point + _itemMoveOffset;
-                                    currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation]);
+                                    currentItem.transform.localRotation = Quaternion.Euler(0, 0, _orientationAngles[currentItem.Orientation]);
                                 }
 
                                 break;
@@ -198,7 +204,7 @@ namespace Interactables.Behaviours
         {
             item.transform.parent = transform.parent;
             item.transform.position = hit.point + _itemMoveOffset;
-            item.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[item.Orientation]);
+            item.transform.localRotation = Quaternion.Euler(0, 0, _orientationAngles[item.Orientation]);
             item.transform.localScale = Vector3.one;
             item.gameObject.SetActive(true);
         }
@@ -273,6 +279,7 @@ namespace Interactables.Behaviours
 
         private void SetupComponentsForLook(bool isLooking)
         {
+            isLookingInUI = isLooking;
             _playerController.FreezePlayerMovement = isLooking;
             _playerController.FreezePlayerRotation = isLooking;
             _playerController.ActivateDepthOfField(isLooking);
@@ -362,7 +369,7 @@ namespace Interactables.Behaviours
                 {
                     item.FullPage.Orientation = item.Orientation;
                     BlackboardItems.Add(item.FullPage.gameObject);
-                    item.FullPage.transform.localRotation = Quaternion.Euler(Vector3.zero);
+                    item.FullPage.transform.localRotation = Quaternion.Euler(0, 0, _orientationAngles[item.FullPage.Orientation]);
                     item.FullPage.gameObject.SetActive(true);
                 }
 
