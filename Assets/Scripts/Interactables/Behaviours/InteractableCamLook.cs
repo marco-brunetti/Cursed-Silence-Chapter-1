@@ -3,7 +3,6 @@ using System.Collections;
 using Cinemachine;
 using UnityEngine;
 using Player;
-using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
@@ -21,7 +20,6 @@ namespace Interactables.Behaviours
 
         private PlayerController controller;
         private Coroutine lookAtInteractable;
-
         
         public override void Activate() => lookAtInteractable ??= StartCoroutine(LookAtInteractable());
         
@@ -41,6 +39,7 @@ namespace Interactables.Behaviours
             }
             else
             {
+                yield return new WaitForSeconds(startLookBlend);
                 IsLooking = true;
                 yield return new WaitUntil(() => !IsLooking);
             }
@@ -64,17 +63,17 @@ namespace Interactables.Behaviours
             controller.CinemachineBrain.m_DefaultBlend.m_Time = enable ? startLookBlend : endLookBlend;
             controller.VirtualCamera.gameObject.SetActive(!enable);
 
+            var vCam = controller.SecondaryVirtualCamera;
+
             if (enable)
             {
-                controller.SecondaryVirtualCamera.transform.position = transform.position;
-                controller.SecondaryVirtualCamera.transform.rotation = transform.rotation;
-                controller.SecondaryVirtualCamera.m_Lens.FieldOfView = fov > 0 ? fov : 50;
+                vCam.transform.position = transform.position;
+                vCam.transform.rotation = transform.rotation;
+                vCam.m_Lens.FieldOfView = fov > 0 ? fov : 50;
             }
 
-            controller.SecondaryVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>()
-                .m_NoiseProfile = noise;
-
-            controller.SecondaryVirtualCamera.gameObject.SetActive(enable);
+            vCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_NoiseProfile = noise;
+            vCam.gameObject.SetActive(enable);
         }
     }
 }

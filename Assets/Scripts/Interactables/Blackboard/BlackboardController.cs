@@ -6,6 +6,7 @@ using SnowHorse.Utils;
 using System.Linq;
 using Player;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Interactables.Behaviours
 {
@@ -15,6 +16,7 @@ namespace Interactables.Behaviours
         [field: SerializeField] public Material GlowPageMaterial { get; private set; }
         [field: SerializeField] public Material DefaultPageMaterial { get; private set; }
         [SerializeField] private InteractableCamLook camLook;
+        [SerializeField] private LayerMask blackboardLayerMask;
 
         public EventHandler<BlackboardEventArgs> SetColliderEnabled;
         public static EventHandler<BlackboardUIActionArgs> blackboardUIAction;
@@ -31,6 +33,7 @@ namespace Interactables.Behaviours
         private ItemOrientation _uiOrientation;
         private BlackboardState _currentState;
         private Dictionary<ItemOrientation, float> _orientationAngles;
+        private Coroutine controlState;
 
         private void Awake()
         {
@@ -57,6 +60,7 @@ namespace Interactables.Behaviours
 
         private void SetItem(GameObject item)
         {
+            item.layer = LayerMask.NameToLayer("Chalkboard Item");
             var interactable = item.GetComponent<Interactable>();
             interactable.SetInteractionType(InteractableType.Interactable);
             interactable.AddInteractionBehaviour(interactable.GetComponent<BlackboardItem>());
@@ -77,15 +81,7 @@ namespace Interactables.Behaviours
 
         public override void Activate()
         {
-            if (_currentState != BlackboardState.None) return;
-            
-            if (_playerController.Inventory.Find<BlackboardItem>(removeFromInventory: true, out var item))
-            {
-                SetItem(item.gameObject);
-                BlackboardItems.Add(item.gameObject);
-                SetPos(item);
-                HoldItem(item, isFirstPlacement: true);
-            }
+            controlState ??= StartCoroutine(ControlState());
         }
 
         private RaycastHit GetHitObject()
@@ -98,55 +94,71 @@ namespace Interactables.Behaviours
                 direction = origin - _playerController.Camera.position
             };
             
-            Physics.Raycast(ray, out var hit, 100);
+            Physics.Raycast(ray, out var hit, 100, blackboardLayerMask);
             return hit;
         }
 
-        private void Update()
+        private IEnumerator ControlState()
         {
-            if (camLook.IsLooking)
-            {
-                
-                var hit = GetHitObject();
-
-                if (hit.collider && hit.collider.TryGetComponent(out BlackboardItem item))
-                {
-                    CheckGlowObject(item.GetComponent<IInteractable>());
-                    
-                    if(Input.GetMouseButtonDown(0)) item.Activate();
-                }
-                else
-                {
-                    CheckGlowObject(null);
-                }
-                
-                if (Input.GetMouseButtonDown(1))
-                {
-                    camLook.StopLooking();
-                }
-            }
+            yield return new WaitUntil(() => camLook.IsLooking);
             
-            if (_currentState == BlackboardState.Moving && Input.mousePosition != Vector3.zero)
+            while (camLook.IsLooking)
             {
                 var hit = GetHitObject();
 
-                if (hit.collider == _collider)
+                if (hit.collider)
                 {
-                    if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
+                    if (hit.collider == _collider)
+                    {
+                        switch (_currentState)
+                        {
+                            case BlackboardState.None:
+                            {
+                                if (Input.GetMouseButtonDown(0)) GetInventoryItem(hit);
+                                CheckGlowObject(null);
+                                break;
+                            }
+                            case BlackboardState.Moving when Input.mousePosition != Vector3.zero:
+                            {
+                                if (hit.collider == _collider)
+                                {
+                                    if (_itemMoveOffset == Vector3.zero) _itemMoveOffset = currentItem.transform.position - hit.point;
 
-                    currentItem.transform.position = hit.point + _itemMoveOffset;
-                    currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation] + 180);
+                                    currentItem.transform.position = hit.point + _itemMoveOffset;
+                                    currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation]);
+                                }
+
+                                break;
+                            }
+                            case BlackboardState.Looking:
+                                break;
+                        }
+                    }
+                    else if (hit.collider.TryGetComponent(out BlackboardItem item))
+                    {
+                        CheckGlowObject(item.GetComponent<IInteractable>());
+                    
+                        if(Input.GetMouseButtonDown(0)) item.Activate();
+                    }
                 }
-                else
-                {
-                    //IF TIME PASSES, THE PLAYER SHOULD SAY TO LOOK AT THE CHALKBOARD
-                }
+
+                if (Input.GetMouseButtonDown(1)) camLook.StopLooking();
+                
+                yield return null;
             }
 
-            /*if (_currentState == BlackboardState.None)
+            controlState = null;
+        }
+
+        private void GetInventoryItem(RaycastHit hitInfo)
+        {
+            if (_playerController.Inventory.Find<BlackboardItem>(removeFromInventory: true, out var item))
             {
-                CheckGlowObject(_playerController.InteractableInSight);
-            }*/
+                SetItem(item.gameObject);
+                BlackboardItems.Add(item.gameObject);
+                SetPos(item, hitInfo);
+                HoldItem(item, isFirstPlacement: true);
+            }
         }
 
         private void CheckGlowObject(IInteractable newItemInSight)
@@ -180,13 +192,13 @@ namespace Interactables.Behaviours
             }
         }
 
-        private void SetPos(BlackboardItem item)
+        private void SetPos(BlackboardItem item, RaycastHit hit)
         {
-            var hit = GetHitObject();
             item.transform.parent = transform.parent;
-            currentItem.transform.position = hit.point + _itemMoveOffset;
-            currentItem.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[currentItem.Orientation] + 180);
+            item.transform.position = hit.point + _itemMoveOffset;
+            item.transform.localRotation = Quaternion.Euler(hit.normal.x, hit.normal.y, _orientationAngles[item.Orientation]);
             item.transform.localScale = Vector3.one;
+            item.gameObject.SetActive(true);
         }
 
         private void HoldItem(BlackboardItem item, bool isFirstPlacement = false)

@@ -18,6 +18,7 @@ namespace Interactables.Behaviours
         [NonSerialized] private Collider[] Colliders;
 
         private BlackboardController controller;
+        private readonly int emissionMap = Shader.PropertyToID("_EmissionMap");
 
         private void Awake()
         {
@@ -54,7 +55,11 @@ namespace Interactables.Behaviours
             Array.ForEach(Colliders, x => x.enabled = enable);
         }
 
-        public void Glow(bool enable) => SpriteRenderer.material = enable ? controller.GlowPageMaterial : controller.DefaultPageMaterial;
+        public void Glow(bool enable)
+        {
+            SpriteRenderer.material = enable ? controller.GlowPageMaterial : controller.DefaultPageMaterial;
+            if(enable) SpriteRenderer.material.SetTexture(emissionMap, SpriteRenderer.sprite.texture);
+        }
 
         public void OnSetColliderEnabled(object sender, BlackboardEventArgs e)
         {
