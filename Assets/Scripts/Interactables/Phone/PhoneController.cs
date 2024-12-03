@@ -9,9 +9,9 @@ namespace Interactables.Behaviours
 {
     public class PhoneController : Behaviour
     {
-        [SerializeField] private GameObject _canvas;
+        [SerializeField] private GameObject uiContainer;
 
-        [SerializeField] private TextMeshProUGUI _timeText;
+        [SerializeField] private TextMeshProUGUI uiTimeText;
 
         [Header("App buttons")]
         [SerializeField] private Button _messageAppButton;
@@ -38,7 +38,7 @@ namespace Interactables.Behaviours
 
             while (_isInteracting)
             {
-                _timeText.text = $"{DateTime.Now:hh:mm tt}";
+                uiTimeText.text = $"{DateTime.Now:hh:mm tt}";
                 
                 //Add this to button
                 if (Input.GetMouseButtonDown(1))
@@ -58,9 +58,9 @@ namespace Interactables.Behaviours
 
         private IEnumerator ActivateCanvas(bool enable)
         {
-            yield return new WaitForSecondsRealtime(0.4f);
+            if(enable) yield return new WaitForSecondsRealtime(0.4f);
             Interactable.showUICursor?.Invoke(this, enable);
-            _canvas.SetActive(enable);
+            uiContainer.SetActive(enable);
         }
 
 
