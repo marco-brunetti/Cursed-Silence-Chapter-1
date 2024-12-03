@@ -18,67 +18,55 @@ namespace Interactables.Behaviours
 
 
         private bool _isInteracting;
+        private Coroutine phoneLoop;
 
         public override void Activate()
         {
+            phoneLoop ??= StartCoroutine(PhoneLoop());
+        }
+
+        private IEnumerator PhoneLoop()
+        {
             var playerController = PlayerController.Instance;
 
-            /*if(isInspecting)
+            playerController.DeactivateInteraction();
+            playerController.FreezePlayer(true);
+            
+            yield return StartCoroutine(ActivateCanvas(true));
+
+            _isInteracting = true;
+
+            while (_isInteracting)
             {
-                StartCoroutine(ActivateCanvas(true));
+                _timeText.text = $"{DateTime.Now:hh:mm tt}";
+                
+                //Add this to button
+                if (Input.GetMouseButtonDown(1))
+                {
+                    _isInteracting = false;
+                    playerController.ReactivateInteraction();
+                }
 
-                playerController.InventoryCamera.SetActive(false);
-                playerController.InventoryCamera.SetActive(true);
-
-                _isInteracting = true;
-
-                //UIManager.Instance.HideUI = true;
+                yield return null;
             }
-            if(!isInspecting && !isInspecting)
-            {
-                StartCoroutine(ActivateCanvas(false));
+            
+            StartCoroutine(ActivateCanvas(false));
+            playerController.FreezePlayer(false);
 
-                playerController.FreezePlayerMovement = false;
-                playerController.FreezePlayerRotation = false;
-
-                _isInteracting = false;
-
-                //GameController.Instance.ShowCursor = false;
-                //UIManager.Instance.HideUI = false;
-            }*/
+            phoneLoop = null;
         }
 
         private IEnumerator ActivateCanvas(bool enable)
         {
             yield return new WaitForSecondsRealtime(0.4f);
-            //GameController.Instance.ShowCursor = enable;
+            Interactable.showUICursor?.Invoke(this, enable);
             _canvas.SetActive(enable);
-        }
-
-        public bool IsInteractable()
-        {
-            return false;
-        }
-
-        public bool IsInspectable()
-        {
-            return true;
         }
 
 
         private void OnEnable()
         {
             //add camera to canvas
-        }
-
-        void Update()
-        {
-            if(_isInteracting) _timeText.text = string.Format("{0:hh:mm tt}", DateTime.Now);
-        }
-
-        public void Behaviour()
-        {
-            throw new NotImplementedException();
         }
     }
 }

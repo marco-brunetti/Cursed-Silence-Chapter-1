@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Interactables.Behaviours;
 using Player;
@@ -55,5 +56,7 @@ namespace Interactables
             OnInteract,
             OnInspect
         }
+        
+        public static EventHandler<bool> showUICursor;
     }
 }

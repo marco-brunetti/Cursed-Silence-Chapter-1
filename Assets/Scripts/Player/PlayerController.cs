@@ -31,7 +31,6 @@ namespace Player
         [NonSerialized] public bool FreezePlayerRotation;
         [NonSerialized] public bool IsOutside;
         [NonSerialized] public bool IsTeleporting;
-        [NonSerialized] public bool CanInteract = true;
 
         [Header("Player Components")] public GameObject CamHolder;
         public Transform Camera;
@@ -52,12 +51,22 @@ namespace Player
         public static EventHandler<Transform> SetPlayerTransform; 
 
         private bool pause;
+        private bool canInteract = true;
 
         public void Pause(bool isPause)=> pause = isPause;
         
         public bool FreezePlayer(bool freeze) => FreezePlayerMovement = FreezePlayerRotation = freeze;
         
         public void ActivateModel(bool activate) => _playerModel.SetActive(activate);
+
+        public void DeactivateInteraction() => canInteract = false;
+
+        public void ReactivateInteraction()
+        {
+            canInteract = true;
+            Interact();
+        }
+        
 
         private void Awake()
         {
@@ -127,7 +136,7 @@ namespace Player
 
         private void Interact()
         {
-            if(!CanInteract) return;
+            if(!canInteract) return;
             
             _interactor.Interact(PlayerData, Input, _inspector);
 

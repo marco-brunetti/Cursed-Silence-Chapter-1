@@ -16,7 +16,7 @@ namespace Interactables.Behaviours
         [SerializeField] private NoiseSettings noise;
         
         public bool IsLooking { get; private set; }
-        public static EventHandler<bool> showUICursor;
+        
 
         private PlayerController controller;
         private Coroutine lookAtInteractable;
@@ -56,9 +56,10 @@ namespace Interactables.Behaviours
 
         private void EnableLookCamera(bool enable)
         {
-            controller.CanInteract = !enable;
+            if (enable) controller.DeactivateInteraction();
+            else controller.ReactivateInteraction();
             
-            if(showCursor) showUICursor?.Invoke(this, enable);
+            if(showCursor) Interactable.showUICursor?.Invoke(this, enable);
             
             controller.CinemachineBrain.m_DefaultBlend.m_Time = enable ? startLookBlend : endLookBlend;
             controller.VirtualCamera.gameObject.SetActive(!enable);

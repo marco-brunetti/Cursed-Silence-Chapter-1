@@ -15,8 +15,8 @@ namespace Game.UI
         
         private void Awake()
         {
-            InteractableCamLook.showUICursor += ActiveCursor;
-            UIManager.activateCenterPoint += ActivateCenterPoint;
+            Interactable.showUICursor += ActiveCursor;
+            activateCenterPoint += ActivateCenterPoint;
         }
 
         public static void ActiveCursor(object sender, bool enable)
