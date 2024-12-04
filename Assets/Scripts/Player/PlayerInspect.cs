@@ -7,10 +7,8 @@ namespace Player
 {
     public class PlayerInspect : MonoBehaviour
     {
-        private readonly float rotationSpeed = 0.2f;
+        private readonly float rotationSpeed = 0.15f;
         private readonly float inspectableMoveDuration = 0.3f;
-        
-        private bool[] rotateXY;
         private Vector2 currentRotation;
         private Vector3 previousPosition;
         private Vector3 previousLocalScale;
@@ -18,22 +16,23 @@ namespace Player
         private Collider interactableCollider;
         private Transform previousParent;
         private Transform interactable;
-        private IInteractable interactableComponent;
         private Coroutine currentInspection;
+        private IInteractable interactableComponent;
+        private PlayerInspectModifier modifier;
 
         public bool IsInspecting { get; private set; }
-
         public void StopInspection() => IsInspecting = false;
 
         public void Interact()
         {
-            if(currentInspection == null) return;
+            if(currentInspection == null || interactableComponent?.CanInteract == false) return;
+            
+            interactableComponent?.InteractBehaviours();
             
             StopCoroutine(currentInspection);
             currentInspection = null;
             IsInspecting = false;
             PlayerController.Instance.FreezePlayer(false);
-            interactableComponent.InteractBehaviours();
             CleanVariables();
         }
 
@@ -61,16 +60,12 @@ namespace Player
             var rotation = Vector3.zero;
             var localScale = Vector3.zero;
             
-            if (interactableComponent.TryGetModifier(out var modifier))
+            if (interactableComponent.TryGetModifier(out var inspectModifier))
             {
-                rotateXY = modifier.RotateXY;
+                modifier = inspectModifier;
                 position = modifier.Position;
                 rotation = modifier.Rotation;
                 localScale = modifier.Scale;
-            }
-            else
-            {
-                rotateXY = new[] { false, false };
             }
             
             StartCoroutine(GoToInspectionPosition(position, rotation, localScale));
@@ -103,12 +98,6 @@ namespace Player
             while (IsInspecting)
             {
                 SetRotation();
-
-                /*if (Input.GetMouseButtonDown(0) && !interactableComponent.InspectableOnly)
-                {
-                    interactableComponent.Interact();
-                }*/
-                
                 yield return null;
             }
 
@@ -146,8 +135,19 @@ namespace Player
             
             if (playerInput.mouseMovementInput == Vector2.zero) return;
 
-            if (rotateXY[0]) currentRotation.x += playerInput.mouseMovementInput.y * rotationSpeed;
-            if (rotateXY[1]) currentRotation.y -= playerInput.mouseMovementInput.x * rotationSpeed;
+            if (modifier?.RotateX == true)
+            {
+                var speed = modifier ? rotationSpeed * modifier.SensitivityX : rotationSpeed;
+                var rot = playerInput.mouseMovementInput.y * speed;
+                currentRotation.x = modifier?.InvertX == true ? currentRotation.x - rot : currentRotation.x + rot;
+            }
+
+            if (modifier?.RotateY == true)
+            {
+                var speed = modifier ? rotationSpeed * modifier.SensitivityY : rotationSpeed;
+                var rot = playerInput.mouseMovementInput.x * speed;
+                currentRotation.y = modifier?.InvertY == true ? currentRotation.y + rot : currentRotation.y - rot;
+            }
 
             interactable.localRotation = Quaternion.Euler(currentRotation);
         }

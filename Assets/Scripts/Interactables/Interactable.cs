@@ -20,7 +20,8 @@ namespace Interactables
         [SerializeField] private List<Behaviour> inspectBehaviours = new();
 
         private PlayerInspectModifier inspectModifier;
-        
+
+        public bool CanInteract => interactBehaviours.Count > 0;
         public List<IInventoryItem> RequiredInventoryItems => inventoryRequirement ? inventoryRequirement.Items() : new List<IInventoryItem>();
 
         public void ShowInventoryRequirement(bool show) => inventoryRequirement?.ShowItems(show);
