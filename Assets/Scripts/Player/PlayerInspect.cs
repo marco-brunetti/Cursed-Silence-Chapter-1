@@ -86,6 +86,7 @@ namespace Player
                 interactable.localPosition = Vector3.Lerp(localPos, position, percent);
                 if(scale != Vector3.zero) interactable.localScale = Vector3.Lerp(localScale, scale, percent);
                 interactable.localRotation = Quaternion.Lerp(localRot, Quaternion.Euler(rotation), percent);
+                currentRotation = interactable.localRotation.eulerAngles;
                 yield return null;
             }
             
@@ -94,7 +95,6 @@ namespace Player
 
         private IEnumerator Inspecting()
         {
-            currentRotation = interactable.localRotation.eulerAngles;
             while (IsInspecting)
             {
                 SetRotation();
@@ -149,7 +149,7 @@ namespace Player
                 currentRotation.y = modifier?.InvertY == true ? currentRotation.y + rot : currentRotation.y - rot;
             }
 
-            interactable.localRotation = Quaternion.Euler(currentRotation);
+            if(modifier?.RotateX == true || modifier?.RotateY == true) interactable.localRotation = Quaternion.Euler(currentRotation);
         }
 
         private void ResetInspectable()

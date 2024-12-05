@@ -137,13 +137,15 @@ namespace Player
         private void Interact()
         {
             if(!canInteract) return;
-            
-            _interactor.Interact(PlayerData, Input, _inspector);
 
             if (IsInspecting)
             {
                 if(UnityEngine.Input.GetMouseButtonDown(0)) _inspector.Interact();
                 else if(UnityEngine.Input.GetMouseButtonDown(1)) _inspector.StopInspection();
+            }
+            else
+            {
+                _interactor.Interact(PlayerData, Input, _inspector);
             }
         }
 
