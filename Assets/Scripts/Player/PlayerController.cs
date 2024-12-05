@@ -48,7 +48,8 @@ namespace Player
         public bool IsDistorted { get; private set; }
         public bool IsInspecting { get => _inspector.IsInspecting; }
         private BadTVEffect _camDistortion;
-        public static EventHandler<Transform> SetPlayerTransform; 
+        public static EventHandler<Transform> SetPlayerTransform;
+        public static EventHandler<bool> showUIPoint;
 
         private bool pause;
         private bool canInteract = true;

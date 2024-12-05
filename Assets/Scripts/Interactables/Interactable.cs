@@ -59,5 +59,6 @@ namespace Interactables
         }
         
         public static EventHandler<bool> showUICursor;
+        public static EventHandler<bool> showUIPoint;
     }
 }

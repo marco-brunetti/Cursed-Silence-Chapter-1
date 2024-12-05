@@ -16,6 +16,8 @@ namespace Game.UI
         private void Awake()
         {
             Interactable.showUICursor += ActiveCursor;
+            PlayerController.showUIPoint += ActivateCenterPoint;
+            Interactable.showUIPoint += ActivateCenterPoint;
             activateCenterPoint += ActivateCenterPoint;
         }
 

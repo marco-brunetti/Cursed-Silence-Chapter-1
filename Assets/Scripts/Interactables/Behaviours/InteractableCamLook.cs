@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Cinemachine;
 using UnityEngine;
@@ -9,6 +8,7 @@ namespace Interactables.Behaviours
     public class InteractableCamLook : Behaviour
     {
         [SerializeField] private bool showCursor;
+        [SerializeField] private bool showUIPoint;
         [SerializeField] private float fov;
         [SerializeField] private float lookDuration = 1;
         [SerializeField] private float startLookBlend;
@@ -17,7 +17,6 @@ namespace Interactables.Behaviours
         
         public bool IsLooking { get; private set; }
         
-
         private PlayerController controller;
         private Coroutine lookAtInteractable;
         
@@ -27,6 +26,7 @@ namespace Interactables.Behaviours
         
         private IEnumerator LookAtInteractable()
         {
+            Interactable.showUIPoint?.Invoke(this, false);
             controller = PlayerController.Instance;
             
             controller.FreezePlayer(true);
@@ -52,6 +52,8 @@ namespace Interactables.Behaviours
             controller.ActivateModel(true);
             controller.FreezePlayer(false);
             lookAtInteractable = null;
+            
+            Interactable.showUIPoint?.Invoke(this, true);
         }
 
         private void EnableLookCamera(bool enable)
