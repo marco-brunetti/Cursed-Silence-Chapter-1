@@ -78,7 +78,10 @@ namespace Player
             PlayerData = _data.dataObject;
 
             _camDistortion = Camera.GetComponent<BadTVEffect>();
+        }
 
+        private void Start()
+        {
             SetPlayerTransform?.Invoke(this, Player.transform);
         }
 

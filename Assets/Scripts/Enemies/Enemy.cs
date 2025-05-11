@@ -40,7 +40,6 @@ namespace Enemies
         
         protected virtual void Awake()
         {
-            EnemyAwake?.Invoke(this, this);
             hasHeavyAttack = data.HeavyAttackAnim != null;
             hasSpecialAttack = data.SpecialAttackAnim != null;
             collider.enabled = true;
@@ -49,6 +48,7 @@ namespace Enemies
         
         protected virtual void Start()
         {
+            EnemyAwake?.Invoke(this, this);
             playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
             StartPlayerTracking();

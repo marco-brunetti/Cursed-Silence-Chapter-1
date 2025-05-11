@@ -10,7 +10,7 @@ namespace Game.General
     {
         public static List<Enemy> activeEnemies = new();
         public static Transform playerTransform;
-        public static string CurrentLayoutStyle { get; private set; }// = "style0";
+        public static string CurrentLayoutStyle { get; private set; } = "style0";
         //private Transform playerTransform;
         public static List<Enemy> enemyWaitingList = new();
         
