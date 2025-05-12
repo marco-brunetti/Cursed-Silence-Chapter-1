@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 //using Game.General;
@@ -9,6 +10,7 @@ namespace Player
     {
         private HashSet<IInventoryItem> inventory = new();
         private PlayerData playerData;
+        public static EventHandler<bool> ShowUIPoint;
 
         public void Add(IInventoryItem item)
         {
@@ -19,6 +21,7 @@ namespace Player
             item.gameObject.SetActive(false);
             
             inventory.Add(item);
+            ShowUIPoint.Invoke(this, true);
         }
 
         public bool Contains(IInventoryItem item) => item != null && inventory.Contains(item);

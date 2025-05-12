@@ -26,7 +26,7 @@ namespace Interactables.Behaviours
         
         private IEnumerator LookAtInteractable()
         {
-            Interactable.showUIPoint?.Invoke(this, false);
+            Interactable.ShowUIPoint?.Invoke(this, false);
             controller = PlayerController.Instance;
             
             controller.FreezePlayer(true);
@@ -53,7 +53,7 @@ namespace Interactables.Behaviours
             controller.FreezePlayer(false);
             lookAtInteractable = null;
             
-            Interactable.showUIPoint?.Invoke(this, true);
+            Interactable.ShowUIPoint?.Invoke(this, true);
         }
 
         private void EnableLookCamera(bool enable)

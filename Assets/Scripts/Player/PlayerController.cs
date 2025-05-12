@@ -49,7 +49,7 @@ namespace Player
         public bool IsInspecting { get => _inspector.IsInspecting; }
         private BadTVEffect _camDistortion;
         public static EventHandler<Transform> SetPlayerTransform;
-        public static EventHandler<bool> showUIPoint;
+        public static EventHandler<bool> ShowUIPoint;
 
         private bool pause;
         private bool canInteract = true;

@@ -68,7 +68,7 @@ namespace Player
                 localScale = modifier.Scale;
             }
             
-            PlayerController.showUIPoint?.Invoke(this, false);
+            PlayerController.ShowUIPoint?.Invoke(this, false);
             
             StartCoroutine(GoToInspectionPosition(position, rotation, localScale));
         }
@@ -163,7 +163,7 @@ namespace Player
                 interactable.rotation = previousRotation;
             }
 
-            PlayerController.showUIPoint?.Invoke(this, true);
+            PlayerController.ShowUIPoint?.Invoke(this, true);
             
             CleanVariables();
         }

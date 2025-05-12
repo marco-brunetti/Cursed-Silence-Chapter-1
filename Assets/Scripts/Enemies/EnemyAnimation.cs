@@ -115,7 +115,9 @@ namespace Enemies
             {
                 if(lookSpeed > 0)
                 {
-                    var direction = targetTransform.position - rootTransform.position;
+                    var targetLookPosition = new Vector3(targetTransform.position.x, rootTransform.position.y, targetTransform.position.z);
+                    
+                    var direction = targetLookPosition - rootTransform.position;
                     var step = lookSpeed * Time.deltaTime;
                     var newRotation = Vector3.RotateTowards(rootTransform.forward, direction, step, 0.0f);
                     rootTransform.rotation = Quaternion.LookRotation(newRotation);
