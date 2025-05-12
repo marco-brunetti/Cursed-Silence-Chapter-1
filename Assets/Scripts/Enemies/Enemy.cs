@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using SnowHorse.Systems;
@@ -46,9 +47,15 @@ namespace Enemies
             random = new System.Random(Guid.NewGuid().GetHashCode());
         }
         
-        protected virtual void Start()
+        protected virtual async void Start()
         {
             EnemyAwake?.Invoke(this, this);
+
+            while (player == null)
+            {
+                await Task.Yield();
+            }
+            
             playerTracker = new EnemyPlayerTracker(this, player, visualCone, data);
             AnimationInit();
             StartPlayerTracking();
