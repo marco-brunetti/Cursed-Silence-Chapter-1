@@ -206,7 +206,7 @@ namespace Enemies
         
         protected virtual void Move()
         {
-            animation.TrySetState(data.MoveAnim.name, currentState, moveTarget:player, randomizePath: data.RandomizePath);
+            animation.TrySetState(data.MoveAnim.name, currentState, moveTarget:player, randomizePath: data.RandomizePath, randomPathRange: data.RandomPathRange);
         }
         
         private void React()
